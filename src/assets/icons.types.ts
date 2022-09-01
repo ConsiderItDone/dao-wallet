@@ -8,4 +8,4 @@ export interface IconsMapper extends Record<string, unknown> {
   success: string;
   tokenA: string;
   arrow: string;
-  }
+}

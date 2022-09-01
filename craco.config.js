@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
-const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   webpack: {

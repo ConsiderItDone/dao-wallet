@@ -1,18 +1,32 @@
 import React from "react";
+import path from "path";
 import iconsObj from "../../assets/icons";
 import Header from "../header";
 import Icon from "../icon";
 import "./index.css";
 import { useQuery } from "../../hooks";
+import { usePolywrapClient } from "@polywrap/react";
+
+const wrapperPath = path.join(__dirname, "wrapper");
+
+const fsPath = `${wrapperPath}`;
+
+const fsUri = `fs/${fsPath}`;
 
 const TrasactionPage = () => {
   const [execute, { data, loading, error }] = useQuery<string>("getBlock");
+  const client = usePolywrapClient();
 
   const handleOnClick = async () => {
     execute({ blockQuery: { finality: "final" } }).then((res) => {
       console.log(res);
-      alert('Check your console');
+      //alert("Check your console");
     });
+    //const resolved = await client.resolveUri(fsUri);
+
+    /* console.log("path", path);
+    console.log("uri", fsUri);
+    console.log("resolved", resolved); */
   };
 
   return (

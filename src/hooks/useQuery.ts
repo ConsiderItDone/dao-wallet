@@ -1,8 +1,18 @@
+import path from "path";
 import { usePolywrapInvoke } from "@polywrap/react";
 import { UsePolywrapInvoke } from "@polywrap/react/build/invoke";
 import { InvokeResult } from "@polywrap/core-js";
 
-export const apiUri = "wrap://ipfs/QmW6rsaFCx9mNDdqzKfGjmKv5bqtUknrd9a8RGiKisk5Xh";
+const basePath = `${__dirname}/cases/wrappers`;
+
+const wrapperPath = path.resolve(`${basePath}/wasm-as/simple-storage`);
+
+const fsPath = `${wrapperPath}/build`;
+
+const fsUri = `fs/${fsPath}`;
+const ipfsUri = "wrap://ipfs/QmW6rsaFCx9mNDdqzKfGjmKv5bqtUknrd9a8RGiKisk5Xh";
+
+export const apiUri = fsUri || ipfsUri;
 
 export const useQuery = <TData = Record<string, unknown>>(
   method: string
@@ -11,7 +21,7 @@ export const useQuery = <TData = Record<string, unknown>>(
   Partial<UsePolywrapInvoke<TData>>
 ] => {
   const { execute, loading, data, error } = usePolywrapInvoke<TData>({
-    uri: apiUri,
+    uri: ipfsUri,
     method: method,
   });
   return [execute, { data, loading, error }];
