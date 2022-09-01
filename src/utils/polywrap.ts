@@ -23,7 +23,7 @@ export function getPolywrapConfig(): Partial<PolywrapClientConfig> {
       {
         uri: "wrap://ens/fs.polywrap.eth",
         plugin: fileSystemPlugin({}),
-      }
+      },
     ],
   };
 }
