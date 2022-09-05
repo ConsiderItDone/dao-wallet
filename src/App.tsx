@@ -1,11 +1,11 @@
 import React from "react";
-import {HomePage} from './components'
-import {Router} from 'react-chrome-extension-router'
+import { HomePage } from "./components";
+import { Router } from "react-chrome-extension-router";
 
 function App() {
   return (
     <Router>
-      <HomePage/>
+      <HomePage />
     </Router>
   );
 }

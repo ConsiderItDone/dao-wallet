@@ -1,0 +1,77 @@
+input {
+  box-sizing: border-box;
+}
+
+.container {
+  width: 440px;
+  height: 426px;
+  background-image: url(../../images/bgInfo.svg);
+  background-position: center;
+  background-color: #FFFFFF;
+  border-radius: 20px;
+  padding-top: 52px;
+  text-align: center;
+}
+
+.container .title {
+  font-family: var(--font_extra_bold);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 58px;
+  color: #202020;
+}
+
+.formContainer {
+  margin-top: 60px;
+  padding: 0 70px;
+}
+
+.passwordContainer {
+  width: 100%;
+  min-height: 95px;
+}
+
+.confirmPasswordContainer {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 95px;
+}
+
+.password {
+  width: 100%;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-radius: 8px;
+  padding: 0 30px;
+}
+
+.password:focus {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.submitButton {
+  width: 102px;
+  height: 48px;
+  background: #202020;
+  border-radius: 88px;
+  font-family: var(--font_bold);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--white_col);
+  cursor: pointer;
+  margin: 20px auto 0 auto;
+}
+
+.submitButton:hover {
+  background: #202020dd;
+}
+
+.submitButton:disabled {
+  background: #202020aa;
+  cursor: not-allowed;
+}

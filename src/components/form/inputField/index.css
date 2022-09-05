@@ -1,0 +1,30 @@
+.fieldLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.fieldLabelError {
+  color: indianred;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  background: #F2F2FF;
+  outline: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.inputError:focus {
+  background: #FFFFFF;
+}
+
+.inputErrorMessage {
+  color: indianred;
+  font-size: small;
+  margin-top: 1px;
+  text-align: left;
+}

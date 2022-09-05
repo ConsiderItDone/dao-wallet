@@ -1,3 +1,7 @@
+input {
+  box-sizing: border-box;
+}
+
 .homePageContainer {
   width: 440px;
   height: 426px;
@@ -50,17 +54,22 @@
   width: 50px;
   left: 15px;
 }
-.homePageContainer .password {
-  width: 193px;
+
+.homePageContainer .homePagePasswordContainer {
+  width: 320px;
+  min-height: 95px;
+  margin: 0 auto;
+}
+.homePageContainer .homePagePasswordContainer .homePagePassword {
+  width: 100%;
   height: 48px;
-  margin: 0 auto 24px auto;
   background: rgba(0, 0, 0, 0.08);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-radius: 8px;
-  padding-left: 126px;
+  padding: 0 30px;
 }
-.homePageContainer .password::placeholder{
+.homePagePassword::placeholder{
   font-family: var(--font_regular);
   font-style: normal;
   font-weight: 400;
@@ -69,6 +78,17 @@
   color: #202020;
   opacity: 0.6;
 }
+.homePagePassword:focus {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.passwordError {
+  color: indianred;
+  font-size: small;
+  margin-top: 4px;
+  text-align: center;
+}
+
 .homePageContainer .btn{
   width: 102px;
   height: 48px;
@@ -80,6 +100,11 @@
   font-size: 16px;
   line-height: 18px;
   color: var(--white_col);
-  margin: 0 auto;
   cursor: pointer;
+  margin: 24px auto 0;
+}
+
+.btn:disabled {
+  background: #202020aa;
+  cursor: not-allowed;
 }
