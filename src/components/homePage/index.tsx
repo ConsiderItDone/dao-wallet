@@ -12,7 +12,7 @@ import { isPasswordCorrect } from "../../utils/encryption";
 import { ClipLoader } from "react-spinners";
 import { InputField } from "../form/inputField";
 
-const HpmePage = () => {
+const HomePage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
 
@@ -144,4 +144,4 @@ const HpmePage = () => {
   );
 };
 
-export default HpmePage;
+export default HomePage;

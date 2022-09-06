@@ -49,7 +49,7 @@ const Header = () => {
     };
 
     getWalletsList();
-  }, []);
+  }, [localStorage]);
 
   const handleWalletChange = (walletIndex: number) => {
     setDropdownVisible(!dropdownVisible);

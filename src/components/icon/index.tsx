@@ -6,7 +6,7 @@ export interface IconProps
 }
 
 function Icon({ src, className = "", ...others }: IconProps) {
-  return <img src={src} {...others} className={className} />;
+  return <img src={src} alt="" {...others} className={className} />;
 }
 
 export default Icon;

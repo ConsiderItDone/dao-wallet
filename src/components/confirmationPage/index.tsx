@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../header";
 import Icon from "../icon";
 import iconsObj from "../../assets/icons";
-import TrasactionPage from "../transactionPage";
+import TransactionPage from "../transactionPage";
 
 import "./index.css";
 import { goBack, goTo } from "react-chrome-extension-router";
@@ -60,7 +60,7 @@ const ConfirmationPage = () => {
           </div>
         </div>
         <button
-          onClick={() => goTo(TrasactionPage)}
+          onClick={() => goTo(TransactionPage)}
           className="btnSend"
           type="button"
         >

@@ -4,7 +4,7 @@ import Header from "../header";
 import Icon from "../icon";
 import "./index.css";
 
-const TrasactionPage = () => {
+const TransactionPage = () => {
   return (
     <div className="transactionPageContainer">
       <Header />
@@ -20,4 +20,4 @@ const TrasactionPage = () => {
   );
 };
 
-export default TrasactionPage;
+export default TransactionPage;
