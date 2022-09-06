@@ -10,7 +10,7 @@ import BalanceCard from "../balanceCard";
 import "./index.css";
 
 const balance = [
-  { title: "Available ballance", value: "0.83 NEAR" },
+  { title: "Available balance", value: "0.83 NEAR" },
   { title: "Staked", value: "0 NEAR" },
 ];
 
@@ -21,7 +21,12 @@ const Info = () => {
     <div className="infoContainer">
       <Header />
       <div className="body">
-        <BalanceCard title="Balance" />
+        <BalanceCard
+          title="Available Balance"
+          walletAddress="df4d1274f600ee"
+          nearAmount={0.93245}
+          usdAmount={6.9208}
+        />
         <div className="cardContainer">
           {balance?.map((el) => {
             return (

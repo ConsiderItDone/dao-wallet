@@ -14,6 +14,20 @@ import {
 } from "../../services/chrome/localStorage";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
 import HomePage from "../homePage";
+import { useQuery } from "../../hooks";
+import { getNearToUSDRatio } from "../../services/coingecko/api";
+import { bignumberToNumber } from "../../utils/bignumber";
+import { ethers } from "ethers";
+import { NEAR_TOKEN_DECIMALS_AMOUNT } from "../../consts/near";
+
+const ACCOUNT_BALANCE_METHOD_NAME = "getAccountBalance";
+
+interface AccountBalance {
+  available: number;
+  staked: number;
+  stateStaked: number;
+  total: number;
+}
 
 const BalancePage = () => {
   const [step, setStep] = useState("tokens");
@@ -30,9 +44,19 @@ const BalancePage = () => {
     balance: "",
   });
 
+  const [
+    execute,
+    { loading: isLoadingAccountBalance, error: accountBalanceError },
+  ] = useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
+
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
+
   const [account, setAccount] = useState<LocalStorageAccount | null>(null);
+  const [accountBalance, setAccountBalance] = useState<AccountBalance | null>(
+    null
+  );
+  const [nearToUsdRatio, setNearToUsdRatio] = useState<number>(0);
 
   useEffect(() => {
     const setCurrentAccount = async () => {
@@ -50,6 +74,56 @@ const BalancePage = () => {
 
     setCurrentAccount();
   }, [localStorage, sessionStorage]);
+
+  useEffect(() => {
+    if (account?.accountId) {
+      execute({ accountId: account?.accountId })
+        .then((balanceData) => {
+          const data = balanceData?.data;
+          if (data) {
+            setAccountBalance({
+              available: bignumberToNumber(
+                ethers.BigNumber.from(data.available),
+                NEAR_TOKEN_DECIMALS_AMOUNT
+              ),
+              staked: bignumberToNumber(
+                ethers.BigNumber.from(data.staked),
+                NEAR_TOKEN_DECIMALS_AMOUNT
+              ),
+              stateStaked: bignumberToNumber(
+                ethers.BigNumber.from(data.stateStaked),
+                NEAR_TOKEN_DECIMALS_AMOUNT
+              ),
+              total: bignumberToNumber(
+                ethers.BigNumber.from(data.total),
+                NEAR_TOKEN_DECIMALS_AMOUNT
+              ),
+            });
+          } else {
+            console.error(
+              "[GetAccountBalance]: received empty account balance data"
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("[GetAccountBalance]:", error);
+        });
+    }
+  }, [account?.accountId]);
+
+  useEffect(() => {
+    getNearToUSDRatio()
+      .then((ratio) => {
+        setNearToUsdRatio(ratio);
+      })
+      .catch((error) => {
+        console.error("[BalancePageGetNearToUSDRatio]:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    console.error("[BalancePageAccountBalance]:", accountBalanceError);
+  }, [accountBalanceError]);
 
   const balanceSecondary = () => {
     return (
@@ -74,9 +148,18 @@ const BalancePage = () => {
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">0 NEAR</div>
+              <div className="value">
+                {accountBalance?.staked ? accountBalance.staked.toFixed(5) : 0}{" "}
+                NEAR
+              </div>
             </div>
-            <div className="valueBalance">≈ $0 USD</div>
+            <div className="valueBalance">
+              ≈ $
+              {accountBalance?.staked && nearToUsdRatio
+                ? (accountBalance.staked * nearToUsdRatio).toFixed(5)
+                : 0}{" "}
+              USD
+            </div>
           </div>
         </button>
         <button
@@ -137,7 +220,7 @@ const BalancePage = () => {
         <button
           onClick={() => {
             setTotalBalanceValue({
-              name: "Total ballance",
+              name: "Total balance",
               value: "0.93245 NEA",
               balance: "≈ $7.9872 USD",
             });
@@ -148,15 +231,24 @@ const BalancePage = () => {
           className="btn"
         >
           <div className="name">
-            <div>Total ballance </div>
+            <div>Total balance </div>
             <Icon className="arrow" src={iconsObj.arrowGrey} />
           </div>
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">0.93245 NEAR</div>
+              <div className="value">
+                {accountBalance?.total ? accountBalance.total.toFixed(5) : 0}{" "}
+                NEAR
+              </div>
             </div>
-            <div className="valueBalance">≈ $7.9872 USD</div>
+            <div className="valueBalance">
+              ≈ $
+              {accountBalance?.total && nearToUsdRatio
+                ? (accountBalance.total * nearToUsdRatio).toFixed(5)
+                : 0}{" "}
+              USD
+            </div>
           </div>
         </button>
         <button
@@ -215,13 +307,25 @@ const BalancePage = () => {
     <div className="balancePageContainer">
       <Header />
       <div className="body">
-        <BalanceCard title="Available Balance" />
+        <BalanceCard
+          title="Available Balance"
+          walletAddress="df4d1274f600ee"
+          nearAmount={
+            accountBalance?.available ? accountBalance.available.toFixed(4) : 0
+          }
+          usdAmount={
+            accountBalance?.available
+              ? (accountBalance.available * nearToUsdRatio).toFixed(2)
+              : 0
+          }
+          isLoading={isLoadingAccountBalance || !account || !accountBalance}
+        />
         {totalBalanceVisible ? (
           <button
             onClick={() => {
               setTotalBalanceVisible(!totalBalanceVisible);
               setTotalBalanceValue({
-                name: "Total ballance",
+                name: "Total balance",
                 value: "0.93245 NEAR",
                 balance: "≈ $7.9872 USD",
               });
@@ -235,7 +339,10 @@ const BalancePage = () => {
             </div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">{totalBalanceValue.value}</div>
+              <div className="value">
+                {accountBalance?.total ? accountBalance.total.toFixed(5) : 0}{" "}
+                NEAR
+              </div>
             </div>
             {!!totalBalanceValue.balance && !totalBalanceVisible && (
               <div className="valueBalance">{totalBalanceValue.balance}</div>

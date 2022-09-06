@@ -1,6 +1,6 @@
 {
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "NEAR Wallet",
+  "description": "NEAR Wallet",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
@@ -14,7 +14,8 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },
   "icons": {
-    "16": "logo192.png",
+    "16": "logo32.png",
+    "32": "logo32.png",
     "48": "logo192.png",
     "128": "logo192.png"
   },

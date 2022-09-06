@@ -1,0 +1,1 @@
+export const NEAR_TOKEN_DECIMALS_AMOUNT = 24;

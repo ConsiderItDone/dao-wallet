@@ -5,7 +5,7 @@ import BalancePage from "../balancePage";
 
 import "./index.css";
 import { LocalStorage } from "../../services/chrome/localStorage";
-import { generateWalletPrivateKey } from "../../utils/wallet";
+import { createNewWallet } from "../../utils/wallet";
 import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
 import HomePage from "../homePage";
 
@@ -28,8 +28,7 @@ const ChooseMethod = () => {
       }
 
       const name = `Wallet ${accounts.length + 1}`;
-      const accountId = "polydev.testnet";
-      const privateKey = generateWalletPrivateKey();
+      const { accountId, privateKey } = createNewWallet();
       const hashedPassword = await localStorage.getHashedPassword();
       if (!hashedPassword) {
         console.error(

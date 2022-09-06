@@ -38,3 +38,11 @@
     color: var(--black_color_secondary);
     margin-top: 4px;
 }
+
+.balanceContainer .clipLoaderContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
