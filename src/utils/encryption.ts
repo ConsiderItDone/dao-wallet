@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-//const Cryptr = require("cryptr");
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -14,18 +13,18 @@ export function isPasswordCorrect(
   return bcrypt.compareSync(password, hashedPassword);
 }
 
-/*export function encryptDataWithPassword(
+export async function encryptPrivateKeyWithPassword(
   password: string,
-  data: string
+  privateKey: string
 ): Promise<string> {
-  const cryptr = new Cryptr(password);
-  return cryptr.encrypt(data);
+  // TODO: use encrypt algorithm
+  return privateKey;
 }
 
-export function decryptDataWithPassword(
+export async function decryptPrivateKeyWithPassword(
   password: string,
-  data: string
+  privateKey: string
 ): Promise<string> {
-  const cryptr = new Cryptr(password);
-  return cryptr.decrypt(data);
-}*/
+  // TODO: use decrypt algorithm
+  return privateKey;
+}

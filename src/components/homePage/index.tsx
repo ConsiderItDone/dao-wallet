@@ -8,7 +8,7 @@ import BalancePage from "../balancePage";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { LocalStorage } from "../../services/chrome/localStorage";
 import CreatePasswordPage from "../createPasswordPage";
-import { isPasswordCorrect } from "../../utils/encryption.utils";
+import { isPasswordCorrect } from "../../utils/encryption";
 import { ClipLoader } from "react-spinners";
 import { InputField } from "../form/inputField";
 
@@ -57,7 +57,10 @@ const HpmePage = () => {
           );
         }
 
-        const currentAccount = accounts[lastSelectedAccountIndex];
+        const isUnlocked = await sessionStorage.isExtensionUnlocked();
+        if (isUnlocked) {
+          goTo(BalancePage);
+        }
       } catch (error) {
         console.error("Failed to initialize:", error);
       } finally {
@@ -66,9 +69,11 @@ const HpmePage = () => {
     };
 
     if (shouldInitialize) {
-      initialize();
+      initialize().catch((error) => {
+        console.error("[HomePageInitialize]:", error);
+      });
     }
-  }, [shouldInitialize]);
+  }, [localStorage, sessionStorage, shouldInitialize]);
 
   const onPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputPassword(e?.target?.value);

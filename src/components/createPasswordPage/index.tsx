@@ -5,7 +5,7 @@ import { InputField } from "../form/inputField";
 import { ClipLoader } from "react-spinners";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { LocalStorage } from "../../services/chrome/localStorage";
-import { hashPassword } from "../../utils/encryption.utils";
+import { hashPassword } from "../../utils/encryption";
 import { HomePage } from "../index";
 
 const CreatePasswordPage = () => {
@@ -82,7 +82,6 @@ const CreatePasswordPage = () => {
     try {
       const hashedPassword = hashPassword(password);
       await localStorage.setHashedPassword(hashedPassword);
-      await sessionStorage.setPassword(password);
       await sessionStorage.setIsExtensionUnlocked(true);
       goTo(HomePage);
     } catch (error) {

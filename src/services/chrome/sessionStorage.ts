@@ -55,7 +55,7 @@ interface SessionStorageData {
   isUnlocked: boolean;
 
   /**
-   * Plaintext password. Sets after user unlocks extension. Needed to encrypt/decrypt private key.
+   * Plaintext password without encryption.
    */
   password: string;
 }

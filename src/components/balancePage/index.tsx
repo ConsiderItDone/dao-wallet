@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavFooter from "../navFooter";
 import Footer from "../footer";
 import Header from "../header";
@@ -8,12 +8,18 @@ import iconsObj from "../../assets/icons";
 import "./index.css";
 import SendPage from "../sendPage";
 import { goTo } from "react-chrome-extension-router";
+import {
+  LocalStorage,
+  LocalStorageAccount,
+} from "../../services/chrome/localStorage";
+import { SessionStorage } from "../../services/chrome/sessionStorage";
+import HomePage from "../homePage";
 
 const BalancePage = () => {
   const [step, setStep] = useState("tokens");
   const [totalBalanceVisible, setTotalBalanceVisible] = useState(true);
   const [totalBalanceValue, setTotalBalanceValue] = useState({
-    name: "Total ballance",
+    name: "Total balance",
     value: "0.93245 NEAR",
     balance: "",
   });
@@ -23,6 +29,27 @@ const BalancePage = () => {
     value: "0 NEAR",
     balance: "",
   });
+
+  const [localStorage] = useState<LocalStorage>(new LocalStorage());
+  const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
+  const [account, setAccount] = useState<LocalStorageAccount | null>(null);
+
+  useEffect(() => {
+    const setCurrentAccount = async () => {
+      const currentAccount = await localStorage.getCurrentAccount();
+      if (!currentAccount) {
+        console.error(
+          "[BalancePageSetCurrentAccount]: failed to get current account"
+        );
+        goTo(HomePage);
+        return;
+      }
+
+      setAccount(currentAccount);
+    };
+
+    setCurrentAccount();
+  }, [localStorage, sessionStorage]);
 
   const balanceSecondary = () => {
     return (

@@ -1,5 +1,5 @@
 import { ExtensionStorage } from "./extensionStorage";
-import { isEmpty } from "../../utils/utils";
+import { isEmpty } from "../../utils/common";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 const ACCOUNTS_KEY = "accounts";
@@ -69,6 +69,29 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       console.error("[SetLastSelectedAccountIndex]:", error);
     }
   }
+
+  async getCurrentAccount(): Promise<LocalStorageAccount | undefined> {
+    try {
+      const accounts = await this.getAccounts();
+      if (!accounts || !accounts?.length) {
+        throw new Error("User has no accounts");
+      }
+
+      let lastSelectedAccountIndex = await this.getLastSelectedAccountIndex();
+      if (
+        lastSelectedAccountIndex === null ||
+        lastSelectedAccountIndex === undefined
+      ) {
+        lastSelectedAccountIndex = 0;
+        await this.setLastSelectedAccountIndex(lastSelectedAccountIndex);
+      }
+
+      return accounts[lastSelectedAccountIndex];
+    } catch (error) {
+      console.error("[GetCurrentAccount]:", error);
+      return undefined;
+    }
+  }
 }
 
 /**
@@ -88,7 +111,13 @@ interface LocalStorageData {
   lastSelectedAccountIndex: number;
 }
 
-interface LocalStorageAccount {
+export interface LocalStorageAccount {
   name: string;
+
+  accountId: string;
+
+  /**
+   * Private key of account gets encrypted/decrypted with hashedPassword.
+   */
   encryptedPrivateKey: string;
 }

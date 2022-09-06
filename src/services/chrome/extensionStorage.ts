@@ -1,4 +1,4 @@
-import { isEmpty } from "../../utils/utils";
+import { isEmpty } from "../../utils/common";
 import StorageArea = chrome.storage.StorageArea;
 
 /**
@@ -35,7 +35,7 @@ export class ExtensionStorage<Type> {
    * Returns all of the keys currently saved
    */
   private _get(): Promise<Type> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.storage.get(null).then((result: any) => {
         resolve(result);
       });
@@ -46,7 +46,7 @@ export class ExtensionStorage<Type> {
    * Sets the key in storage state
    */
   private _set(obj: object): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.storage.set(obj).then(() => {
         resolve();
       });

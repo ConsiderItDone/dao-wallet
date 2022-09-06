@@ -72,6 +72,9 @@
   line-height: 19px;
   color: #20202040;
 }
+.chooseMethodContainer .body .btnContainer .btnChoose:disabled{
+  color: #202020cc;
+}
 .chooseMethodContainer .body .btnCancel{
   margin: 0 auto;
   font-family: var(--font_bold);

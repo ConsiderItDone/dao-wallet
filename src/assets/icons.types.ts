@@ -7,11 +7,10 @@ export interface IconsMapper extends Record<string, unknown> {
   nearMenu: string;
   copyIcon: string;
   omniLogo: string;
-  nearIcon:string;
-  logoCIDT:string;
+  nearIcon: string;
+  logoCIDT: string;
   x_close: string;
   success: string;
   tokenA: string;
   arrow: string;
-
-  }
+}
