@@ -28,7 +28,7 @@ const BalanceCard = ({
       ) : (
         <>
           <div className="token">
-            {shortenWalletAddress(walletAddress)}{" "}
+            {shortenWalletAddress(walletAddress, 4, 4)}{" "}
             <CopyIcon style={{ cursor: "pointer" }} className="copyIcon" />
           </div>
           <div className="title">{title}</div>

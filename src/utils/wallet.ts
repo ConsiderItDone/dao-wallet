@@ -22,10 +22,10 @@ export function shortenWalletAddress(
 ): string {
   if (!address) return "";
 
-  if (address.length <= 2 + startChars + endChars) {
+  if (address.length <= startChars + endChars) {
     return address;
   }
-  return `${address.substring(0, startChars + 2)}...${address.substring(
+  return `${address.substring(0, startChars)}...${address.substring(
     address.length - endChars
   )}`;
 }
