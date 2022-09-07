@@ -1,11 +1,20 @@
 import { ExtensionStorage } from "./extensionStorage";
+import { BrowserStorageWrapper } from "./browserStorageWrapper";
 
 const IS_UNLOCKED_KEY = "isUnlocked";
 const PASSWORD_KEY = "password";
 
+const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
+
 export class SessionStorage extends ExtensionStorage<SessionStorageData> {
   constructor() {
-    super(chrome.storage.session);
+    let storage;
+    if (isInDevelopmentMode) {
+      storage = new BrowserStorageWrapper(sessionStorage);
+    } else {
+      storage = chrome.storage.session;
+    }
+    super(storage);
   }
 
   async isExtensionUnlocked(): Promise<boolean> {

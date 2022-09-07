@@ -1,13 +1,22 @@
 import { ExtensionStorage } from "./extensionStorage";
 import { isEmpty } from "../../utils/common";
+import { BrowserStorageWrapper } from "./browserStorageWrapper";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 const ACCOUNTS_KEY = "accounts";
 const LAST_SELECTED_ACCOUNT_INDEX_KEY = "lastSelectedAccountIndex";
 
+const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
+
 export class LocalStorage extends ExtensionStorage<LocalStorageData> {
   constructor() {
-    super(chrome.storage.local);
+    let storage;
+    if (isInDevelopmentMode) {
+      storage = new BrowserStorageWrapper(localStorage);
+    } else {
+      storage = chrome.storage.local;
+    }
+    super(storage);
   }
 
   async getHashedPassword(): Promise<string | undefined> {

@@ -1,13 +1,19 @@
 import { isEmpty } from "../../utils/common";
-import StorageArea = chrome.storage.StorageArea;
+
+export interface ApplicationStorageArea {
+  get: (
+    keys?: string | string[] | { [p: string]: any } | null | undefined
+  ) => Promise<{ [p: string]: any }>;
+  set: (items: { [p: string]: any }) => Promise<void>;
+}
 
 /**
  * Basic wrapper around the extension's storage API
  */
 export class ExtensionStorage<Type> {
-  private storage: StorageArea;
+  private storage: ApplicationStorageArea;
 
-  constructor(storage: StorageArea) {
+  constructor(storage: ApplicationStorageArea) {
     this.storage = storage;
   }
 
