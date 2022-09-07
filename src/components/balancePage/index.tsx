@@ -122,7 +122,9 @@ const BalancePage = () => {
   }, []);
 
   useEffect(() => {
-    console.error("[BalancePageAccountBalance]:", accountBalanceError);
+    if (accountBalanceError) {
+      console.error("[BalancePageAccountBalance]:", accountBalanceError);
+    }
   }, [accountBalanceError]);
 
   const balanceSecondary = () => {
