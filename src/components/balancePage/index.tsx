@@ -112,7 +112,7 @@ const BalancePage = () => {
           console.error("[GetAccountBalance]:", error);
         });
     }
-  }, [account?.accountId]);
+  }, [account?.accountId, execute]);
 
   useEffect(() => {
     getNearToUSDRatio()
