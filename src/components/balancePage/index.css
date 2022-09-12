@@ -2,7 +2,6 @@
   width: 440px;
   height: 622px;
   background-color: var(--white_col);
-  border-radius: 20px;
 }
 .balancePageContainer .body {
   background-image: url(../../images/bgInfo.svg);

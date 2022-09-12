@@ -1,7 +1,6 @@
 .sendPageContainer{
   width: 440px;
   height: 465px;
-  border-radius: 20px;
   padding-bottom: 32px;
   background-color: var(--white_col);
 }

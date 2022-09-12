@@ -92,7 +92,7 @@ const CreatePasswordPage = () => {
   };
 
   return (
-    <div className="container">
+    <div className="createPasswordContainer">
       <div className="title">Create Password</div>
       <div className="formContainer">
         <InputField
