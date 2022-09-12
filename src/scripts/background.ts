@@ -30,11 +30,17 @@ async function openPopup() {
   });
 }
 
-// Catch messages from content script
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request?.type === "near#enable") {
-    openPopup();
-  }
+if (chrome?.runtime) {
+  // Catch messages from content script
+  chrome.runtime.onMessage.addListener(function (
+    request,
+    sender,
+    sendResponse
+  ) {
+    if (request?.type === "near#enable") {
+      openPopup();
+    }
 
-  sendResponse();
-});
+    sendResponse();
+  });
+}
