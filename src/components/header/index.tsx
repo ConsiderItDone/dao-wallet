@@ -12,6 +12,15 @@ import {
   LocalStorage,
   LocalStorageAccount,
 } from "../../services/chrome/localStorage";
+import ChooseMethod from "../chooseMethod";
+
+const formatWalletName = (str: string) => {
+  if (str?.length <= 8) {
+    return str;
+  }
+
+  return str.substring(0, 6) + "...";
+};
 
 const Header = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -28,7 +37,7 @@ const Header = () => {
     const getWalletsList = async () => {
       const accounts = await localStorage.getAccounts();
       if (!accounts || !accounts.length) {
-        console.error("[HeaderGetWalletsList]: user has no accounts");
+        console.info("[HeaderGetWalletsList]: user has no accounts");
         return;
       }
 
@@ -51,7 +60,12 @@ const Header = () => {
     getWalletsList();
   }, [localStorage]);
 
-  const handleWalletChange = (walletIndex: number) => {
+  const handleAddAccount = () => {
+    goTo(ChooseMethod);
+  };
+
+  const handleWalletChange = async (walletIndex: number) => {
+    await localStorage.setLastSelectedAccountIndex(walletIndex);
     setDropdownVisible(!dropdownVisible);
     setSelectedWalletIndex(walletIndex);
   };
@@ -78,7 +92,9 @@ const Header = () => {
             className="dropdownBtn"
           >
             <NearIcon className="nearIcon" />
-            <div>{wallets[selectedWalletIndex]?.name}</div>
+            <div>
+              {formatWalletName(wallets[selectedWalletIndex]?.accountId)}
+            </div>
             <ArrowIcon className="arrowIcon" />
           </button>
         </div>
@@ -93,7 +109,9 @@ const Header = () => {
               className="dropdownBtn"
             >
               <NearIcon className="nearIcon" />
-              <div>{wallets[selectedWalletIndex]?.name}</div>
+              <div>
+                {formatWalletName(wallets[selectedWalletIndex]?.accountId)}
+              </div>
               <ArrowIcon className="arrowIcon" />
             </button>
           </div>
@@ -107,10 +125,17 @@ const Header = () => {
                 {selectedWalletIndex === index && (
                   <NearIcon className="nearIcon" />
                 )}
-                <div>{el?.name} </div>
+                <div>{el?.accountId} </div>
               </button>
             ) : null;
           })}
+          <button
+            className="btnChooseNetwork"
+            type="button"
+            onClick={handleAddAccount}
+          >
+            Add Account
+          </button>
           <button className="btnChooseNetwork" type="button">
             Choose Network
           </button>
