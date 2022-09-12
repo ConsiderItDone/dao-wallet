@@ -112,6 +112,7 @@ const BalancePage = () => {
           console.error("[GetAccountBalance]:", error);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account?.accountId]);
 
   useEffect(() => {
