@@ -14,17 +14,19 @@ function injectAPIIntoWindow() {
   }
 }
 
-injectAPIIntoWindow();
+if (chrome?.runtime) {
+  injectAPIIntoWindow();
 
-// Catch messages from inpage script and others
-window.addEventListener("message", (event) => {
-  if (!chrome.runtime?.id || event.source !== window) {
-    return;
-  }
+  // Catch messages from inpage script and others
+  window.addEventListener("message", (event) => {
+    if (!chrome.runtime?.id || event.source !== window) {
+      return;
+    }
 
-  const eventType: string = event?.data?.type;
-  // Send message to background messages listener
-  if (eventType === "near#enable") {
-    chrome.runtime.sendMessage({ type: "near#enable" }, () => {});
-  }
-});
+    const eventType: string = event?.data?.type;
+    // Send message to background messages listener
+    if (eventType === "near#enable") {
+      chrome.runtime.sendMessage({ type: "near#enable" }, () => {});
+    }
+  });
+}
