@@ -8,9 +8,11 @@ import { LocalStorage } from "../../services/chrome/localStorage";
 import { createNewWallet } from "../../utils/wallet";
 import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
 import HomePage from "../homePage";
+import { SessionStorage } from "../../services/chrome/sessionStorage";
 
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
+  const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
 
   const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false);
 
@@ -29,17 +31,17 @@ const ChooseMethod = () => {
 
       const name = `Wallet ${accounts.length + 1}`;
       const { accountId, privateKey } = createNewWallet();
-      const hashedPassword = await localStorage.getHashedPassword();
-      if (!hashedPassword) {
+      const password = await sessionStorage.getPassword();
+      if (!password) {
         console.error(
-          "[HandleCreateWithSecurePassphrase]: failed to get hashed password"
+          "[HandleCreateWithSecurePassphrase]: failed to get password from session storage"
         );
         goTo(HomePage);
         return;
       }
 
       const encryptedPrivateKey = await encryptPrivateKeyWithPassword(
-        hashedPassword,
+        password,
         privateKey
       );
 
