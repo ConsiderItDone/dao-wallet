@@ -1,12 +1,18 @@
 import { ExtensionStorage } from "./extensionStorage";
 import { isEmpty } from "../../utils/common";
 import { BrowserStorageWrapper } from "./browserStorageWrapper";
+import { SessionStorage } from "./sessionStorage";
+import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
-const ACCOUNTS_KEY = "accounts";
-const LAST_SELECTED_ACCOUNT_INDEX_KEY = "lastSelectedAccountIndex";
+export const ACCOUNTS_KEY = "accounts";
+export const LAST_SELECTED_ACCOUNT_INDEX_KEY = "lastSelectedAccountIndex";
 
 const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
+export const LOCAL_STORAGE_CHANGED_EVENT_KEY = "near#localStorage";
+const LOCAL_STORAGE_CHANGED_EVENT = new Event(LOCAL_STORAGE_CHANGED_EVENT_KEY);
+
+const sessionStorage = new SessionStorage();
 
 export class LocalStorage extends ExtensionStorage<LocalStorageData> {
   constructor() {
@@ -31,7 +37,11 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
   async setHashedPassword(hashedPassword: string): Promise<void> {
     try {
-      return this.set({ [HASHED_PASSWORD_KEY]: hashedPassword });
+      const result = await this.set({ [HASHED_PASSWORD_KEY]: hashedPassword });
+      if (isInDevelopmentMode) {
+        window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
+      }
+      return result;
     } catch (error) {
       console.error("[SetHashedPassword]:", error);
     }
@@ -55,7 +65,11 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         accounts = [];
       }
       accounts.push(account);
-      return this.set({ [ACCOUNTS_KEY]: accounts });
+      const result = await this.set({ [ACCOUNTS_KEY]: accounts });
+      if (isInDevelopmentMode) {
+        window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
+      }
+      return result;
     } catch (error) {
       console.error("[AddAccount]:", error);
     }
@@ -73,13 +87,19 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
   async setLastSelectedAccountIndex(index: number): Promise<void> {
     try {
-      return this.set({ [LAST_SELECTED_ACCOUNT_INDEX_KEY]: index });
+      const result = await this.set({
+        [LAST_SELECTED_ACCOUNT_INDEX_KEY]: index,
+      });
+      if (isInDevelopmentMode) {
+        window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
+      }
+      return result;
     } catch (error) {
       console.error("[SetLastSelectedAccountIndex]:", error);
     }
   }
 
-  async getCurrentAccount(): Promise<LocalStorageAccount | undefined> {
+  async getCurrentAccount(): Promise<WalletAccount | null> {
     try {
       const accounts = await this.getAccounts();
       if (!accounts || !accounts?.length) {
@@ -95,10 +115,20 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         await this.setLastSelectedAccountIndex(lastSelectedAccountIndex);
       }
 
-      return accounts[lastSelectedAccountIndex];
+      const currentAccount = accounts[lastSelectedAccountIndex];
+      const password = await sessionStorage.getPassword();
+      if (!password) {
+        throw new Error("Failed to get password from session storage");
+      }
+
+      const decryptedPrivateKey = await decryptPrivateKeyWithPassword(
+        password,
+        currentAccount.encryptedPrivateKey
+      );
+      return { ...currentAccount, privateKey: decryptedPrivateKey };
     } catch (error) {
       console.error("[GetCurrentAccount]:", error);
-      return undefined;
+      return null;
     }
   }
 }
@@ -129,4 +159,11 @@ export interface LocalStorageAccount {
    * Private key of account gets encrypted/decrypted with hashedPassword.
    */
   encryptedPrivateKey: string;
+}
+
+export interface WalletAccount extends LocalStorageAccount {
+  /**
+   * Decrypted private key.
+   */
+  privateKey: string;
 }

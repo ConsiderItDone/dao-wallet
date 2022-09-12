@@ -8,17 +8,13 @@ import iconsObj from "../../assets/icons";
 import "./index.css";
 import SendPage from "../sendPage";
 import { goTo } from "react-chrome-extension-router";
-import {
-  LocalStorage,
-  LocalStorageAccount,
-} from "../../services/chrome/localStorage";
-import { SessionStorage } from "../../services/chrome/sessionStorage";
-import HomePage from "../homePage";
+import { WalletAccount } from "../../services/chrome/localStorage";
 import { useQuery } from "../../hooks";
 import { getNearToUSDRatio } from "../../services/coingecko/api";
 import { bignumberToNumber } from "../../utils/bignumber";
 import { ethers } from "ethers";
 import { NEAR_TOKEN_DECIMALS_AMOUNT } from "../../consts/near";
+import { useAccount } from "../../hooks/useAccount";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -51,31 +47,12 @@ const BalancePage = () => {
     { loading: isLoadingAccountBalance, error: accountBalanceError },
   ] = useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
 
-  const [localStorage] = useState<LocalStorage>(new LocalStorage());
-  const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
+  const account: WalletAccount | null = useAccount();
 
-  const [account, setAccount] = useState<LocalStorageAccount | null>(null);
   const [accountBalance, setAccountBalance] = useState<AccountBalance | null>(
     null
   );
   const [nearToUsdRatio, setNearToUsdRatio] = useState<number>(0);
-
-  useEffect(() => {
-    const setCurrentAccount = async () => {
-      const currentAccount = await localStorage.getCurrentAccount();
-      if (!currentAccount) {
-        console.error(
-          "[BalancePageSetCurrentAccount]: failed to get current account"
-        );
-        goTo(HomePage);
-        return;
-      }
-
-      setAccount(currentAccount);
-    };
-
-    setCurrentAccount();
-  }, [localStorage, sessionStorage]);
 
   useEffect(() => {
     if (account?.accountId) {
@@ -332,7 +309,7 @@ const BalancePage = () => {
       <div className="body">
         <BalanceCard
           title="Available Balance"
-          walletAddress="polydev.testnet"
+          walletAddress={account?.accountId || ""}
           nearAmount={
             accountBalance?.available ? accountBalance.available.toFixed(4) : 0
           }
