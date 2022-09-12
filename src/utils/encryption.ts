@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import passworder from "@metamask/browser-passworder";
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -17,14 +18,12 @@ export async function encryptPrivateKeyWithPassword(
   password: string,
   privateKey: string
 ): Promise<string> {
-  // TODO: use encrypt algorithm
-  return privateKey;
+  return passworder.encrypt(password, privateKey);
 }
 
 export async function decryptPrivateKeyWithPassword(
   password: string,
-  privateKey: string
+  encryptedPrivateKey: string
 ): Promise<string> {
-  // TODO: use decrypt algorithm
-  return privateKey;
+  return passworder.decrypt(password, encryptedPrivateKey);
 }
