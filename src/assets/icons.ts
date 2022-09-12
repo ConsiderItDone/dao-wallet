@@ -13,6 +13,7 @@ import tokenA from "../images/tokenA.svg";
 import x_close from "../images/x_close.svg";
 import { IconsMapper } from "./icons.types";
 import arrow from "../images/arrow.svg";
+import wrappedNearTokenIcon from "../images/wrappedNearTokenIcon.svg";
 
 const iconsObj: IconsMapper = {
   transactionIcon,
@@ -29,6 +30,7 @@ const iconsObj: IconsMapper = {
   success,
   tokenA,
   arrow,
+  wrappedNearTokenIcon,
 };
 
 export default iconsObj;

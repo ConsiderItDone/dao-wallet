@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import NavFooter from "../navFooter";
-import Footer from "../footer";
 import Header from "../header";
 import BalanceCard from "../balanceCard";
 import Icon from "../icon";
@@ -15,6 +14,8 @@ import { bignumberToNumber } from "../../utils/bignumber";
 import { ethers } from "ethers";
 import { NEAR_TOKEN_DECIMALS_AMOUNT } from "../../consts/near";
 import { useAccount } from "../../hooks/useAccount";
+import { NftList } from "../nftList";
+import { Token, TokenList } from "../tokenList";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -42,10 +43,8 @@ const BalancePage = () => {
     balance: "",
   });
 
-  const [
-    execute,
-    { loading: isLoadingAccountBalance, error: accountBalanceError },
-  ] = useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
+  const [execute, { loading: isLoadingAccountBalance }] =
+    useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
 
   const account: WalletAccount | null = useAccount();
 
@@ -54,10 +53,15 @@ const BalancePage = () => {
   );
   const [nearToUsdRatio, setNearToUsdRatio] = useState<number>(0);
 
+  const [tokenList, setTokenList] = useState<Token[] | null>(null);
+
   useEffect(() => {
     if (account?.accountId) {
       execute({ accountId: account?.accountId })
         .then((balanceData) => {
+          if (balanceData?.error) {
+            console.error("[GetAccountBalanceBalanceData]:", balanceData.error);
+          }
           const data = balanceData?.data;
           if (data) {
             setAccountBalance({
@@ -103,10 +107,28 @@ const BalancePage = () => {
   }, []);
 
   useEffect(() => {
-    if (accountBalanceError) {
-      console.error("[BalancePageAccountBalance]:", accountBalanceError);
+    if (accountBalance && nearToUsdRatio) {
+      const newTokenList: Token[] = [];
+
+      const nearToken: Token = {
+        symbol: "NEAR",
+        amount: accountBalance.available,
+        icon: iconsObj.nearMenu,
+        usdRatio: nearToUsdRatio,
+      };
+      newTokenList.push(nearToken);
+
+      const wrappedNearToken: Token = {
+        symbol: "wNEAR",
+        amount: 15,
+        icon: iconsObj.wrappedNearTokenIcon,
+        usdRatio: nearToUsdRatio,
+      };
+      newTokenList.push(wrappedNearToken);
+
+      setTokenList(newTokenList);
     }
-  }, [accountBalanceError]);
+  }, [accountBalance, nearToUsdRatio]);
 
   const balanceSecondary = () => {
     return (
@@ -391,7 +413,11 @@ const BalancePage = () => {
         </button>
         <NavFooter step={step} setStep={setStep} />
       </div>
-      <Footer />
+      {step === "tokens" ? (
+        <TokenList tokens={tokenList || []} />
+      ) : (
+        <NftList nfts={[]} />
+      )}
     </div>
   );
 };

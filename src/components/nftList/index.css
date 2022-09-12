@@ -1,0 +1,11 @@
+.nftListContainer {
+    font-family: var(--font_semi_bold);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #20202040;
+    margin-bottom: 12px;
+    text-align: center;
+    margin-top: 32px;
+}

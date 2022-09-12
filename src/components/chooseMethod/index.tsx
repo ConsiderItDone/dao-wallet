@@ -9,10 +9,12 @@ import { createNewWallet } from "../../utils/wallet";
 import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
 import HomePage from "../homePage";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
+import { useAccount } from "../../hooks/useAccount";
 
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
+  const account = useAccount();
 
   const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false);
 
@@ -54,6 +56,16 @@ const ChooseMethod = () => {
     }
   };
 
+  const handleRecoverFromPassphrase = async () => {
+    // TODO: add recovering from passphrase
+    handleCreateWithSecurePassphrase();
+  };
+
+  const handlerCreateWithLedger = async () => {
+    // TODO: create account using ledger
+    handleCreateWithSecurePassphrase();
+  };
+
   return (
     <div className="chooseMethodContainer">
       <Header />
@@ -71,15 +83,24 @@ const ChooseMethod = () => {
             className="btnChoose"
             disabled={isCreatingAccount}
           >
-            <div className="btnTitle">Secure Passphrase</div>
+            <div className="btnTitle">Create With Secure Passphrase</div>
             <div className="btnText">
               Generate and safely store a unique passphrase
             </div>
           </button>
           <button
-            onClick={() => {
-              goTo(BalancePage);
-            }}
+            onClick={handleRecoverFromPassphrase}
+            type="button"
+            className="btnChoose"
+            disabled={isCreatingAccount}
+          >
+            <div className="btnTitle">Recover From Passphrase</div>
+            <div className="btnText">
+              Use mnemonic passphrase to recover existing account
+            </div>
+          </button>
+          <button
+            onClick={handlerCreateWithLedger}
             type="button"
             className="btnChoose"
             disabled={isCreatingAccount}
@@ -90,9 +111,11 @@ const ChooseMethod = () => {
             </div>
           </button>
         </div>
-        <button className="btnCancel" type="button">
-          Cancel
-        </button>
+        {account ? (
+          <button className="btnCancel" type="button">
+            Cancel
+          </button>
+        ) : null}
       </div>
     </div>
   );
