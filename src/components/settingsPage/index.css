@@ -1,10 +1,7 @@
 .settings{
-  position: absolute; 
   width: 440px;
-  height: 554px;
   background: #FFFFFF;
   backdrop-filter: blur(12px);
-  margin: 0 auto;
 }
 
 .settingsContainer{
