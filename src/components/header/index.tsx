@@ -81,26 +81,10 @@ const Header = () => {
   return wallets &&
     selectedWalletIndex !== null &&
     selectedWalletIndex !== undefined ? (
-    <div className="header">
-      {!dropdownVisible ? (
-        <div className="item walletContainer">
-          <button onClick={handleGoBack} className="backBtn">
-            <ArrowIcon />
-          </button>
-          <button
-            onClick={() => setDropdownVisible(!dropdownVisible)}
-            className="dropdownBtn"
-          >
-            <NearIcon className="nearIcon" />
-            <div>
-              {formatWalletName(wallets[selectedWalletIndex]?.accountId)}
-            </div>
-            <ArrowIcon className="arrowIcon" />
-          </button>
-        </div>
-      ) : (
-        <div className="walletsContainer">
-          <div className="item curentWallet">
+    <div className="headerWrapper">
+      <div className="header">
+        {!dropdownVisible ? (
+          <div className="item walletContainer">
             <button onClick={handleGoBack} className="backBtn">
               <ArrowIcon />
             </button>
@@ -115,45 +99,63 @@ const Header = () => {
               <ArrowIcon className="arrowIcon" />
             </button>
           </div>
-          {wallets.map((el, index) => {
-            return index !== selectedWalletIndex ? (
-              <button
-                onClick={() => handleWalletChange(index)}
-                key={index}
-                className="dropdownBtn interationBtn"
-              >
-                {selectedWalletIndex === index && (
-                  <NearIcon className="nearIcon" />
-                )}
-                <div>{el?.accountId} </div>
+        ) : (
+          <div className="walletsContainer">
+            <div className="item curentWallet">
+              <button onClick={handleGoBack} className="backBtn">
+                <ArrowIcon />
               </button>
-            ) : null;
-          })}
-          <button
-            className="btnChooseNetwork"
-            type="button"
-            onClick={handleAddAccount}
-          >
-            Add Account
+              <button
+                onClick={() => setDropdownVisible(!dropdownVisible)}
+                className="dropdownBtn"
+              >
+                <NearIcon className="nearIcon" />
+                <div>
+                  {formatWalletName(wallets[selectedWalletIndex]?.accountId)}
+                </div>
+                <ArrowIcon className="arrowIcon" />
+              </button>
+            </div>
+            {wallets.map((el, index) => {
+              return index !== selectedWalletIndex ? (
+                <button
+                  onClick={() => handleWalletChange(index)}
+                  key={index}
+                  className="dropdownBtn interationBtn"
+                >
+                  {selectedWalletIndex === index && (
+                    <NearIcon className="nearIcon" />
+                  )}
+                  <div>{el?.accountId} </div>
+                </button>
+              ) : null;
+            })}
+            <button
+              className="btnChooseNetwork"
+              type="button"
+              onClick={handleAddAccount}
+            >
+              Add Account
+            </button>
+            <button className="btnChooseNetwork" type="button">
+              Choose Network
+            </button>
+          </div>
+        )}
+        <div
+          className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
+        >
+          <OmniLogo className="nearIconTitle" />
+          <span className="title">Omni Near Wallet</span>
+        </div>
+        <div className="item">
+          <button>
+            <LockIcon className="lockIcon" />
           </button>
-          <button className="btnChooseNetwork" type="button">
-            Choose Network
+          <button onClick={() => goTo(Settings)}>
+            <SettingsIcon className="settingIcon" />
           </button>
         </div>
-      )}
-      <div
-        className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
-      >
-        <OmniLogo className="nearIconTitle" />
-        <span className="title">Omni Near Wallet</span>
-      </div>
-      <div className="item">
-        <button>
-          <LockIcon className="lockIcon" />
-        </button>
-        <button onClick={() => goTo(Settings)}>
-          <SettingsIcon className="settingIcon" />
-        </button>
       </div>
     </div>
   ) : null;
