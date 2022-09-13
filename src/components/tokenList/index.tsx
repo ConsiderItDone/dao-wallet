@@ -17,6 +17,11 @@ const formatTokenAmount = (amount: number) => {
   return Number(amount.toFixed(5));
 };
 
+const formatUsdTokenAmount = (amount: number) => {
+  if (!amount) return amount;
+  return amount.toFixed(2);
+};
+
 export const TokenList = ({ tokens }: Props) => {
   return (
     <div className="tokenListContainer">
@@ -36,9 +41,11 @@ export const TokenList = ({ tokens }: Props) => {
               <div className="tokenAmount">{`${formatTokenAmount(
                 token?.amount
               )} ${token?.symbol}`}</div>
-              <div className="tokenUsdAmount">{`≈ $${token?.amount.toFixed(
-                2
-              )} USD`}</div>
+              <div className="tokenUsdAmount">{`≈ $${
+                token?.usdRatio
+                  ? formatUsdTokenAmount(token?.amount * token?.usdRatio)
+                  : formatUsdTokenAmount(token?.amount)
+              } USD`}</div>
             </div>
           </div>
         ))
