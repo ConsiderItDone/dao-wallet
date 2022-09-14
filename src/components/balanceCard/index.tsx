@@ -2,7 +2,7 @@ import React from "react";
 import { ReactComponent as CopyIcon } from "../../images/copyIcon.svg";
 import "./index.css";
 import { shortenWalletAddress } from "../../utils/wallet";
-import { ClipLoader } from "react-spinners";
+import { Loading } from "../animations/loading";
 
 interface BalanceCardProps {
   title: string;
@@ -23,7 +23,7 @@ const BalanceCard = ({
     <div className="balanceContainer">
       {isLoading ? (
         <div className="clipLoaderContainer">
-          <ClipLoader color="#9896F0" size={48} />
+          <Loading />
         </div>
       ) : (
         <>
