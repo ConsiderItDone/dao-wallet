@@ -12,10 +12,12 @@ import { useQuery } from "../../hooks";
 import { getNearToUSDRatio } from "../../services/coingecko/api";
 import { bignumberToNumber } from "../../utils/bignumber";
 import { ethers } from "ethers";
-import { NEAR_TOKEN_DECIMALS_AMOUNT } from "../../consts/near";
+import { NEAR_TOKEN } from "../../consts/near";
 import { useAccount } from "../../hooks/useAccount";
 import { NftList } from "../nftList";
-import { Token, TokenList } from "../tokenList";
+import { TokenAmountData, TokenList } from "../tokenList";
+import { fetchTokenBalance, TokenMetadata } from "../../utils/fungibleTokens";
+import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -45,6 +47,9 @@ const BalancePage = () => {
 
   const [execute, { loading: isLoadingAccountBalance }] =
     useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
+  const [viewFunctionExecute] = useQuery<TokenMetadata>(
+    VIEW_FUNCTION_METHOD_NAME
+  );
 
   const account: WalletAccount | null = useAccount();
 
@@ -53,7 +58,7 @@ const BalancePage = () => {
   );
   const [nearToUsdRatio, setNearToUsdRatio] = useState<number>(0);
 
-  const [tokenList, setTokenList] = useState<Token[] | null>(null);
+  const [tokenList, setTokenList] = useState<TokenAmountData[] | null>(null);
 
   useEffect(() => {
     if (account?.accountId) {
@@ -68,19 +73,19 @@ const BalancePage = () => {
               available:
                 bignumberToNumber(
                   ethers.BigNumber.from(data?.available),
-                  NEAR_TOKEN_DECIMALS_AMOUNT
+                  NEAR_TOKEN.decimals
                 ) - RESERVED_FOR_TRANSACTION_FEES,
               staked: bignumberToNumber(
                 ethers.BigNumber.from(data?.staked),
-                NEAR_TOKEN_DECIMALS_AMOUNT
+                NEAR_TOKEN.decimals
               ),
               stateStaked: bignumberToNumber(
                 ethers.BigNumber.from(data?.stateStaked),
-                NEAR_TOKEN_DECIMALS_AMOUNT
+                NEAR_TOKEN.decimals
               ),
               total: bignumberToNumber(
                 ethers.BigNumber.from(data?.total),
-                NEAR_TOKEN_DECIMALS_AMOUNT
+                NEAR_TOKEN.decimals
               ),
             });
           } else {
@@ -107,28 +112,43 @@ const BalancePage = () => {
   }, []);
 
   useEffect(() => {
-    if (accountBalance && nearToUsdRatio) {
-      const newTokenList: Token[] = [];
+    const formTokenList = async (
+      account: WalletAccount,
+      accountBalance: AccountBalance,
+      nearToUsdRatio: number
+    ) => {
+      const newTokenList: TokenAmountData[] = [];
 
-      const nearToken: Token = {
-        symbol: "NEAR",
+      const nearTokenAmountData: TokenAmountData = {
+        token: NEAR_TOKEN,
         amount: accountBalance.available,
-        icon: iconsObj.nearMenu,
         usdRatio: nearToUsdRatio,
       };
-      newTokenList.push(nearToken);
+      newTokenList.push(nearTokenAmountData);
 
-      const wrappedNearToken: Token = {
-        symbol: "wNEAR",
-        amount: 15,
-        icon: iconsObj.wrappedNearTokenIcon,
-        usdRatio: nearToUsdRatio,
-      };
-      newTokenList.push(wrappedNearToken);
+      for (const token of account?.tokens) {
+        const tokenBalance = await fetchTokenBalance(
+          token.address,
+          token.decimals,
+          account.accountId,
+          viewFunctionExecute
+        );
+
+        newTokenList.push({
+          token,
+          amount: tokenBalance || undefined,
+          usdRatio: undefined,
+        });
+      }
 
       setTokenList(newTokenList);
+    };
+
+    if (account && accountBalance && nearToUsdRatio) {
+      formTokenList(account, accountBalance, nearToUsdRatio);
     }
-  }, [accountBalance, nearToUsdRatio]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, accountBalance, nearToUsdRatio]);
 
   const balanceSecondary = () => {
     return (

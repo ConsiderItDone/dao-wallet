@@ -1,7 +1,3 @@
-.createPasswordContainer input {
-  box-sizing: border-box;
-}
-
 .createPasswordContainer {
   width: 440px;
   height: 426px;
@@ -10,6 +6,10 @@
   background-color: #FFFFFF;
   padding-top: 52px;
   text-align: center;
+}
+
+.createPasswordContainer input {
+  box-sizing: border-box;
 }
 
 .createPasswordContainer .title {

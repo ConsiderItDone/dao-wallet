@@ -131,14 +131,11 @@ const Header = () => {
               ) : null;
             })}
             <button
-              className="btnChooseNetwork"
+              className="btnAddAccount"
               type="button"
               onClick={handleAddAccount}
             >
               Add Account
-            </button>
-            <button className="btnChooseNetwork" type="button">
-              Choose Network
             </button>
           </div>
         )}

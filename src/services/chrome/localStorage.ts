@@ -101,6 +101,29 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
   async getCurrentAccount(): Promise<WalletAccount | null> {
     try {
+      const currentAccount = await this._getCurrentAccount();
+      if (!currentAccount) {
+        throw new Error("User doesn't have current account");
+      }
+
+      const password = await sessionStorage.getPassword();
+      if (!password) {
+        throw new Error("Failed to get password from session storage");
+      }
+
+      const decryptedPrivateKey = await decryptPrivateKeyWithPassword(
+        password,
+        currentAccount.encryptedPrivateKey
+      );
+      return { ...currentAccount, privateKey: decryptedPrivateKey };
+    } catch (error) {
+      console.error("[GetCurrentAccount]:", error);
+      return null;
+    }
+  }
+
+  private async _getCurrentAccount(): Promise<LocalStorageAccount | null> {
+    try {
       const accounts = await this.getAccounts();
       if (!accounts || !accounts?.length) {
         throw new Error("User has no accounts");
@@ -115,20 +138,53 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         await this.setLastSelectedAccountIndex(lastSelectedAccountIndex);
       }
 
-      const currentAccount = accounts[lastSelectedAccountIndex];
-      const password = await sessionStorage.getPassword();
-      if (!password) {
-        throw new Error("Failed to get password from session storage");
+      return accounts[lastSelectedAccountIndex];
+    } catch (error) {
+      console.error("[_GetCurrentAccount]:", error);
+      return null;
+    }
+  }
+
+  async addTokenForCurrentAccount(token: Token): Promise<void> {
+    try {
+      const accounts = await this.getAccounts();
+      if (!accounts || !accounts?.length) {
+        throw new Error("User has no accounts");
       }
 
-      const decryptedPrivateKey = await decryptPrivateKeyWithPassword(
-        password,
-        currentAccount.encryptedPrivateKey
-      );
-      return { ...currentAccount, privateKey: decryptedPrivateKey };
+      let lastSelectedAccountIndex = await this.getLastSelectedAccountIndex();
+      if (
+        lastSelectedAccountIndex === null ||
+        lastSelectedAccountIndex === undefined
+      ) {
+        lastSelectedAccountIndex = 0;
+        await this.setLastSelectedAccountIndex(lastSelectedAccountIndex);
+      }
+
+      accounts[lastSelectedAccountIndex].tokens.push(token);
+      await this.set({ [ACCOUNTS_KEY]: accounts });
+
+      if (isInDevelopmentMode) {
+        window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
+      }
     } catch (error) {
-      console.error("[GetCurrentAccount]:", error);
-      return null;
+      console.error("[AddTokenForCurrentAccount]:", error);
+    }
+  }
+
+  async currentUserHasToken(token: Token): Promise<boolean> {
+    try {
+      const currentAccount = await this.getCurrentAccount();
+      if (!currentAccount) {
+        throw new Error("User doesn't have current account");
+      }
+
+      return currentAccount.tokens.some(
+        (existingToken) => existingToken.address === token.address
+      );
+    } catch (error) {
+      console.error("[CurrentUserHasToken]:", error);
+      return false;
     }
   }
 }
@@ -159,6 +215,11 @@ export interface LocalStorageAccount {
    * Private key of account gets encrypted/decrypted with hashedPassword.
    */
   encryptedPrivateKey: string;
+
+  /**
+   * List of account tokens added by user. Do not include default NEAR token.
+   */
+  tokens: Token[];
 }
 
 export interface WalletAccount extends LocalStorageAccount {
@@ -166,4 +227,12 @@ export interface WalletAccount extends LocalStorageAccount {
    * Decrypted private key.
    */
   privateKey: string;
+}
+
+export interface Token {
+  address: string;
+  name: string;
+  symbol: string;
+  icon: string;
+  decimals: number;
 }

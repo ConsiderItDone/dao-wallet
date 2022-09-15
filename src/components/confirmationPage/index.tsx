@@ -6,7 +6,7 @@ import TransactionPage from "../transactionPage";
 
 import "./index.css";
 import { goBack, goTo } from "react-chrome-extension-router";
-import { NEAR_TOKEN_DECIMALS_AMOUNT } from "../../consts/near";
+import { NEAR_TOKEN } from "../../consts/near";
 import { useQuery } from "../../hooks";
 import { ClipLoader } from "react-spinners";
 
@@ -25,7 +25,7 @@ const formatNearAmount = (amount: number | string): string => {
 
   let result = int.replaceAll("0", "");
 
-  const decimalValue = (decimals || "").padEnd(NEAR_TOKEN_DECIMALS_AMOUNT, "0");
+  const decimalValue = (decimals || "").padEnd(NEAR_TOKEN.decimals, "0");
 
   result = result.concat(decimalValue);
 

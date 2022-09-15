@@ -1,15 +1,19 @@
 import "./index.css";
 import React from "react";
+import { Token } from "../../services/chrome/localStorage";
+import { goTo } from "react-chrome-extension-router";
+import { ImportTokensPage } from "../ImportTokensPage";
+import { useAccount } from "../../hooks/useAccount";
+import iconsObj from "../../assets/icons";
 
-export interface Token {
-  symbol: string;
-  icon: string;
-  amount: number;
+export interface TokenAmountData {
+  token: Token;
+  amount?: number;
   usdRatio?: number;
 }
 
 interface Props {
-  tokens: Token[];
+  tokens: TokenAmountData[];
 }
 
 const formatTokenAmount = (amount: number) => {
@@ -23,29 +27,45 @@ const formatUsdTokenAmount = (amount: number) => {
 };
 
 export const TokenList = ({ tokens }: Props) => {
+  const account = useAccount();
+
+  const onAddToken = () => {
+    goTo(ImportTokensPage);
+  };
+
   return (
     <div className="tokenListContainer">
       {tokens?.length ? (
-        tokens.map((token, index) => (
+        tokens.map((tokenAmountData, index) => (
           <div className="token" key={index}>
             <div className="leftPartWrapper">
               <div className="iconWrapper">
-                <img src={token?.icon} alt="" className="icon" />
+                <img
+                  src={tokenAmountData?.token?.icon}
+                  alt=""
+                  className="icon"
+                />
               </div>
-              <div className="nameAndRatioWrapper">
-                <div className="tokenName">{token?.symbol}</div>
-                <div className="usdRatio">${token?.usdRatio?.toFixed(2)}</div>
+              <div className="nameAndAmountWrapper">
+                <div className="amount">
+                  {tokenAmountData?.amount
+                    ? formatTokenAmount(tokenAmountData?.amount)
+                    : "-"}{" "}
+                  {tokenAmountData?.token?.symbol}
+                </div>
+                {tokenAmountData?.amount && tokenAmountData?.usdRatio && (
+                  <div className="usdAmount">
+                    {`$${formatUsdTokenAmount(
+                      tokenAmountData?.amount * tokenAmountData?.usdRatio
+                    )} USD`}
+                  </div>
+                )}
               </div>
             </div>
             <div className="rightPartWrapper">
-              <div className="tokenAmount">{`${formatTokenAmount(
-                token?.amount
-              )} ${token?.symbol}`}</div>
-              <div className="tokenUsdAmount">{`≈ $${
-                token?.usdRatio
-                  ? formatUsdTokenAmount(token?.amount * token?.usdRatio)
-                  : formatUsdTokenAmount(token?.amount)
-              } USD`}</div>
+              <div className="imgWrapper">
+                <img src={iconsObj.arrowRight} alt="" className="img" />
+              </div>
             </div>
           </div>
         ))
@@ -53,7 +73,13 @@ export const TokenList = ({ tokens }: Props) => {
         <div className="noTokens">You don't have tokens</div>
       )}
       <div className="addTokenContainer">
-        <button className="addTokenButton">Add Token</button>
+        <button
+          className="addTokenButton"
+          onClick={onAddToken}
+          disabled={!account}
+        >
+          Add Token
+        </button>
       </div>
     </div>
   );

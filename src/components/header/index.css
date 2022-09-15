@@ -81,7 +81,6 @@
 }
 
 .header .walletsContainer {
- min-height: 163px;
  width: 161px;
  position: absolute;
  left: 0;
@@ -109,6 +108,10 @@
   line-height: 16px;
   color: #202020;
   margin-bottom: 7px;
+  cursor: pointer;
+}
+.header .interationBtn:hover {
+  opacity: 0.6;
 }
 .header .curentWallet {
   margin-bottom: 24px;
@@ -126,7 +129,7 @@
 .header .walletsContainer .nearIcon {
   background-color: #fff;
 }
-.header .walletsContainer .btnChooseNetwork {
+.header .walletsContainer .btnAddAccount {
   width: 129px;
   height: 32px;
   background: #202020;
@@ -140,4 +143,7 @@
   margin-top: 24px;
 
   cursor: pointer;
+}
+.header .walletsContainer .btnAddAccount:hover {
+  opacity: 0.6;
 }

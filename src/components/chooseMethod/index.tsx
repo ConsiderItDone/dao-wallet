@@ -47,7 +47,12 @@ const ChooseMethod = () => {
         privateKey
       );
 
-      await localStorage.addAccount({ name, accountId, encryptedPrivateKey });
+      await localStorage.addAccount({
+        name,
+        accountId,
+        encryptedPrivateKey,
+        tokens: [],
+      });
       goTo(BalancePage);
     } catch (error) {
       console.error("[HandleCreateWithSecurePassphrase]:", error);

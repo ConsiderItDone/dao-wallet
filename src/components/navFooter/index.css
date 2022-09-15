@@ -17,5 +17,5 @@
   }
 .btnConteiner .active {
     border-bottom: 2px solid #9896F0;
-    color: var(--black_color_Secondary);
+    color: var(--black_color_secondary);
   }

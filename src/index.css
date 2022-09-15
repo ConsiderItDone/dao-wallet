@@ -7,6 +7,7 @@
   --font_semi_bold: 'ManropeSemiBold';
   --font_extra_bold: 'ManropeExtraBold';
   --font_regular: 'ManropeRegular';
+  --font_manrope: 'Manrope', sans-serif;
 }
 *::-webkit-scrollbar {
   display: none;
