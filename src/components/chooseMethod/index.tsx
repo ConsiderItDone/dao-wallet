@@ -10,6 +10,7 @@ import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
 import HomePage from "../homePage";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { useAccount } from "../../hooks/useAccount";
+import { RecoverWithPassphrasePage } from "../recoverWithPassphrasePage";
 
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -62,8 +63,7 @@ const ChooseMethod = () => {
   };
 
   const handleRecoverFromPassphrase = async () => {
-    // TODO: add recovering from passphrase
-    handleCreateWithSecurePassphrase();
+    goTo(RecoverWithPassphrasePage);
   };
 
   const handlerCreateWithLedger = async () => {

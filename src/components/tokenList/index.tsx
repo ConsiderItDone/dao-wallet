@@ -2,7 +2,7 @@ import "./index.css";
 import React from "react";
 import { Token } from "../../services/chrome/localStorage";
 import { goTo } from "react-chrome-extension-router";
-import { ImportTokensPage } from "../ImportTokensPage";
+import { ImportTokensPage } from "../importTokensPage";
 import { useAccount } from "../../hooks/useAccount";
 import iconsObj from "../../assets/icons";
 

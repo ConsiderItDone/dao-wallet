@@ -34,8 +34,8 @@ export const ImportTokensPage = () => {
   const [isValidatingContractAddress, setIsValidatingContractAddress] =
     useState<boolean>(false);
   const [contractAddressError, setContractAddressError] = useState<
-    string | null
-  >(" ");
+    string | null | undefined
+  >(undefined);
 
   const [isTokenAddressInputStep, setIsTokenAddressInputStep] =
     useState<boolean>(true);
@@ -48,6 +48,11 @@ export const ImportTokensPage = () => {
       setIsValidatingContractAddress(true);
 
       try {
+        if (!tokenAddress) {
+          setContractAddressError(undefined);
+          return;
+        }
+
         const tokenData = await fetchTokenMetadata(tokenAddress, execute);
         if (!tokenData) {
           throw new Error("Failed to get token metadata");
@@ -87,9 +92,7 @@ export const ImportTokensPage = () => {
       }
     };
 
-    if (contractAddress) {
-      getTokenData(contractAddress);
-    }
+    getTokenData(contractAddress);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contractAddress]);
 
@@ -196,6 +199,7 @@ export const ImportTokensPage = () => {
           className="addTokenBtn"
           disabled={
             !contractAddress ||
+            contractAddressError === undefined ||
             !!contractAddressError ||
             isValidatingContractAddress
           }
