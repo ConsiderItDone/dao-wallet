@@ -1,14 +1,14 @@
 import React from "react";
 import { Router } from "react-chrome-extension-router";
 import { PolywrapProvider } from "@polywrap/react";
-import { HomePage } from "./components";
+import { ChooseMethod, HomePage } from "./components";
 import { getPolywrapConfig } from "./utils/polywrap";
 
 function App() {
   return (
     <PolywrapProvider {...getPolywrapConfig()}>
       <Router>
-        <HomePage />
+        <ChooseMethod />
       </Router>
     </PolywrapProvider>
   );

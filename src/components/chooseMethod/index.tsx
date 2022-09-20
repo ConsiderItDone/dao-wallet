@@ -11,6 +11,8 @@ import HomePage from "../homePage";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { useAccount } from "../../hooks/useAccount";
 import { RecoverWithPassphrasePage } from "../recoverWithPassphrasePage";
+import { openTab } from "../../utils/router";
+import Ledger from "../ledger";
 
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -68,7 +70,8 @@ const ChooseMethod = () => {
 
   const handlerCreateWithLedger = async () => {
     // TODO: create account using ledger
-    handleCreateWithSecurePassphrase();
+    //handleCreateWithSecurePassphrase();
+    openTab("/ledger", Ledger);
   };
 
   return (

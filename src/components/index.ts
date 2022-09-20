@@ -11,3 +11,4 @@ export { default as HomePage } from "./homePage";
 export { default as Footer } from "./footer";
 export { default as Info } from "./Info";
 export { default as CreatePasswordPage } from "./createPasswordPage";
+export { default as Ledger } from "./ledger";
