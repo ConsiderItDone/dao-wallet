@@ -1,6 +1,6 @@
-export function createNewWallet() {
+export function createNewWallet(accountId?:string) {
   return {
-    accountId: generateAccountID(),
+    accountId: accountId || generateAccountID(),
     privateKey: generateWalletPrivateKey(),
   };
 }

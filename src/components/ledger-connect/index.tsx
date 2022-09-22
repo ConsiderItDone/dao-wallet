@@ -1,6 +1,8 @@
 import { goTo } from "react-chrome-extension-router";
 import { useNavigate } from "react-router-dom";
 import { useLedger } from "../../hooks/useLedger";
+import { LocalStorage } from "../../services/chrome/localStorage";
+import { createNewWallet } from "../../utils/wallet";
 import HomePage from "../homePage";
 
 const LedgerConnect = () => {
@@ -20,6 +22,14 @@ const LedgerConnect = () => {
     connect(async () => {
       const pk = await getPublicKey();
       //TODO do something with PK
+
+      const { accountId, privateKey } = createNewWallet(pk);
+      await new LocalStorage().addAccount({
+        name: pk,
+        accountId,
+        encryptedPrivateKey: privateKey,
+        tokens: [],
+      });
       onAfterConnect();
     });
   };
