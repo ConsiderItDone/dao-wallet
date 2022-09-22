@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "../header";
 import { goTo } from "react-chrome-extension-router";
 import BalancePage from "../balancePage";
-
 import "./index.css";
 import { LocalStorage } from "../../services/chrome/localStorage";
 import { createNewWallet } from "../../utils/wallet";
@@ -12,13 +11,12 @@ import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { useAccount } from "../../hooks/useAccount";
 import { RecoverWithPassphrasePage } from "../recoverWithPassphrasePage";
 import { openTab } from "../../utils/router";
-import Ledger from "../ledger";
+import LedgerConnect from "../ledger-connect";
 
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
   const account = useAccount();
-
   const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false);
 
   const handleCreateWithSecurePassphrase = async () => {
@@ -67,11 +65,8 @@ const ChooseMethod = () => {
   const handleRecoverFromPassphrase = async () => {
     goTo(RecoverWithPassphrasePage);
   };
-
   const handlerCreateWithLedger = async () => {
-    // TODO: create account using ledger
-    //handleCreateWithSecurePassphrase();
-    openTab("/ledger", Ledger);
+    await openTab("/ledger", LedgerConnect);
   };
 
   return (
