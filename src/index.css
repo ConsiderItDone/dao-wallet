@@ -78,3 +78,7 @@ input::placeholder {
   color: #202020;
   opacity: 0.6;
 }
+.full {
+  width: 80% !important;
+  margin: 100px auto 0;
+}

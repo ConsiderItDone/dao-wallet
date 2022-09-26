@@ -6,6 +6,7 @@ import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 export const ACCOUNTS_KEY = "accounts";
+export const SCREEN_KEY = "screen";
 export const LAST_SELECTED_ACCOUNT_INDEX_KEY = "lastSelectedAccountIndex";
 
 const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
@@ -187,6 +188,23 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       return false;
     }
   }
+  async addScreen(): Promise<void> {
+    try {
+      const result = await this.set({ [SCREEN_KEY]: true });
+      return result;
+    } catch (error) {
+      console.error("[AddScreen]:", error);
+    }
+  }
+  async getScreen(): Promise<boolean | undefined> {
+    try {
+      const storageObject = await this.get();
+      return storageObject?.screen;
+    } catch (error) {
+      console.error("[GetHashedPassword]:", error);
+      return undefined;
+    }
+  }
 }
 
 /**
@@ -204,6 +222,7 @@ interface LocalStorageData {
    * Index of last selected account (if there is any).
    */
   lastSelectedAccountIndex: number;
+  screen: boolean;
 }
 
 export interface LocalStorageAccount {

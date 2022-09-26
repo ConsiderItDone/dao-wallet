@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Header from "../header";
 import Icon from "../icon";
 import iconsObj from "../../assets/icons";
@@ -9,6 +9,7 @@ import { goBack, goTo } from "react-chrome-extension-router";
 import { NEAR_TOKEN } from "../../consts/near";
 import { useQuery } from "../../hooks";
 import { ClipLoader } from "react-spinners";
+import { LocalStorage } from "../../services/chrome/localStorage";
 
 interface Props {
   receiver: string;
@@ -33,6 +34,8 @@ const formatNearAmount = (amount: number | string): string => {
 };
 
 const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
+  const [localStorage] = useState<LocalStorage>(new LocalStorage());
+  const [screen, setScreen] = useState(false)
   const accountId = "polydev.testnet";
 
   const [execute, { loading }] = useQuery("sendMoney");
@@ -56,10 +59,19 @@ const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
         });
       }
     });
-  };
-
+  }; 
+   const getScreen = async () => {
+    const screenWidth = await localStorage.getScreen();
+    if(screenWidth) {
+      setScreen(true)
+    }
+  }
+  useEffect(() => {
+    getScreen()
+  }, [] )
+ 
   return (
-    <div className="confirmationPageContainer">
+    <div className={`confirmationPageContainer  ${screen ? 'full': '' }`}>
       <Header />
       <div className="body">
         <div className="title">Confirmation</div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Header from "../header";
 import { goTo } from "react-chrome-extension-router";
+
 import BalancePage from "../balancePage";
 
 import "./index.css";
@@ -69,6 +70,7 @@ const ChooseMethod = () => {
   const handlerCreateWithLedger = async () => {
     // TODO: create account using ledger
     handleCreateWithSecurePassphrase();
+    localStorage.addScreen()
   };
 
   return (

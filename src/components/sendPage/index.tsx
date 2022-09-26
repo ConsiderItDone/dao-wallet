@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../header";
 import { ReactComponent as ArrowIcon } from "../../images/arrow.svg";
 import iconsObj from "../../assets/icons";
@@ -6,6 +6,7 @@ import ConfirmationPage from "../confirmationPage";
 import Icon from "../icon";
 import "./index.css";
 import { goTo, goBack } from "react-chrome-extension-router";
+import { LocalStorage } from "../../services/chrome/localStorage";
 
 const menu = [
   { title: "TokenA", icon: iconsObj.tokenA, value: "0.001 TKN1" },
@@ -13,11 +14,13 @@ const menu = [
 ];
 
 const Info = () => {
+  const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [visible, setVisible] = useState(false);
   const [assets, setAssets] = useState("Select asset");
   const [icon, setIcon] = useState(undefined || iconsObj.nearMenu);
   const [amount, setAmount] = useState<number>();
   const [success, setSuccess] = useState(false);
+  const [screen, setScreen] = useState(false)
   const [receiver, setReceiver] = useState("");
 
   const onSubmit = () => {
@@ -28,10 +31,20 @@ const Info = () => {
       setSuccess(true);
     }
   };
-
+  
+  const getScreen = async () => {
+    const screenWidth = await localStorage.getScreen();
+    if(screenWidth) {
+      setScreen(true)
+    }
+    return screenWidth
+  }
+  useEffect(() => {
+    getScreen()
+  }, [])
   const menuClass = !visible ? "menu visible" : "visible";
   return (
-    <div className="sendPageContainer">
+    <div className={`sendPageContainer ${screen ? 'full': '' }`}>
       <Header />
       <div className="body">
         <div className="title">Send</div>

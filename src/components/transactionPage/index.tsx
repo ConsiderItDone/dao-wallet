@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import iconsObj from "../../assets/icons";
 import Header from "../header";
 import Icon from "../icon";
 import "./index.css";
+import { LocalStorage } from "../../services/chrome/localStorage";
 
 interface Props {
   amount: number;
@@ -11,8 +12,21 @@ interface Props {
 }
 
 const TransactionPage = ({ amount, receiver, hash }: Props) => {
+  const [localStorage] = useState<LocalStorage>(new LocalStorage());
+  const [screen, setScreen] = useState(false)
+
+  const getScreen = async () => {
+    const screenWidth = await localStorage.getScreen();
+    if(screenWidth) {
+      setScreen(true)
+    }
+  }
+  useEffect(() => {
+    getScreen()
+  }, [])
+
   return (
-    <div className="transactionPageContainer">
+    <div className={`transactionPageContainer ${screen ? 'full': '' }`}>
       <Header />
       <div className="body">
         <Icon src={iconsObj.transactionIcon} className="icon" />

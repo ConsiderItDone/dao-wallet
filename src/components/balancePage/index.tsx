@@ -18,6 +18,7 @@ import { NftList } from "../nftList";
 import { TokenAmountData, TokenList } from "../tokenList";
 import { fetchTokenBalance, TokenMetadata } from "../../utils/fungibleTokens";
 import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
+import { LocalStorage } from "../../services/chrome/localStorage";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -31,8 +32,10 @@ interface AccountBalance {
 }
 
 const BalancePage = () => {
+  const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [step, setStep] = useState("tokens");
   const [totalBalanceVisible, setTotalBalanceVisible] = useState(true);
+  const [screen, setScreen] = useState(false)
   const [totalBalanceValue, setTotalBalanceValue] = useState({
     name: "Total balance",
     value: "0.93245 NEAR",
@@ -59,6 +62,13 @@ const BalancePage = () => {
   const [nearToUsdRatio, setNearToUsdRatio] = useState<number>(0);
 
   const [tokenList, setTokenList] = useState<TokenAmountData[] | null>(null);
+
+  const getScreen = async () => {
+    const screenWidth = await localStorage.getScreen();
+    if(screenWidth) {
+      setScreen(true)
+    }
+  }
 
   useEffect(() => {
     if (account?.accountId) {
@@ -109,6 +119,7 @@ const BalancePage = () => {
       .catch((error) => {
         console.error("[BalancePageGetNearToUSDRatio]:", error);
       });
+      getScreen()
   }, []);
 
   useEffect(() => {
@@ -346,7 +357,7 @@ const BalancePage = () => {
   };
 
   return (
-    <div className="balancePageContainer">
+    <div className={`balancePageContainer ${screen ? 'full': '' }`}>
       <Header />
       <div className="body">
         <BalanceCard
