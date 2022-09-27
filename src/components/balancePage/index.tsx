@@ -120,7 +120,7 @@ const BalancePage = () => {
         console.error("[BalancePageGetNearToUSDRatio]:", error);
       });
       getScreen()
-  }, []);
+  }, [getScreen]);
 
   useEffect(() => {
     const formTokenList = async (

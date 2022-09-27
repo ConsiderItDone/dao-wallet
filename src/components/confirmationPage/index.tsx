@@ -68,7 +68,7 @@ const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
   }
   useEffect(() => {
     getScreen()
-  }, [] )
+  }, [getScreen])
  
   return (
     <div className={`confirmationPageContainer  ${screen ? 'full': '' }`}>

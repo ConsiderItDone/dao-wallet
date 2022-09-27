@@ -41,7 +41,7 @@ const Info = () => {
   }
   useEffect(() => {
     getScreen()
-  }, [])
+  }, [getScreen])
   const menuClass = !visible ? "menu visible" : "visible";
   return (
     <div className={`sendPageContainer ${screen ? 'full': '' }`}>

@@ -23,7 +23,7 @@ const TransactionPage = ({ amount, receiver, hash }: Props) => {
   }
   useEffect(() => {
     getScreen()
-  }, [])
+  }, [getScreen])
 
   return (
     <div className={`transactionPageContainer ${screen ? 'full': '' }`}>
