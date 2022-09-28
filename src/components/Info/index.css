@@ -1,11 +1,13 @@
 .infoContainer {
-  width: 440px;
-  height: 662px;
+  width: 100%;
+  height: 100vh;
+  min-height: 662px;
   padding-bottom: 32px;
   background-color: var(--white_col);
 }
 .infoContainer .body{
   background-image: url(../../images/bgInfo.svg);
+  background-size: cover;
   background-position: center;
   padding-top: 32px;
 }

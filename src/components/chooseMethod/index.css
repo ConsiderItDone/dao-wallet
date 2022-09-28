@@ -1,6 +1,7 @@
 .chooseMethodContainer {
-  width: 440px;
-  height: 592px;
+  width: 100%;
+  height: 100vh;
+  min-height: 592px;
   background-color: #fff;
 }
 .chooseMethodContainer .body {
@@ -8,6 +9,8 @@
   background-position: center;
   height: 524px;
   border-radius: 0 0 20px 20px;
+  height: 100vh;
+  background-size: cover;
   padding: 32px 50px 0;
 }
 .chooseMethodContainer .body .title {

@@ -1,9 +1,11 @@
 .balancePageContainer{
-  width: 440px;
+  width: 100%;
+  height: 100vh;
   background-color: var(--white_col);
 }
 .balancePageContainer .body {
   background-image: url(../../images/bgInfo.svg);
+  background-size: cover;
   background-position: center;
   padding-top: 32px;
 }
@@ -102,7 +104,8 @@
   border-radius: 8px;
   padding: 17px 20px;
   position: absolute;
-  left: 60px;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 .balancePageContainer .dropdownStake .btn,
 .balancePageContainer .balanceMenu .btn {

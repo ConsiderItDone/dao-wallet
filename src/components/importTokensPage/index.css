@@ -1,8 +1,10 @@
 .importTokensPageContainer {
-    width: 440px;
+    width: 100%;
+    height: 100vh;
     min-height: 473px;
     background-color: var(--white_col);
     background-image: url(../../images/bgInfo.svg);
+    background-size: cover;
     background-position: center;
     font-family: var(--font_manrope);
 }

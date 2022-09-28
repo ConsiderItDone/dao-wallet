@@ -1,5 +1,6 @@
 .connectionErrorPageContainer{
-  width: 440px;
+  width: 100%;
+  height: 100vh;
 }
 .connectionErrorPageContainer .body {
   background-image: url(../../images/bgInfo.svg);

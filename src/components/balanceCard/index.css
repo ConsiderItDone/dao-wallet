@@ -1,6 +1,6 @@
 .balanceContainer {
-    width: 320px;
-    height: 151px;
+    width: 100%;
+    min-height: 151px;
     border-radius: 8px;
     backdrop-filter: blur(12px);
     background: var(--white_col);
