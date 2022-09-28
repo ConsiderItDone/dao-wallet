@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import iconsObj from "../../assets/icons";
 import Header from "../header";
 import Icon from "../icon";
@@ -15,12 +15,13 @@ const TransactionPage = ({ amount, receiver, hash }: Props) => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [screen, setScreen] = useState(false)
 
-  const getScreen = async () => {
+  const getScreen = useCallback(() => async () => {
     const screenWidth = await localStorage.getScreen();
     if(screenWidth) {
       setScreen(true)
     }
-  }
+  }, [localStorage])
+
   useEffect(() => {
     getScreen()
   }, [getScreen])

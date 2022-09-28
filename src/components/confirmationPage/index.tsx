@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import Header from "../header";
 import Icon from "../icon";
 import iconsObj from "../../assets/icons";
@@ -60,12 +60,13 @@ const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
       }
     });
   }; 
-   const getScreen = async () => {
+  const getScreen = useCallback(() => async () => {
     const screenWidth = await localStorage.getScreen();
     if(screenWidth) {
       setScreen(true)
     }
-  }
+  }, [localStorage])
+
   useEffect(() => {
     getScreen()
   }, [getScreen])

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import NavFooter from "../navFooter";
 import Header from "../header";
 import BalanceCard from "../balanceCard";
@@ -63,12 +63,12 @@ const BalancePage = () => {
 
   const [tokenList, setTokenList] = useState<TokenAmountData[] | null>(null);
 
-  const getScreen = async () => {
+  const getScreen = useCallback(() => async () => {
     const screenWidth = await localStorage.getScreen();
     if(screenWidth) {
       setScreen(true)
     }
-  }
+  }, [localStorage])
 
   useEffect(() => {
     if (account?.accountId) {

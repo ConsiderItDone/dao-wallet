@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "../header";
 import { ReactComponent as ArrowIcon } from "../../images/arrow.svg";
 import iconsObj from "../../assets/icons";
@@ -32,16 +32,17 @@ const Info = () => {
     }
   };
   
-  const getScreen = async () => {
+  const getScreen = useCallback(() => async () => {
     const screenWidth = await localStorage.getScreen();
     if(screenWidth) {
       setScreen(true)
     }
-    return screenWidth
-  }
+  }, [localStorage])
+
   useEffect(() => {
-    getScreen()
+  getScreen()
   }, [getScreen])
+  
   const menuClass = !visible ? "menu visible" : "visible";
   return (
     <div className={`sendPageContainer ${screen ? 'full': '' }`}>
