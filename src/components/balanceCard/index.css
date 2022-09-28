@@ -45,4 +45,9 @@
     align-items: center;
     width: 100%;
     height: 100%;
+    max-height: 168px;
+}
+.balanceContainer .clipLoaderContainer > div {
+  width: 50%;
+  height: 50%;
 }

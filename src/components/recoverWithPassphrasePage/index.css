@@ -10,6 +10,8 @@
 
 .recoverWithPassphrasePageContainer .body {
     padding: 32px 60px 50px;
+    max-width: 380px;
+    margin: 0 auto;
 }
 
 .recoverWithPassphrasePageContainer .body .title {

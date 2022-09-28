@@ -24,8 +24,9 @@
 }
 
 .createPasswordContainer .formContainer {
-  margin-top: 60px;
   padding: 0 70px;
+  max-width: 320px;
+  margin: 60px auto 0;
 }
 
 .createPasswordContainer .passwordContainer {

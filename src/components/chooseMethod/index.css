@@ -3,15 +3,16 @@
   height: 100vh;
   min-height: 592px;
   background-color: #fff;
-}
-.chooseMethodContainer .body {
   background-image: url(../../images/bgInfo.svg);
   background-position: center;
-  height: 524px;
-  border-radius: 0 0 20px 20px;
-  height: 100vh;
   background-size: cover;
+}
+.chooseMethodContainer .body {
+  border-radius: 0 0 20px 20px;
+  height: calc(100% - 80px);
   padding: 32px 50px 0;
+  max-width: 320px;
+  margin: 0 auto;
 }
 .chooseMethodContainer .body .title {
   font-family: var(--font_extra_bold);

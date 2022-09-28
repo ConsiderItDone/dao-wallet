@@ -1,5 +1,8 @@
 .tokenListContainer {
     border-top: 1px solid rgb(240, 240, 241);
+    max-width: 440px;
+    margin: 0 auto;
+    background-color: white;
 }
 
 .tokenListContainer .token {
