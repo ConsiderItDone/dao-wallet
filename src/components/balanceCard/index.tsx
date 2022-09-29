@@ -20,22 +20,24 @@ const BalanceCard = ({
   isLoading = false,
 }: BalanceCardProps) => {
   return (
-    <div className="balanceContainer">
+    <div style={{backgroundColor: isLoading ? 'inherit' : 'white'}} className="balanceContainer">
       {isLoading ? (
         <div className="clipLoaderContainer">
           <Loading />
         </div>
-      ) : (
-        <>
-          <div className="token">
-            {shortenWalletAddress(walletAddress, 4, 4)}{" "}
-            <CopyIcon style={{ cursor: "pointer" }} className="copyIcon" />
-          </div>
-          <div className="title">{title}</div>
-          <div className="balance">{nearAmount} NEAR</div>
-          <div className="text">≈ ${usdAmount} USD</div>
-        </>
-      )}
+       ) 
+       : (
+         <>
+           <div className="token">
+             {shortenWalletAddress(walletAddress, 4, 4)}{" "}
+             <CopyIcon style={{ cursor: "pointer" }} className="copyIcon" />
+           </div>
+           <div className="title">{title}</div>
+           <div className="balance">{nearAmount} NEAR</div>
+           <div className="text">≈ ${usdAmount} USD</div>
+         </>
+       )
+       }
     </div>
   );
 };
