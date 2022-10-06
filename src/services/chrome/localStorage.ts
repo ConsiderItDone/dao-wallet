@@ -110,11 +110,15 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       if (!password) {
         throw new Error("Failed to get password from session storage");
       }
-
-      const decryptedPrivateKey = await decryptPrivateKeyWithPassword(
-        password,
-        currentAccount.encryptedPrivateKey
-      );
+      let decryptedPrivateKey = "";
+      try {
+        decryptedPrivateKey = await decryptPrivateKeyWithPassword(
+          password,
+          currentAccount.encryptedPrivateKey
+        );
+      } catch (error) {
+        console.log("[DecryptedPrivateKet]:", error);
+      }
       return { ...currentAccount, privateKey: decryptedPrivateKey };
     } catch (error) {
       console.error("[GetCurrentAccount]:", error);

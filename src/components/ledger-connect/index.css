@@ -1,0 +1,64 @@
+.unlockWalletPageContainer{
+    width: 440px;
+  }
+  .unlockWalletPageContainer .body {
+    background-image: url(../../images/bgInfo.svg);
+    background-position: center;
+    padding: 32px 60px 0 60px;
+    text-align: center;
+    height: 425px;
+    border-radius:0 0 20px 20px;
+  }
+  .unlockWalletPageContainer .body .title {
+    font-family: var(--font_extra_bold);
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 110%;
+    text-align: center;
+    color: #202020;
+  }
+  .unlockWalletPageContainer .secondaryTitle {
+    font-family: var(--font_regular);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    text-align: center;
+    color: #202020;
+    margin-top: 12px;
+  }
+  .unlockWalletPageContainer .body .icon {
+    width: 68px;
+    height: 68px;
+    margin: 60px auto 0 auto;
+    background-image: url(../../images/unlockIcon.png);
+    background-position: center;
+    background-size: contain;
+  }
+  .unlockWalletPageContainer .body .connect {
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    color: #FFFFFF;
+    background: #202020;
+    border-radius: 88px;
+    width: 175px;
+    height: 48px;
+    margin: 60px auto 0 auto;
+    cursor: pointer;
+  }
+  .unlockWalletPageContainer .body .cancel {
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    color: #20202050;
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    margin-top: 12px;
+  }

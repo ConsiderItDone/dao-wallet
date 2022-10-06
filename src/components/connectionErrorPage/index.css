@@ -1,0 +1,52 @@
+.connectionErrorPageContainer{
+  width: 440px;
+}
+.connectionErrorPageContainer .body {
+  background-image: url(../../images/bgInfo.svg);
+  background-position: center;
+  padding: 32px 60px 0 60px;
+  text-align: center;
+  height: 425px;
+  border-radius:0 0 20px 20px;
+}
+.connectionErrorPageContainer .body .title {
+  font-family: var(--font_extra_bold);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 110%;
+  text-align: center;
+  color: #202020;
+}
+.connectionErrorPageContainer .body .textError{
+  font-family: var(--font_regular);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  color: #202020;
+  margin-top: 12px;
+}
+.connectionErrorPageContainer .body .errorIcon {
+  width: 68px;
+  height: 68px;
+  background-image: url(../../images/errorIcon.png);
+  background-size: contain;
+  background-position: center;
+  margin: 60px auto 0 auto;
+}
+.connectionErrorPageContainer .body .retryBtn{
+  font-family: var(--font_bold);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18px;
+  color: #FFFFFF;
+  background: #202020;
+  border-radius: 88px;
+  width: 91px;
+  height: 48px;
+  margin: 60px auto 0 auto;
+  cursor: pointer;
+}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Header from "../header";
-import { goTo } from "react-chrome-extension-router";
+import { goBack, goTo } from "react-chrome-extension-router";
 import BalancePage from "../balancePage";
 import "./index.css";
 import { LocalStorage } from "../../services/chrome/localStorage";
@@ -115,7 +115,7 @@ const ChooseMethod = () => {
           </button>
         </div>
         {account ? (
-          <button className="btnCancel" type="button">
+          <button className="btnCancel" type="button" onClick={() => goBack()}>
             Cancel
           </button>
         ) : null}
