@@ -1,4 +1,4 @@
-export { default as ConnectionErrorPage } from './connectionErrorPage'
+export { default as ConnectionErrorPage } from "./connectionErrorPage";
 export { default as CreatePasswordPage } from "./createPasswordPage";
 export { default as ConfirmationPage } from "./confirmationPage";
 export { default as TrasactionPage } from "./transactionPage";
