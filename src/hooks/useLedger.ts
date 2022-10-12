@@ -72,10 +72,11 @@ export const useLedger = () => {
 
   const sign = useCallback(
     async (transactionData: any, path?: string) => {
+      console.log("ledgerClient", client);
       if (client) {
         return await client.sign(transactionData, path);
       } else {
-        connect().then(async () => await client!.sign(transactionData, path));
+        return await connect((client) => client.sign(transactionData, path)); //.then(async () => await client!.sign(transactionData, path));
       }
     },
     [client, connect]

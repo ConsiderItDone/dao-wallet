@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../header";
 import Icon from "../icon";
 import iconsObj from "../../assets/icons";
@@ -6,9 +5,9 @@ import TransactionPage from "../transactionPage";
 
 import "./index.css";
 import { goBack, goTo } from "react-chrome-extension-router";
-import { NEAR_TOKEN } from "../../consts/near";
-import { useQuery } from "../../hooks";
+import { useSendTransaction } from "../../hooks";
 import { ClipLoader } from "react-spinners";
+import { useAccount } from "../../hooks/useAccount";
 
 interface Props {
   receiver: string;
@@ -16,46 +15,26 @@ interface Props {
   amount: number;
 }
 
-const formatNearAmount = (amount: number | string): string => {
-  const value = amount.toString();
-
-  const [int, decimals] = value.includes(".")
-    ? value.split(".")
-    : value.split(",");
-
-  let result = int.replaceAll("0", "");
-
-  const decimalValue = (decimals || "").padEnd(NEAR_TOKEN.decimals, "0");
-
-  result = result.concat(decimalValue);
-
-  return result;
-};
-
 const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
-  const accountId = "polydev.testnet";
-
-  const [execute, { loading }] = useQuery("sendMoney");
-
+  const account = useAccount();
   const nearAmount = amount;
-  const onSubmit = () => {
-    execute({
-      signerId: accountId,
-      receiverId: receiver,
-      amount: formatNearAmount(amount),
-    }).then(({ data, error }) => {
-      data && console.log("data", data);
-      error && console.log("error", error);
 
-      if (data) {
-        goTo(TransactionPage, {
-          amount,
-          receiver,
-          //@ts-ignore
-          hash: data?.transaction?.hash,
-        });
-      }
-    });
+  const { execute, loading } = useSendTransaction(account?.accountId!);
+
+  const onSubmit = async () => {
+    const { data, error } = await execute({ receiverId: "", amount: amount });
+
+    if (data) {
+      goTo(TransactionPage, {
+        amount,
+        receiver,
+        //@ts-ignore
+        hash: data?.transaction?.hash,
+      });
+    }
+    if (error) {
+      console.log("Error sending tx:", error);
+    }
   };
 
   return (
@@ -68,7 +47,7 @@ const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
         <Icon className="iconsGroup" src={iconsObj.arrowDownGroup} />
         <div className="recipientContainer">
           <div className="title">From</div>
-          <div className="value">{accountId}</div>
+          <div className="value">{account?.accountId}</div>
         </div>
         <div className="adddressContainer">
           <div className="title">To</div>
