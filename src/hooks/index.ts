@@ -1,3 +1,4 @@
+export * from "./useAuth";
 export * from "./useAccount";
 export * from "./useBorsh";
 export * from "./useLedger";

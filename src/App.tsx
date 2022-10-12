@@ -1,14 +1,13 @@
 import React from "react";
 import { Router } from "react-chrome-extension-router";
-import { PolywrapProvider } from "@polywrap/react";
 import { HomePage, LedgerConnect } from "./components";
-import { getPolywrapConfig } from "./utils/polywrap";
 import { HashRouter, Routes, Route } from "react-router-dom";
+import AuthProvider from "./provider/AuthProvider";
 
 function App() {
   return (
     <HashRouter>
-      <PolywrapProvider {...getPolywrapConfig()}>
+      <AuthProvider>
         <Routes>
           <Route
             path="/"
@@ -20,7 +19,7 @@ function App() {
           />
           <Route path="ledger" element={<LedgerConnect />} />
         </Routes>
-      </PolywrapProvider>
+      </AuthProvider>
     </HashRouter>
   );
 }
