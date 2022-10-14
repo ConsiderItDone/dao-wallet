@@ -16,7 +16,7 @@ import { useAuth } from "../../hooks";
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
-  const { currentAccount: account } = useAuth();
+  const { currentAccount: account, addAccount } = useAuth();
   const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false);
 
   const handleCreateWithSecurePassphrase = async () => {
@@ -48,12 +48,16 @@ const ChooseMethod = () => {
         privateKey
       );
 
-      await localStorage.addAccount({
+      //TODO handle adding already imported account
+      await addAccount({ name, accountId, encryptedPrivateKey, tokens: [] });
+
+      /*       await localStorage.addAccount({
         name,
         accountId,
         encryptedPrivateKey,
         tokens: [],
-      });
+      }); */
+
       goTo(BalancePage);
     } catch (error) {
       console.error("[HandleCreateWithSecurePassphrase]:", error);

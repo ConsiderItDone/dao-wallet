@@ -32,7 +32,7 @@ interface AuthProviderValue extends AuthState {
 
 export interface AuthState {
   network: Network;
-  selectedAccountIndex: Number | undefined;
+  selectedAccountIndex: number | undefined;
   accounts: WalletAccount[];
   loading: Boolean;
 }
@@ -56,15 +56,21 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
   );
 
   const addAccount = useCallback(async (newAccount: WalletAccount) => {
+    await appLocalStorage.addAccount(newAccount);
     setState((state) => ({
       ...state,
       accounts: [...state.accounts, newAccount],
       selectedAccountIndex: state.accounts.length,
     }));
+    console.log("add Account", newAccount);
+
+    selectAccount(newAccount.accountId);
+
     return true;
-  }, []);
+  }, []); //eslint-disable-line
 
   const selectAccount = useCallback(async (indexOrId: string | number) => {
+    console.log("select account !", indexOrId);
     if (typeof indexOrId === "string") {
       const accounts = await appLocalStorage.getAccounts();
       const accountIndex = accounts?.findIndex(
@@ -73,9 +79,11 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
       if (accountIndex && accountIndex >= 0) {
         await appLocalStorage.setLastSelectedAccountIndex(accountIndex);
       }
+      setState((state) => ({ ...state, selectedAccountIndex: accountIndex }));
     }
     if (typeof indexOrId === "number") {
       await appLocalStorage.setLastSelectedAccountIndex(indexOrId);
+      setState((state) => ({ ...state, selectedAccountIndex: indexOrId }));
     }
   }, []);
 
@@ -108,11 +116,25 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
   }, []);
 
   const initAccounts = useCallback(async (): Promise<WalletAccount[]> => {
-    console.log("initAccs", isInDevelopmentMode);
-    if (isInDevelopmentMode) {
+    const accounts = (await appLocalStorage.getAccounts()) as WalletAccount[];
+
+    if (!accounts || !accounts.length) {
+      console.info("[HeaderGetWalletsList]: user has no accounts");
+      return [];
     }
-    // TODO init accounts from storage or elsewhere
-    return [];
+
+    let lastSelectedAccountIndex =
+      await appLocalStorage.getLastSelectedAccountIndex();
+    if (
+      lastSelectedAccountIndex === null ||
+      lastSelectedAccountIndex === undefined
+    ) {
+      lastSelectedAccountIndex = 0;
+      await appLocalStorage.setLastSelectedAccountIndex(
+        lastSelectedAccountIndex
+      );
+    }
+    return accounts;
   }, []);
 
   const init = useCallback(async (network: Network = "testnet") => {
@@ -137,9 +159,6 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
 
     return clearEventListeners;
   }, []); //eslint-disable-line
-
-  console.log("Accounts", state.accounts);
-  console.log("currentAccount", currentAccount);
 
   return (
     <AuthContext.Provider

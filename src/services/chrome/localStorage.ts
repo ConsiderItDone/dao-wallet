@@ -233,7 +233,7 @@ export interface WalletAccount extends LocalStorageAccount {
   /**
    * Decrypted private key.
    */
-  privateKey: string;
+  privateKey?: string;
 }
 
 export interface Token {

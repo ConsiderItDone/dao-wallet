@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { goBack, goTo, getComponentStack } from "react-chrome-extension-router";
 import { ReactComponent as NearIcon } from "../../images/nearIcon.svg";
 import { ReactComponent as OmniLogo } from "../../images/omniLogo.svg";
@@ -8,10 +8,6 @@ import { ReactComponent as ArrowIcon } from "../../images/arrow.svg";
 import Settings from "../settingsPage";
 import "./index.css";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
-import {
-  LocalStorage,
-  LocalStorageAccount,
-} from "../../services/chrome/localStorage";
 import ChooseMethod from "../chooseMethod";
 import { useAuth } from "../../hooks";
 
@@ -24,51 +20,22 @@ const formatWalletName = (str: string) => {
 };
 
 const Header = () => {
-  const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
-  //const {accounts:wallets} = useAuth()
-  const [wallets, setWallets] = useState<LocalStorageAccount[] | null>(null);
-  const [selectedWalletIndex, setSelectedWalletIndex] = useState<number | null>(
-    null
-  );
+  const {
+    accounts: wallets,
+    selectedAccountIndex: selectedWalletIndex,
+    selectAccount,
+  } = useAuth();
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
-
-  useEffect(() => {
-    const getWalletsList = async () => {
-      const accounts = await localStorage.getAccounts();
-      if (!accounts || !accounts.length) {
-        console.info("[HeaderGetWalletsList]: user has no accounts");
-        return;
-      }
-
-      let lastSelectedAccountIndex =
-        await localStorage.getLastSelectedAccountIndex();
-      if (
-        lastSelectedAccountIndex === null ||
-        lastSelectedAccountIndex === undefined
-      ) {
-        lastSelectedAccountIndex = 0;
-        await localStorage.setLastSelectedAccountIndex(
-          lastSelectedAccountIndex
-        );
-      }
-
-      setWallets(accounts);
-      setSelectedWalletIndex(lastSelectedAccountIndex);
-    };
-
-    getWalletsList();
-  }, [localStorage]);
 
   const handleAddAccount = () => {
     goTo(ChooseMethod);
   };
 
   const handleWalletChange = async (walletIndex: number) => {
-    await localStorage.setLastSelectedAccountIndex(walletIndex);
     setDropdownVisible(!dropdownVisible);
-    setSelectedWalletIndex(walletIndex);
+    selectAccount(walletIndex);
   };
 
   const handleGoBack = async () => {
@@ -79,30 +46,12 @@ const Header = () => {
     goBack();
   };
 
-  return wallets &&
-    selectedWalletIndex !== null &&
-    selectedWalletIndex !== undefined ? (
+  return (
     <div className="headerWrapper">
       <div className="header">
-        {!dropdownVisible ? (
-          <div className="item walletContainer">
-            <button onClick={handleGoBack} className="backBtn">
-              <ArrowIcon />
-            </button>
-            <button
-              onClick={() => setDropdownVisible(!dropdownVisible)}
-              className="dropdownBtn"
-            >
-              <NearIcon className="nearIcon" />
-              <div>
-                {formatWalletName(wallets[selectedWalletIndex]?.accountId)}
-              </div>
-              <ArrowIcon className="arrowIcon" />
-            </button>
-          </div>
-        ) : (
-          <div className="walletsContainer">
-            <div className="item curentWallet">
+        {Boolean(wallets.length) && selectedWalletIndex !== undefined ? (
+          !dropdownVisible ? (
+            <div className="item walletContainer">
               <button onClick={handleGoBack} className="backBtn">
                 <ArrowIcon />
               </button>
@@ -117,29 +66,47 @@ const Header = () => {
                 <ArrowIcon className="arrowIcon" />
               </button>
             </div>
-            {wallets.map((el, index) => {
-              return index !== selectedWalletIndex ? (
-                <button
-                  onClick={() => handleWalletChange(index)}
-                  key={index}
-                  className="dropdownBtn interationBtn"
-                >
-                  {selectedWalletIndex === index && (
-                    <NearIcon className="nearIcon" />
-                  )}
-                  <div>{el?.accountId} </div>
+          ) : (
+            <div className="walletsContainer">
+              <div className="item curentWallet">
+                <button onClick={handleGoBack} className="backBtn">
+                  <ArrowIcon />
                 </button>
-              ) : null;
-            })}
-            <button
-              className="btnAddAccount"
-              type="button"
-              onClick={handleAddAccount}
-            >
-              Add Account
-            </button>
-          </div>
-        )}
+                <button
+                  onClick={() => setDropdownVisible(!dropdownVisible)}
+                  className="dropdownBtn"
+                >
+                  <NearIcon className="nearIcon" />
+                  <div>
+                    {formatWalletName(wallets[selectedWalletIndex]?.accountId)}
+                  </div>
+                  <ArrowIcon className="arrowIcon" />
+                </button>
+              </div>
+              {wallets.map((el, index) => {
+                return index !== selectedWalletIndex ? (
+                  <button
+                    onClick={() => handleWalletChange(index)}
+                    key={index}
+                    className="dropdownBtn interationBtn"
+                  >
+                    {selectedWalletIndex === index && (
+                      <NearIcon className="nearIcon" />
+                    )}
+                    <div>{el?.accountId} </div>
+                  </button>
+                ) : null;
+              })}
+              <button
+                className="btnAddAccount"
+                type="button"
+                onClick={handleAddAccount}
+              >
+                Add Account
+              </button>
+            </div>
+          )
+        ) : null}
         <div
           className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
         >
@@ -156,6 +123,6 @@ const Header = () => {
         </div>
       </div>
     </div>
-  ) : null;
+  );
 };
 export default Header;
