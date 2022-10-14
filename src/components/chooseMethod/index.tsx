@@ -8,15 +8,15 @@ import { createNewWallet } from "../../utils/wallet";
 import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
 import HomePage from "../homePage";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
-import { useAccount } from "../../hooks/useAccount";
 import { RecoverWithPassphrasePage } from "../recoverWithPassphrasePage";
 import { openTab } from "../../utils/router";
 import LedgerConnect from "../ledger-connect";
+import { useAuth } from "../../hooks";
 
 const ChooseMethod = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
-  const account = useAccount();
+  const { currentAccount: account } = useAuth();
   const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false);
 
   const handleCreateWithSecurePassphrase = async () => {

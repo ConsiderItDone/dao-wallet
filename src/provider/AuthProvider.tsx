@@ -1,5 +1,6 @@
 import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import { PolywrapProvider } from "@polywrap/react";
+import { useMemo } from "react";
 import {
   createContext,
   ProviderProps,
@@ -7,21 +8,32 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AccountData, Network } from "../types";
+import {
+  ACCOUNTS_KEY,
+  LAST_SELECTED_ACCOUNT_INDEX_KEY,
+  LocalStorage,
+  LOCAL_STORAGE_CHANGED_EVENT_KEY,
+  WalletAccount,
+} from "../services/chrome/localStorage";
+import { Network } from "../types";
 import { getPolywrapConfig } from "../utils/polywrap";
 
+const appLocalStorage = new LocalStorage();
+
+const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
 interface AuthProviderValue extends AuthState {
-  selectedAccount: AccountData | undefined;
-  accounts: AccountData[];
-  addPublicKey: (accountId: string, publicKey: PublicKey) => AccountData;
-  addAccount: (newAccount: AccountData) => Promise<Boolean>;
+  currentAccount: WalletAccount | undefined;
+  accounts: WalletAccount[];
+  addPublicKey: (accountId: string, publicKey: PublicKey) => WalletAccount;
+  addAccount: (newAccount: WalletAccount) => Promise<Boolean>;
+  selectAccount: (index: number) => Promise<void>;
   changeNetwork: (newNetwork: Network) => Promise<Boolean>;
 }
 
 export interface AuthState {
   network: Network;
   selectedAccountIndex: Number | undefined;
-  accounts: AccountData[];
+  accounts: WalletAccount[];
   loading: Boolean;
 }
 
@@ -37,11 +49,13 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     loading: true,
   });
 
-  const selectedAccount = state.accounts.find(
-    (acc, index) => index === state.selectedAccountIndex
+  const currentAccount = useMemo(
+    () =>
+      state.accounts.find((acc, index) => index === state.selectedAccountIndex),
+    [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
   );
 
-  const addAccount = useCallback(async (newAccount: AccountData) => {
+  const addAccount = useCallback(async (newAccount: WalletAccount) => {
     setState((state) => ({
       ...state,
       accounts: [...state.accounts, newAccount],
@@ -50,13 +64,28 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     return true;
   }, []);
 
+  const selectAccount = useCallback(async (indexOrId: string | number) => {
+    if (typeof indexOrId === "string") {
+      const accounts = await appLocalStorage.getAccounts();
+      const accountIndex = accounts?.findIndex(
+        (acc) => acc.accountId === indexOrId
+      );
+      if (accountIndex && accountIndex >= 0) {
+        await appLocalStorage.setLastSelectedAccountIndex(accountIndex);
+      }
+    }
+    if (typeof indexOrId === "number") {
+      await appLocalStorage.setLastSelectedAccountIndex(indexOrId);
+    }
+  }, []);
+
   const addPublicKey = useCallback(
     (accountId: string, publicKey: PublicKey) => {
       const index = state.accounts.findIndex(
         (acc) => acc.accountId === accountId
       );
 
-      const accountWithPublicKey: AccountData = {
+      const accountWithPublicKey: WalletAccount = {
         ...state.accounts[index],
         publicKey: publicKey,
       };
@@ -78,19 +107,9 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     return true;
   }, []);
 
-  const initAccounts = useCallback(async (): Promise<AccountData[]> => {
-    if (process.env.REACT_APP_DEV_MODE) {
-      return [
-        {
-          accountId: "polydev.testnet",
-          privateKey:
-            "ed25519:4HbxvXyS76rvNdHcad3HegGzdVcpNid3LE1vbdZNMSqygZJrL2PRQDzPWZA5hopCBFuJNmp9kihyJKPEagVPsPEc",
-        },
-        {
-          accountId:
-            "d6cffd5f97babaf6226e944fb0dde03bda6b2bc3d91e665b724dbf6ea10754f2",
-        },
-      ];
+  const initAccounts = useCallback(async (): Promise<WalletAccount[]> => {
+    console.log("initAccs", isInDevelopmentMode);
+    if (isInDevelopmentMode) {
     }
     // TODO init accounts from storage or elsewhere
     return [];
@@ -103,15 +122,32 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
   }, []); //eslint-disable-line
 
   useEffect(() => {
+    const updateAccount = async () => {
+      console.log("updateAccount called");
+      const currentAccount = await appLocalStorage.getCurrentAccount();
+      if (currentAccount) {
+        console.log("current Account", currentAccount);
+        selectAccount(currentAccount.accountId);
+      }
+    };
+
     init();
+    updateAccount();
+    const clearEventListeners = setEventListeners(updateAccount);
+
+    return clearEventListeners;
   }, []); //eslint-disable-line
+
+  console.log("Accounts", state.accounts);
+  console.log("currentAccount", currentAccount);
 
   return (
     <AuthContext.Provider
       value={{
         ...state,
-        selectedAccount,
+        currentAccount,
         addAccount,
+        selectAccount,
         addPublicKey,
         changeNetwork,
       }}
@@ -124,3 +160,30 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
 };
 
 export default AuthProvider;
+
+const setEventListeners = (updateAccount: () => void) => {
+  if (chrome?.storage?.onChanged) {
+    const onChange = (changes: object, areaName: string) => {
+      const shouldUpdate =
+        areaName === "local" &&
+        (ACCOUNTS_KEY in changes || LAST_SELECTED_ACCOUNT_INDEX_KEY in changes);
+
+      if (shouldUpdate) {
+        updateAccount();
+      }
+    };
+
+    chrome.storage.onChanged.addListener(onChange);
+    return () => {
+      chrome.storage.onChanged.removeListener(onChange);
+    };
+  } else if (isInDevelopmentMode) {
+    window.addEventListener(LOCAL_STORAGE_CHANGED_EVENT_KEY, updateAccount);
+    return () => {
+      window.removeEventListener(
+        LOCAL_STORAGE_CHANGED_EVENT_KEY,
+        updateAccount
+      );
+    };
+  }
+};

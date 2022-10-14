@@ -3,6 +3,7 @@ import { isEmpty } from "../../utils/common";
 import { BrowserStorageWrapper } from "./browserStorageWrapper";
 import { SessionStorage } from "./sessionStorage";
 import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
+import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 export const ACCOUNTS_KEY = "accounts";
@@ -219,11 +220,13 @@ export interface LocalStorageAccount {
    * Private key of account gets encrypted/decrypted with hashedPassword.
    */
   encryptedPrivateKey: string;
-
   /**
    * List of account tokens added by user. Do not include default NEAR token.
    */
   tokens: Token[];
+
+  isLedger?: boolean;
+  publicKey?: PublicKey;
 }
 
 export interface WalletAccount extends LocalStorageAccount {

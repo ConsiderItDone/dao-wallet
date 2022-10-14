@@ -3,8 +3,8 @@ import React from "react";
 import { Token } from "../../services/chrome/localStorage";
 import { goTo } from "react-chrome-extension-router";
 import { ImportTokensPage } from "../importTokensPage";
-import { useAccount } from "../../hooks/useAccount";
 import iconsObj from "../../assets/icons";
+import { useAuth } from "../../hooks";
 
 export interface TokenAmountData {
   token: Token;
@@ -27,7 +27,7 @@ const formatUsdTokenAmount = (amount: number) => {
 };
 
 export const TokenList = ({ tokens }: Props) => {
-  const account = useAccount();
+  const { currentAccount: account } = useAuth();
 
   const onAddToken = () => {
     goTo(ImportTokensPage);

@@ -1,11 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import "./index.css";
 import Header from "../header";
-import { useQuery } from "../../hooks";
+import { useAuth, useQuery } from "../../hooks";
 import { goBack, goTo } from "react-chrome-extension-router";
 import { LocalStorage } from "../../services/chrome/localStorage";
 import BalancePage from "../balancePage";
-import { useAccount } from "../../hooks/useAccount";
 import {
   fetchTokenBalance,
   fetchTokenMetadata,
@@ -23,7 +22,7 @@ const formatBalance = (balance: number) => {
 
 export const ImportTokensPage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
-  const account = useAccount();
+  const { currentAccount: account } = useAuth();
 
   const [contractAddress, setContractAddress] = useState<string>("");
   const [tokenMetadata, setTokenMetadata] = useState<TokenMetadata | null>(

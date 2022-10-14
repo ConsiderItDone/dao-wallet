@@ -13,6 +13,7 @@ import {
   LocalStorageAccount,
 } from "../../services/chrome/localStorage";
 import ChooseMethod from "../chooseMethod";
+import { useAuth } from "../../hooks";
 
 const formatWalletName = (str: string) => {
   if (str?.length <= 8) {
@@ -25,7 +26,7 @@ const formatWalletName = (str: string) => {
 const Header = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
-
+  //const {accounts:wallets} = useAuth()
   const [wallets, setWallets] = useState<LocalStorageAccount[] | null>(null);
   const [selectedWalletIndex, setSelectedWalletIndex] = useState<number | null>(
     null

@@ -5,9 +5,8 @@ import TransactionPage from "../transactionPage";
 
 import "./index.css";
 import { goBack, goTo } from "react-chrome-extension-router";
-import { useSendTransaction } from "../../hooks";
+import { useAuth, useSendTransaction } from "../../hooks";
 import { ClipLoader } from "react-spinners";
-import { useAccount } from "../../hooks/useAccount";
 
 interface Props {
   receiver: string;
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
-  const account = useAccount();
+  const { currentAccount: account } = useAuth();
   const nearAmount = amount;
 
   const { execute, loading } = useSendTransaction(account?.accountId!);
