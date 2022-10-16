@@ -8,12 +8,11 @@ import "./index.css";
 import SendPage from "../sendPage";
 import { goTo } from "react-chrome-extension-router";
 import { WalletAccount } from "../../services/chrome/localStorage";
-import { useQuery } from "../../hooks";
+import { useAuth, useQuery } from "../../hooks";
 import { getNearToUSDRatio } from "../../services/coingecko/api";
 import { bignumberToNumber } from "../../utils/bignumber";
 import { ethers } from "ethers";
 import { NEAR_TOKEN } from "../../consts/near";
-import { useAccount } from "../../hooks/useAccount";
 import { NftList } from "../nftList";
 import { TokenAmountData, TokenList } from "../tokenList";
 import { fetchTokenBalance, TokenMetadata } from "../../utils/fungibleTokens";
@@ -51,7 +50,7 @@ const BalancePage = () => {
     VIEW_FUNCTION_METHOD_NAME
   );
 
-  const account: WalletAccount | null = useAccount();
+  const { currentAccount: account } = useAuth();
 
   const [accountBalance, setAccountBalance] = useState<AccountBalance | null>(
     null
@@ -62,6 +61,7 @@ const BalancePage = () => {
 
   useEffect(() => {
     if (account?.accountId) {
+      console.log("sds");
       execute({ accountId: account?.accountId })
         .then((balanceData) => {
           if (balanceData?.error) {
@@ -113,7 +113,7 @@ const BalancePage = () => {
 
   useEffect(() => {
     const formTokenList = async (
-      account: WalletAccount,
+      account: any | WalletAccount,
       accountBalance: AccountBalance,
       nearToUsdRatio: number
     ) => {

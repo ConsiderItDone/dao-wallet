@@ -1,17 +1,33 @@
 import { PolywrapClientConfig } from "@polywrap/client-js";
 import { nearPlugin } from "@cidt/near-plugin-js";
-import { fileSystemResolverPlugin } from "@polywrap/fs-resolver-plugin-js";
-import { fileSystemPlugin } from "@polywrap/fs-plugin-js";
 import { keyStores, KeyPair } from "near-api-js";
+import { AuthState } from "../provider/AuthProvider";
 
-export function getPolywrapConfig(): Partial<PolywrapClientConfig> {
-  const accountId = "polydev.testnet";
-  const networkId = "testnet";
-  const privateKey =
-    "ed25519:4HbxvXyS76rvNdHcad3HegGzdVcpNid3LE1vbdZNMSqygZJrL2PRQDzPWZA5hopCBFuJNmp9kihyJKPEagVPsPEc";
+export interface AuthConfig extends AuthState {}
+
+export function getPolywrapConfig(
+  authConfig: AuthConfig
+): Partial<PolywrapClientConfig> {
+  const { selectedAccountIndex, network: networkId, accounts } = authConfig;
+
+  const selectedAccount = accounts.find(
+    (acc, index) => index === selectedAccountIndex
+  );
+
   const keyStore = new keyStores.InMemoryKeyStore();
-  const keyPair = KeyPair.fromString(privateKey);
-  keyStore.setKey(networkId, accountId, keyPair);
+
+  //@ts-ignore
+  window.keyStore = keyStore;
+
+  for (const account of accounts) {
+    if (account?.privateKey) {
+      const keyPair = KeyPair.fromString(account.privateKey);
+      keyStore.setKey(networkId, account.accountId, keyPair);
+    } else {
+      const keyPair = KeyPair.fromRandom("ed25519");
+      keyStore.setKey(networkId, account.accountId, keyPair);
+    }
+  }
 
   return {
     plugins: [
@@ -20,20 +36,12 @@ export function getPolywrapConfig(): Partial<PolywrapClientConfig> {
         plugin: nearPlugin({
           headers: {},
           keyStore: keyStore,
-          masterAccount: accountId,
-          networkId: "testnet",
-          nodeUrl: "https://rpc.testnet.near.org",
-          walletUrl: "https://wallet.testnet.near.org",
-          helperUrl: "https://helper.testnet.near.org",
+          masterAccount: selectedAccount?.accountId,
+          networkId: networkId,
+          nodeUrl: `https://rpc.${networkId}.near.org`,
+          walletUrl: `https://wallet.${networkId}.near.org`,
+          helperUrl: `https://helper.${networkId}.near.org`,
         }),
-      },
-      {
-        uri: "wrap://ens/fs-resolver.polywrap.eth",
-        plugin: fileSystemResolverPlugin({}),
-      },
-      {
-        uri: "wrap://ens/fs.polywrap.eth",
-        plugin: fileSystemPlugin({}),
       },
     ],
   };

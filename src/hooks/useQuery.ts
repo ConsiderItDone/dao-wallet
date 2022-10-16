@@ -1,4 +1,4 @@
-import { usePolywrapInvoke } from "@polywrap/react";
+import { usePolywrapClient, usePolywrapInvoke } from "@polywrap/react";
 import { UsePolywrapInvoke } from "@polywrap/react/build/invoke";
 import { InvokeResult } from "@polywrap/core-js";
 
@@ -17,4 +17,16 @@ export const useQuery = <TData = Record<string, unknown>>(
     method: method,
   });
   return [execute, { data, loading, error }];
+};
+
+export const useInvoke = <TData = Record<string, unknown>>() => {
+  const client = usePolywrapClient();
+  const invoke = async ({
+    method,
+    args,
+  }: {
+    method: string;
+    args: Record<string, unknown>;
+  }) => client.invoke<TData>({ uri: ipfsUri, method, args });
+  return invoke;
 };
