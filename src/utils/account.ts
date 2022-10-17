@@ -6,11 +6,11 @@ import { getNearConnectionConfig } from "./near";
 import { Network } from "../types";
 import { PublicKey } from "near-api-js/lib/utils/key_pair";
 import { KeyStores } from "@cidt/near-plugin-js";
+import { INDEXER_SERVICE_URL } from "../consts/near";
 
 const ACCOUNT_ID_REGEX =
   /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
 
-const INDEXER_SERVICE_URL = "https://testnet-api.kitwallet.app";
 const CUSTOM_REQUEST_HEADERS = {};
 
 export function isLegitAccountId(accountId: string) {

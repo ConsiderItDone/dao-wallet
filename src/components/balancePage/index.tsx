@@ -10,13 +10,13 @@ import { goTo } from "react-chrome-extension-router";
 import { AccountWithPrivateKey } from "../../services/chrome/localStorage";
 import { useAuth, useQuery } from "../../hooks";
 import { getNearToUSDRatio } from "../../services/coingecko/api";
-import { bignumberToNumber } from "../../utils/bignumber";
-import { ethers } from "ethers";
 import { NEAR_TOKEN } from "../../consts/near";
 import { NftList } from "../nftList";
 import { TokenAmountData, TokenList } from "../tokenList";
 import { fetchTokenBalance, TokenMetadata } from "../../utils/fungibleTokens";
 import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
+import { useStakingData } from "../../hooks/useStakingData";
+import { parseNearTokenAmount } from "../../utils/near";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -59,6 +59,8 @@ const BalancePage = () => {
 
   const [tokenList, setTokenList] = useState<TokenAmountData[] | null>(null);
 
+  const accountTotalStakedAmount = useStakingData(account?.accountId);
+
   useEffect(() => {
     if (account?.accountId) {
       execute({ accountId: account?.accountId })
@@ -70,22 +72,11 @@ const BalancePage = () => {
           if (data) {
             setAccountBalance({
               available:
-                bignumberToNumber(
-                  ethers.BigNumber.from(data?.available),
-                  NEAR_TOKEN.decimals
-                ) - RESERVED_FOR_TRANSACTION_FEES,
-              staked: bignumberToNumber(
-                ethers.BigNumber.from(data?.staked),
-                NEAR_TOKEN.decimals
-              ),
-              stateStaked: bignumberToNumber(
-                ethers.BigNumber.from(data?.stateStaked),
-                NEAR_TOKEN.decimals
-              ),
-              total: bignumberToNumber(
-                ethers.BigNumber.from(data?.total),
-                NEAR_TOKEN.decimals
-              ),
+                parseNearTokenAmount(data?.available) -
+                RESERVED_FOR_TRANSACTION_FEES,
+              staked: parseNearTokenAmount(data?.staked),
+              stateStaked: parseNearTokenAmount(data?.stateStaked),
+              total: parseNearTokenAmount(data?.total),
             });
           } else {
             console.error(
@@ -173,14 +164,16 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountBalance?.staked ? accountBalance.staked.toFixed(5) : 0}{" "}
+                {accountTotalStakedAmount
+                  ? accountTotalStakedAmount.toFixed(5)
+                  : 0}{" "}
                 NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
-              {accountBalance?.staked && nearToUsdRatio
-                ? (accountBalance.staked * nearToUsdRatio).toFixed(5)
+              {accountTotalStakedAmount && nearToUsdRatio
+                ? (accountTotalStakedAmount * nearToUsdRatio).toFixed(5)
                 : 0}{" "}
               USD
             </div>
@@ -295,16 +288,16 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountBalance?.stateStaked
-                  ? accountBalance.stateStaked.toFixed(5)
+                {accountTotalStakedAmount
+                  ? accountTotalStakedAmount.toFixed(5)
                   : 0}{" "}
                 NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
-              {accountBalance?.stateStaked && nearToUsdRatio
-                ? (accountBalance.stateStaked * nearToUsdRatio).toFixed(2)
+              {accountTotalStakedAmount && nearToUsdRatio
+                ? (accountTotalStakedAmount * nearToUsdRatio).toFixed(2)
                 : 0}{" "}
               USD
             </div>
@@ -413,7 +406,12 @@ const BalancePage = () => {
             </div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">{stakeValue.value}</div>
+              <div className="value">
+                {accountTotalStakedAmount
+                  ? accountTotalStakedAmount.toFixed(5)
+                  : 0}{" "}
+                NEAR
+              </div>
             </div>
             {!!stakeValue?.balance && !stakeVisible && (
               <div className="valueBalance">{stakeValue?.balance}</div>

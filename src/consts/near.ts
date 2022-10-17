@@ -9,3 +9,5 @@ export const NEAR_TOKEN: Token = {
   icon: iconsObj.nearMenu,
   decimals: 24,
 };
+
+export const INDEXER_SERVICE_URL = "https://testnet-api.kitwallet.app";
