@@ -61,7 +61,6 @@ const BalancePage = () => {
 
   useEffect(() => {
     if (account?.accountId) {
-      console.log("sds");
       execute({ accountId: account?.accountId })
         .then((balanceData) => {
           if (balanceData?.error) {

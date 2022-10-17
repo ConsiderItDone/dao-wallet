@@ -48,6 +48,7 @@
   display: flex;
   position: relative;
   justify-content: space-between;
+  gap: 8px;
   margin-bottom: 8px;
 }
 .sendPageContainer .body .btn {
@@ -76,34 +77,100 @@
   bottom: 0;
   display: none;
 }
-.sendPageContainer .dropDownContainer  .visible {
-  position: absolute;
-  background: white;
-  width: 210px;
-  left: 8px;
-  z-index: 1;
+
+.react-select-container {
+  width: 100% !important;
+  font-family: var(--font_regular);
+  font-size: 12px;
+  color: #20202060;
+  z-index: 10;
   border-radius: 8px;
-  background-color: var(--white_col);
+}
+
+.react-select__control {
+  display: flex;
+  border: none;
+  background-color: unset;
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
   cursor: pointer;
 }
-.sendPageContainer .dropDownContainer .visible .btnVisible {
-  width: 100%;
+
+.react-select__indicator-separator {
+  display: none;
+}
+.react-select__value-container {
+  padding-left: 16px !important;
+}
+.react-select__placeholder, .react-select__single-value {
   text-align: left;
-  background-color: unset;
-  border: unset;
+}
+.react-select__single-value  {
+  font-weight: 600;
+}
+
+.react-select__menu {
+  border: none !important;
+  margin-top: 0 !important;
+  background-color: rgba(0, 0, 0, 0.2) !important; 
+  backdrop-filter: blur(6px);
+  box-shadow: none !important;
+  padding: 16px;
+  border-radius: 8px !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+}
+.react-select__menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: none
+}
+.react-select__option {
+  cursor: pointer;
+  text-align: left;
+  color: black;
+  font-size: inherit;
+  font-weight: 600;
+  line-height: 16px;
+
+}
+.react-select__option .container {
   display: flex;
   justify-content: space-between;
-  height: 48px;
-  padding: 0;
+}
+
+.react-select__option .container .token, .react-select__value-container .container .token {
+  display: flex;
+  gap: 4px;
   align-items: center;
-  cursor: pointer;
 }
-.sendPageContainer .dropDownContainer .visible > div {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(12px);
-  padding: 0 14px 0 16px;
-  border-radius: 8px;
+.react-select__value-container .container .amount {
+  display: none;
 }
+.react-select__input-container input {
+  caret-color: transparent;
+}
+
+.react-select__option .container .token span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+.react-select__option img, .react-select__value-container img {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
 .sendPageContainer .dropDownContainer .primary {
   font-family: var(--font_regular);
   font-style: normal;
@@ -112,29 +179,16 @@
   line-height: 16px;
   color: #20202060;
 }
-.sendPageContainer .body .menu > button,
-.sendPageContainer .dropDownContainer .menu > div  {
-  display: none;
-}
-.sendPageContainer .body .menu.visible{
-  display: block;
-}
 
-.sendPageContainer .body .dropDownContainer .arrow{
-  position: absolute;
-  right: 21px;
-  rotate: -90deg;
-}
 .sendPageContainer .body .dropDownContainer .balanceBox{
   background: rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(6px);
   border-radius: 8px;
   text-align: center;
   position: relative;
   padding-top: 6px;
-  width: 92px;
-  margin: 0 0 0 auto;
   height: 41px;
+  min-width: 92px;
 }
 .sendPageContainer .body .dropDownContainer .balanceBox .title {
   font-family: var(--font_regular);
@@ -154,19 +208,21 @@
   color: var(--black_color_secondary);
 }
 .sendPageContainer .body .amountContainer { 
-  width: 320px;
+  width: 100%;
   height: 48px;
   position: relative;
-  background: white;
-  margin-bottom: 8px;
-}
-.sendPageContainer .body .amountContainer .amount{
-  width: 304px;
-  height: 48px;
   background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(6px);
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+.sendPageContainer .body .amountContainer .amount {
+  width: 100%;
+  height: 48px;
+  background: transparent;
   border: unset;
   padding: 0 0 0 16px;
-  border-radius: 8px;
+  border-radius: inherit;
   font-family: var(--font_extra_bold);
   font-style: normal;
   font-weight: 800;
@@ -189,7 +245,8 @@
   right: 88px;
 }
 .sendPageContainer .body .amountContainer .amount::placeholder{
-  color: #20202060;
+  color: black !important;
+  opacity: 0.6;
 }
 .sendPageContainer .body .amountContainer .amount:focus-visible{
   border: unset;
@@ -213,7 +270,7 @@
   text-decoration: unset;
 }
 .sendPageContainer .to {
-  width: 304px;
+  width: 100%;
   height: 48px;
   background: rgba(0, 0, 0, 0.08);
   border: unset;
@@ -221,12 +278,20 @@
   border-radius: 8px;
 }
 .sendPageContainer .toContainer {
-  width: 320px;
+  width: 100%;
   height: 48px;
   position: relative;
-  background: white;
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
   margin-bottom: 40px;
 }
+.sendPageContainer .toContainer input {
+  font-size: 16px;
+  line-height: 22px;
+  background: transparent;
+}
+
 .sendPageContainer .toContainer .successIcon{
   position: absolute;
   top: 50%;

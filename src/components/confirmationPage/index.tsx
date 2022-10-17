@@ -10,11 +10,11 @@ import { ClipLoader } from "react-spinners";
 
 interface Props {
   receiver: string;
-  asset: string;
+  token: string;
   amount: number;
 }
 
-const ConfirmationPage = ({ amount, asset, receiver }: Props) => {
+const ConfirmationPage = ({ amount, token, receiver }: Props) => {
   const { currentAccount: account } = useAuth();
   const nearAmount = amount;
 
