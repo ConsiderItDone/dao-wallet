@@ -70,6 +70,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       if (isInDevelopmentMode) {
         window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
       }
+      await this.setLastSelectedAccountIndex(accounts.length - 1);
       return result;
     } catch (error) {
       console.error("[AddAccount]:", error);
@@ -100,16 +101,16 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     }
   }
 
-  async getCurrentAccount(): Promise<WalletAccount | null> {
+  async getCurrentAccount(): Promise<AccountWithPrivateKey | null> {
     try {
       const currentAccount = await this._getCurrentAccount();
       if (!currentAccount) {
-        throw new Error("User doesn't have current account");
+        return null;
       }
 
       const password = await sessionStorage.getPassword();
       if (!password) {
-        throw new Error("Failed to get password from session storage");
+        return null;
       }
       let decryptedPrivateKey = "";
       try {
@@ -131,7 +132,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     try {
       const accounts = await this.getAccounts();
       if (!accounts || !accounts?.length) {
-        throw new Error("User has no accounts");
+        return null;
       }
 
       let lastSelectedAccountIndex = await this.getLastSelectedAccountIndex();
@@ -212,8 +213,6 @@ interface LocalStorageData {
 }
 
 export interface LocalStorageAccount {
-  name: string;
-
   accountId: string;
 
   /**
@@ -221,7 +220,7 @@ export interface LocalStorageAccount {
    */
   encryptedPrivateKey: string;
   /**
-   * List of account tokens added by user. Do not include default NEAR token.
+   * List of account tokens added by user. Does not include default NEAR token.
    */
   tokens: Token[];
 
@@ -229,7 +228,7 @@ export interface LocalStorageAccount {
   publicKey?: PublicKey;
 }
 
-export interface WalletAccount extends LocalStorageAccount {
+export interface AccountWithPrivateKey extends LocalStorageAccount {
   /**
    * Decrypted private key.
    */

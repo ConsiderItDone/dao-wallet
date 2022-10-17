@@ -73,6 +73,7 @@
 }
 
 .recoverWithPassphrasePageContainer .body .importAccountButton {
+    min-width: 166px;
     height: 48px;
     text-align: center;
     margin: 40px auto 0;

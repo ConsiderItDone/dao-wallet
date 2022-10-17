@@ -1,6 +1,6 @@
 import {
   ACCOUNTS_KEY,
-  WalletAccount,
+  AccountWithPrivateKey,
   LAST_SELECTED_ACCOUNT_INDEX_KEY,
   LOCAL_STORAGE_CHANGED_EVENT_KEY,
   LocalStorage,
@@ -11,8 +11,8 @@ const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
 
 const appLocalStorage = new LocalStorage();
 
-export const useAccount = (): WalletAccount | null => {
-  const [account, setAccount] = useState<WalletAccount | null>(null);
+export const useAccount = (): AccountWithPrivateKey | null => {
+  const [account, setAccount] = useState<AccountWithPrivateKey | null>(null);
   const [forceUpdateAccount, setForceUpdateAccount] = useState<boolean>(false);
 
   useEffect(() => {

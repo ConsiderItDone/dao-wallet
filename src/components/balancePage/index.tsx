@@ -7,7 +7,7 @@ import iconsObj from "../../assets/icons";
 import "./index.css";
 import SendPage from "../sendPage";
 import { goTo } from "react-chrome-extension-router";
-import { WalletAccount } from "../../services/chrome/localStorage";
+import { AccountWithPrivateKey } from "../../services/chrome/localStorage";
 import { useAuth, useQuery } from "../../hooks";
 import { getNearToUSDRatio } from "../../services/coingecko/api";
 import { bignumberToNumber } from "../../utils/bignumber";
@@ -20,9 +20,9 @@ import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
-const ACCOUNT_BALANCE_METHOD_NAME = "getAccountBalance";
+export const ACCOUNT_BALANCE_METHOD_NAME = "getAccountBalance";
 
-interface AccountBalance {
+export interface AccountBalance {
   available: number;
   staked: number;
   stateStaked: number;
@@ -112,7 +112,7 @@ const BalancePage = () => {
 
   useEffect(() => {
     const formTokenList = async (
-      account: any | WalletAccount,
+      account: any | AccountWithPrivateKey,
       accountBalance: AccountBalance,
       nearToUsdRatio: number
     ) => {

@@ -1,74 +1,24 @@
-import { useState } from "react";
+import React from "react";
 import Header from "../header";
 import { goBack, goTo } from "react-chrome-extension-router";
-import BalancePage from "../balancePage";
 import "./index.css";
-import { LocalStorage } from "../../services/chrome/localStorage";
-import { createNewWallet } from "../../utils/wallet";
-import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
-import HomePage from "../homePage";
-import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { RecoverWithPassphrasePage } from "../recoverWithPassphrasePage";
 import { openTab } from "../../utils/router";
 import LedgerConnect from "../ledger-connect";
 import { useAuth } from "../../hooks";
+import CreateWithSecurePassphrasePage from "../createWithSecurePassphrasePage";
 
 const ChooseMethod = () => {
-  const [localStorage] = useState<LocalStorage>(new LocalStorage());
-  const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
-  const { currentAccount: account, addAccount } = useAuth();
-  const [isCreatingAccount, setIsCreatingAccount] = useState<boolean>(false);
+  const { currentAccount: account } = useAuth();
 
-  const handleCreateWithSecurePassphrase = async () => {
-    if (isCreatingAccount) {
-      return;
-    }
-
-    setIsCreatingAccount(true);
-
-    try {
-      let accounts = await localStorage.getAccounts();
-      if (!accounts) {
-        accounts = [];
-      }
-
-      const name = `Wallet ${accounts.length + 1}`;
-      const { accountId, privateKey } = createNewWallet();
-      const password = await sessionStorage.getPassword();
-      if (!password) {
-        console.error(
-          "[HandleCreateWithSecurePassphrase]: failed to get password from session storage"
-        );
-        goTo(HomePage);
-        return;
-      }
-
-      const encryptedPrivateKey = await encryptPrivateKeyWithPassword(
-        password,
-        privateKey
-      );
-
-      //TODO handle adding already imported account
-      await addAccount({ name, accountId, encryptedPrivateKey, tokens: [] });
-
-      /*       await localStorage.addAccount({
-        name,
-        accountId,
-        encryptedPrivateKey,
-        tokens: [],
-      }); */
-
-      goTo(BalancePage);
-    } catch (error) {
-      console.error("[HandleCreateWithSecurePassphrase]:", error);
-    } finally {
-      setIsCreatingAccount(false);
-    }
+  const handleCreateWithSecurePassphrase = () => {
+    goTo(CreateWithSecurePassphrasePage);
   };
 
-  const handleRecoverFromPassphrase = async () => {
+  const handleRecoverFromPassphrase = () => {
     goTo(RecoverWithPassphrasePage);
   };
+
   const handlerCreateWithLedger = async () => {
     await openTab("/ledger", LedgerConnect);
   };
@@ -88,7 +38,6 @@ const ChooseMethod = () => {
             onClick={handleCreateWithSecurePassphrase}
             type="button"
             className="btnChoose"
-            disabled={isCreatingAccount}
           >
             <div className="btnTitle">Create With Secure Passphrase</div>
             <div className="btnText">
@@ -99,7 +48,6 @@ const ChooseMethod = () => {
             onClick={handleRecoverFromPassphrase}
             type="button"
             className="btnChoose"
-            disabled={isCreatingAccount}
           >
             <div className="btnTitle">Recover From Passphrase</div>
             <div className="btnText">
@@ -110,7 +58,6 @@ const ChooseMethod = () => {
             onClick={handlerCreateWithLedger}
             type="button"
             className="btnChoose"
-            disabled={isCreatingAccount}
           >
             <div className="btnTitle">Ledger Hardware Wallet</div>
             <div className="btnText">

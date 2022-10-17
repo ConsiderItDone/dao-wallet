@@ -1,20 +1,3 @@
-export function createNewWallet(accountId?: string) {
-  return {
-    accountId: accountId || generateAccountID(),
-    privateKey: generateWalletPrivateKey(),
-  };
-}
-
-// TODO: create unique account id
-function generateAccountID(): string {
-  return "polydev.testnet";
-}
-
-// TODO: use algorithm for generating new unique private key
-function generateWalletPrivateKey(): string {
-  return "jfmD4Jp7RhToz7w9kPR6";
-}
-
 export function shortenWalletAddress(
   address: string,
   startChars = 4,

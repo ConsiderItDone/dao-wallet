@@ -1,3 +1,7 @@
+body {
+  background: white;
+}
+
 :root {
   --black_col: #000000;
   --white_col: #ffffff;

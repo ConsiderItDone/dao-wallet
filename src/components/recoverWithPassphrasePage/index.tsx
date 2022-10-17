@@ -1,17 +1,32 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import "./index.css";
 import Header from "../header";
-import { goBack } from "react-chrome-extension-router";
+import { goBack, goTo } from "react-chrome-extension-router";
+import { SessionStorage } from "../../services/chrome/sessionStorage";
+import HomePage from "../homePage";
+import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
+import BalancePage from "../balancePage";
+import { useAuth } from "../../hooks";
+import { getAccountIds } from "../../utils/account";
+import { ClipLoader } from "react-spinners";
+// @ts-ignore
+import { parseSeedPhrase } from "near-seed-phrase";
 
 const MIN_PASSPHRASE_WORDS_AMOUNT = 12;
 
 export const RecoverWithPassphrasePage = () => {
+  const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
+
+  const { accounts, addAccount } = useAuth();
+
   const [passphrase, setPassphrase] = useState<string>("");
   const [passphraseError, setPassphraseError] = useState<
     string | null | undefined
   >(undefined);
   const [isValidatingPassphrase, setIsValidatingPassphrase] =
     useState<boolean>(false);
+
+  const [isImportingAccount, setIsImportingAccount] = useState<boolean>(false);
 
   useEffect(() => {
     const validatePassphrase = (passphrase: string) => {
@@ -45,9 +60,54 @@ export const RecoverWithPassphrasePage = () => {
     setPassphrase(event?.target?.value);
   };
 
-  const handleAccountImport = () => {
-    //TODO: import account with passphrase
-    setPassphraseError("Recover using passphrase is not yet implemented");
+  const handleAccountImport = async () => {
+    if (isImportingAccount) return;
+
+    setIsImportingAccount(true);
+
+    try {
+      const { publicKey, secretKey: privateKey } = parseSeedPhrase(passphrase);
+
+      const password = await sessionStorage.getPassword();
+      if (!password) {
+        console.error(
+          "[HandleAccountImport]: failed to get password from session storage"
+        );
+        goTo(HomePage);
+        return;
+      }
+      const encryptedPrivateKey = await encryptPrivateKeyWithPassword(
+        password,
+        privateKey
+      );
+
+      const accountIds: string[] = await getAccountIds(publicKey);
+      if (accountIds?.length === 0) {
+        setPassphraseError("Couldn't find account with specified passphrase");
+        return;
+      }
+      const importedAccountId = accountIds[0];
+
+      for (const account of accounts) {
+        if (account.accountId === importedAccountId) {
+          setPassphraseError("You have already added this account");
+          return;
+        }
+      }
+
+      await addAccount({
+        accountId: accountIds[0],
+        encryptedPrivateKey,
+        tokens: [],
+        isLedger: false,
+      });
+      goTo(BalancePage);
+    } catch (error) {
+      console.error("[HandleAccountImport]:", error);
+      setPassphraseError("Failed to import account");
+    } finally {
+      setIsImportingAccount(false);
+    }
   };
 
   const onCancel = () => {
@@ -67,6 +127,7 @@ export const RecoverWithPassphrasePage = () => {
             className="passphraseInput"
             placeholder="Passphrase (12 words)"
             onChange={onPassphraseChange}
+            disabled={isImportingAccount}
           />
           {!!passphrase && passphraseError && (
             <div className="errorMessage">{passphraseError}</div>
@@ -78,15 +139,24 @@ export const RecoverWithPassphrasePage = () => {
             !passphrase ||
             passphraseError === undefined ||
             !!passphraseError ||
-            isValidatingPassphrase
+            isValidatingPassphrase ||
+            isImportingAccount
           }
           className="importAccountButton"
         >
-          Import Account
+          {isImportingAccount || isValidatingPassphrase ? (
+            <ClipLoader color="#fff" size={14} />
+          ) : (
+            "Import Account"
+          )}
         </button>
-        <div className="cancel" onClick={onCancel}>
+        <button
+          className="cancel"
+          onClick={onCancel}
+          disabled={isImportingAccount}
+        >
           Cancel
-        </div>
+        </button>
       </div>
     </div>
   );

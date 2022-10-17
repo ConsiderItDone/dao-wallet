@@ -13,7 +13,7 @@ import {
   LAST_SELECTED_ACCOUNT_INDEX_KEY,
   LocalStorage,
   LOCAL_STORAGE_CHANGED_EVENT_KEY,
-  WalletAccount,
+  AccountWithPrivateKey,
 } from "../services/chrome/localStorage";
 import { Network } from "../types";
 import { getPolywrapConfig } from "../utils/polywrap";
@@ -22,10 +22,13 @@ const appLocalStorage = new LocalStorage();
 
 const isInDevelopmentMode = process?.env?.NODE_ENV === "development";
 interface AuthProviderValue extends AuthState {
-  currentAccount: WalletAccount | undefined;
-  accounts: WalletAccount[];
-  addPublicKey: (accountId: string, publicKey: PublicKey) => WalletAccount;
-  addAccount: (newAccount: WalletAccount) => Promise<Boolean>;
+  currentAccount: AccountWithPrivateKey | undefined;
+  accounts: AccountWithPrivateKey[];
+  addPublicKey: (
+    accountId: string,
+    publicKey: PublicKey
+  ) => AccountWithPrivateKey;
+  addAccount: (newAccount: AccountWithPrivateKey) => Promise<Boolean>;
   selectAccount: (index: number) => Promise<void>;
   changeNetwork: (newNetwork: Network) => Promise<Boolean>;
 }
@@ -33,7 +36,7 @@ interface AuthProviderValue extends AuthState {
 export interface AuthState {
   network: Network;
   selectedAccountIndex: number | undefined;
-  accounts: WalletAccount[];
+  accounts: AccountWithPrivateKey[];
   loading: Boolean;
 }
 
@@ -55,7 +58,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
   );
 
-  const addAccount = useCallback(async (newAccount: WalletAccount) => {
+  const addAccount = useCallback(async (newAccount: AccountWithPrivateKey) => {
     await appLocalStorage.addAccount(newAccount);
     setState((state) => ({
       ...state,
@@ -93,7 +96,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         (acc) => acc.accountId === accountId
       );
 
-      const accountWithPublicKey: WalletAccount = {
+      const accountWithPublicKey: AccountWithPrivateKey = {
         ...state.accounts[index],
         publicKey: publicKey,
       };
@@ -115,8 +118,11 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     return true;
   }, []);
 
-  const initAccounts = useCallback(async (): Promise<WalletAccount[]> => {
-    const accounts = (await appLocalStorage.getAccounts()) as WalletAccount[];
+  const initAccounts = useCallback(async (): Promise<
+    AccountWithPrivateKey[]
+  > => {
+    const accounts =
+      (await appLocalStorage.getAccounts()) as AccountWithPrivateKey[];
 
     if (!accounts || !accounts.length) {
       console.info("[HeaderGetWalletsList]: user has no accounts");

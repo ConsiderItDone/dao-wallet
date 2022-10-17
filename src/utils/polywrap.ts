@@ -2,6 +2,7 @@ import { PolywrapClientConfig } from "@polywrap/client-js";
 import { nearPlugin } from "@cidt/near-plugin-js";
 import { keyStores, KeyPair } from "near-api-js";
 import { AuthState } from "../provider/AuthProvider";
+import { getNearConnectionConfig } from "./near";
 
 export interface AuthConfig extends AuthState {}
 
@@ -33,15 +34,9 @@ export function getPolywrapConfig(
     plugins: [
       {
         uri: "wrap://ens/nearPlugin.polywrap.eth",
-        plugin: nearPlugin({
-          headers: {},
-          keyStore: keyStore,
-          masterAccount: selectedAccount?.accountId,
-          networkId: networkId,
-          nodeUrl: `https://rpc.${networkId}.near.org`,
-          walletUrl: `https://wallet.${networkId}.near.org`,
-          helperUrl: `https://helper.${networkId}.near.org`,
-        }),
+        plugin: nearPlugin(
+          getNearConnectionConfig(networkId, keyStore, selectedAccount)
+        ),
       },
     ],
   };

@@ -6,9 +6,7 @@ import { LocalStorage } from "../../services/chrome/localStorage";
 import Header from "../header";
 import HomePage from "../homePage";
 import "./index.css";
-
-const INDEXER_SERVICE_URL = "https://testnet-api.kitwallet.app";
-const CUSTOM_REQUEST_HEADERS = {};
+import { getAccountIds } from "../../utils/account";
 
 const LedgerConnect = () => {
   const { connect } = useLedger();
@@ -24,14 +22,6 @@ const LedgerConnect = () => {
     }
   };
 
-  const getAccountIds = async (publicKey: string) => {
-    return fetch(`${INDEXER_SERVICE_URL}/publicKey/${publicKey}/accounts`, {
-      headers: {
-        ...CUSTOM_REQUEST_HEADERS,
-      },
-    }).then((res) => res.json());
-  };
-
   const handleOnConnect = async () => {
     connect(async () => {
       const pkData = await connect((client) => client.getPublicKey());
@@ -45,13 +35,12 @@ const LedgerConnect = () => {
 
       try {
         await new LocalStorage().addAccount({
-          name: implicitAccountId,
           accountId: implicitAccountId,
           encryptedPrivateKey: "",
           tokens: [],
         });
       } catch (e) {
-        console.log("[Try to add ledger acc to localStrorage]:", e);
+        console.log("[Try to add ledger acc to localStorage]:", e);
       }
       onAfterConnect();
     });
