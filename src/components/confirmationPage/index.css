@@ -54,6 +54,8 @@
   line-height: 16px;
   text-align: right;
   color: #202020;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .confirmationPageContainer .recipientContainer,
 .confirmationPageContainer .adddressContainer{
@@ -68,9 +70,7 @@
   margin: 0 auto;
   margin-bottom: 4px;
 }
-.confirmationPageContainer .recipientContainer {
-  height: 33px;
-}
+
 .confirmationPageContainer .assetContainer {
   width: 320px;
   height: 107px;
@@ -102,6 +102,13 @@
   align-items: center;
   margin-bottom: 3px;
 }
+
+.confirmationPageContainer .assetContainer .value .valueTitle img{
+  height: 16px;
+  width: 16px;
+  margin-right: 4px;
+}
+
 .confirmationPageContainer .assetContainer .value .valueSecondaryTitle{
   font-family: var(--font_bold);
   font-style: normal;

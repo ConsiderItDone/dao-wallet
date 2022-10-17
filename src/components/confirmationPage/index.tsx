@@ -7,16 +7,16 @@ import "./index.css";
 import { goBack, goTo } from "react-chrome-extension-router";
 import { useAuth, useSendTransaction } from "../../hooks";
 import { ClipLoader } from "react-spinners";
+import { Token } from "../../services/chrome/localStorage";
 
 interface Props {
   receiver: string;
-  token: string;
+  token: Token;
   amount: number;
 }
 
 const ConfirmationPage = ({ amount, token, receiver }: Props) => {
   const { currentAccount: account } = useAuth();
-  const nearAmount = amount;
 
   const { execute, loading } = useSendTransaction(account?.accountId!);
 
@@ -36,13 +36,24 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
     }
   };
 
+  const fee = 0.00005;
+  const total = amount + fee;
+
+  const toUsdAmount = (amount: number) => {
+    //TODO get usdRatio
+    const ratio = token.decimals;
+    return `< $${ratio * amount}USD`;
+  };
+
   return (
     <div className="confirmationPageContainer">
       <Header />
       <div className="body">
         <div className="title">Confirmation</div>
         <div className="secondaryTitle">You are sending</div>
-        <div className="valueTitle">{nearAmount} NEAR</div>
+        <div className="valueTitle">
+          {amount} {token.name}
+        </div>
         <Icon className="iconsGroup" src={iconsObj.arrowDownGroup} />
         <div className="recipientContainer">
           <div className="title">From</div>
@@ -57,8 +68,8 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
             <div className="title">Asset</div>
             <div className="value">
               <div className="valueTitle">
-                <Icon src={iconsObj.nearMenu} />
-                NEAR
+                <Icon src={token.icon} />
+                {token.symbol}
               </div>
             </div>
           </div>
@@ -66,20 +77,22 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
             <div className="title">Estimated fees</div>
             <div className="value">
               <div className="valueTitle">
-                <Icon src={iconsObj.nearMenu} />
-                NEAR 0.00005 NEAR
+                <Icon src={token.icon} />
+                {fee}
+                {token.symbol}
               </div>
-              <div className="valueSecondaryTitle">{`${"< $0.01 USD"}`}</div>
+              <div className="valueSecondaryTitle">{toUsdAmount(fee)}</div>
             </div>
           </div>
           <div>
             <div className="title">Estimated total</div>
             <div className="value">
               <div className="valueTitle">
-                <Icon src={iconsObj.nearMenu} />
-                0.00105 NEAR
+                <Icon src={token.icon} />
+                {total}
+                {token.symbol}
               </div>
-              <div className="valueSecondaryTitle">{`${"< $0.01 USD"}`}</div>
+              <div className="valueSecondaryTitle">{toUsdAmount(total)}</div>
             </div>
           </div>
         </div>

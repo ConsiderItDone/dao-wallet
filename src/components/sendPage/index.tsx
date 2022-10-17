@@ -9,20 +9,22 @@ import { Formik, Form, Field, FormikProps, FieldProps } from "formik";
 import { useAuth } from "../../hooks";
 import { Token } from "../../services/chrome/localStorage";
 import Select from "react-select";
+import { NEAR_TOKEN } from "../../consts/near";
 
 interface SendProps {
-  token: string | undefined;
+  token: Token | undefined;
   amount: number | undefined;
   receiver: string | undefined;
 }
+
 type FormInstance = FormikProps<SendProps>;
+
 const Info = () => {
   const { currentAccount } = useAuth();
   const [receiverValidated, setReceiverValidated] = useState<boolean>();
   const [usdValue, setUsdValue] = useState<number>();
 
   const onSubmit = (values: SendProps) => {
-    console.log("SUMBIT", values);
     const { receiver, amount, token } = values;
     if (receiverValidated) {
       goTo(ConfirmationPage, { receiver, amount, token: token });
@@ -34,13 +36,13 @@ const Info = () => {
 
   const getSelectOptions = (
     assets: Token[]
-  ): { label: React.ReactElement; value: string }[] => {
+  ): { label: React.ReactElement; value: Token }[] => {
     const nearToken = {
-      value: "near",
+      value: NEAR_TOKEN,
       label: (
         <div className="container">
           <div className="token">
-            <img src={iconsObj.nearMenu} alt="nearToken" />
+            <img src={NEAR_TOKEN.icon} alt="nearToken" />
             <span>Near</span>
           </div>
           <div className="amount">000</div>
@@ -49,22 +51,22 @@ const Info = () => {
     };
     return [
       nearToken,
-      ...assets.map((a) => ({
-        value: a.address,
+      ...assets.map((token) => ({
+        value: token,
         label: (
           <div className="container">
             <div className="token">
-              <img src={a.icon} alt={a.name} />
-              <span>{a.name}</span>
+              <img src={token.icon} alt={token.name} />
+              <span>{token.name}</span>
             </div>
-            <div className="amount">100 {a.symbol}</div>
+            <div className="amount">100 {token.symbol}</div>
           </div>
         ),
       })),
     ];
   };
 
-  const handleSelectToken = (formik: FormInstance, value: string) => {
+  const handleSelectToken = (formik: FormInstance, value: Token) => {
     formik.setFieldValue("token", value);
   };
 
@@ -101,7 +103,11 @@ const Info = () => {
       <div className="body">
         <div className="title">Send</div>
         <Formik<SendProps>
-          initialValues={{ token: "", amount: undefined, receiver: "" }}
+          initialValues={{
+            token: undefined,
+            amount: undefined,
+            receiver: undefined,
+          }}
           onSubmit={onSubmit}
         >
           {(props: FormikProps<SendProps>) => (
