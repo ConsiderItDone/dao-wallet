@@ -75,8 +75,10 @@ const Info = () => {
   };
 
   const handleSetMaxAmount = (formik: FormInstance) => {
-    //TODO set max value here
-    formik.setFieldValue("amount", 999);
+    //TODO calculate max amount here
+    const maxAmount = 999;
+    formik.setFieldValue("amount", maxAmount);
+    handleAmountChange(formik.getFieldProps("token").value, maxAmount);
   };
 
   const customStyles = {
@@ -130,6 +132,7 @@ const Info = () => {
                       )}
                       <input
                         {...field}
+                        disabled={!props.getFieldProps("token").value}
                         onChange={(event) => {
                           field.onChange(event);
                           handleAmountChange(
@@ -146,9 +149,10 @@ const Info = () => {
                 </Field>
                 {usdValue && <span className="value">≈ ${usdValue} USD</span>}
                 <button
-                  onClick={() => handleSetMaxAmount(props)}
-                  type="button"
                   className="btnMax"
+                  type="button"
+                  onClick={() => handleSetMaxAmount(props)}
+                  disabled={!props.getFieldProps("token").value}
                 >
                   Max
                 </button>
