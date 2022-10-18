@@ -1,6 +1,7 @@
 import { bignumberToNumber } from "./bignumber";
 import { ethers } from "ethers";
 import { InvokeResult } from "@polywrap/core-js";
+import { fetchWithViewFunction } from "./polywrap";
 
 const TOKEN_METADATA_METHOD_NAME = "ft_metadata";
 const TOKEN_BALANCE_METHOD_NAME = "ft_balance_of";
@@ -18,21 +19,14 @@ export async function fetchTokenMetadata(
     args?: Record<string, unknown> | Uint8Array
   ) => Promise<InvokeResult>
 ): Promise<TokenMetadata | null> {
-  try {
-    const result = await viewFunctionExecute({
+  return fetchWithViewFunction(
+    {
       contractId: tokenAddress,
       methodName: TOKEN_METADATA_METHOD_NAME,
       args: JSON.stringify(""),
-    });
-    const viewFunctionResult = result?.data;
-    const fnResult = JSON.parse(viewFunctionResult as any).result;
-    const parsedResult = new TextDecoder().decode(
-      Uint8Array.from(fnResult).buffer
-    );
-    return JSON.parse(parsedResult);
-  } catch {
-    return null;
-  }
+    },
+    viewFunctionExecute
+  );
 }
 
 export async function fetchTokenBalance(
@@ -43,23 +37,16 @@ export async function fetchTokenBalance(
     args?: Record<string, unknown> | Uint8Array
   ) => Promise<InvokeResult>
 ): Promise<number | null> {
-  try {
-    const result = await viewFunctionExecute({
+  const bignumberValue = await fetchWithViewFunction(
+    {
       contractId: tokenAddress,
       methodName: TOKEN_BALANCE_METHOD_NAME,
       args: JSON.stringify({ account_id: accountId }),
-    });
-    const viewFunctionResult = result?.data;
-    const fnResult = JSON.parse(viewFunctionResult as any).result;
-    const parsedResult = new TextDecoder().decode(
-      Uint8Array.from(fnResult).buffer
-    );
-    const bignumberValue = JSON.parse(parsedResult);
-    return bignumberToNumber(
-      ethers.BigNumber.from(bignumberValue),
-      tokenDecimals
-    );
-  } catch {
-    return null;
-  }
+    },
+    viewFunctionExecute
+  );
+  return bignumberToNumber(
+    ethers.BigNumber.from(bignumberValue),
+    tokenDecimals
+  );
 }

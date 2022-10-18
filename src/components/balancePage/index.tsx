@@ -19,6 +19,7 @@ import { useStakingData } from "../../hooks/useStakingData";
 import { parseNearTokenAmount } from "../../utils/near";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useAccountNftCollections } from "../../hooks/useAccountNftCollections";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -92,6 +93,8 @@ const BalancePage = () => {
     totalPending: totalStakedPending,
     totalAvailable: totalStakedAvailable,
   } = useStakingData(account?.accountId);
+
+  const nftCollections = useAccountNftCollections(account?.accountId);
 
   useEffect(() => {
     setAccountBalance(null);
@@ -449,7 +452,7 @@ const BalancePage = () => {
       {footerTab === "tokens" ? (
         <TokenList tokens={tokenList || []} />
       ) : (
-        <NftList nfts={[]} />
+        <NftList nftCollections={nftCollections || []} />
       )}
     </div>
   );

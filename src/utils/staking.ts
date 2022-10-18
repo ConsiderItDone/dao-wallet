@@ -1,5 +1,6 @@
 import { INDEXER_SERVICE_URL } from "../consts/near";
 import { InvokeResult } from "@polywrap/core-js";
+import { fetchWithViewFunction } from "./polywrap";
 
 const CUSTOM_REQUEST_HEADERS = {};
 const GET_ACCOUNT_TOTAL_BALANCE_METHOD_NAME = "get_account_total_balance";
@@ -30,21 +31,14 @@ export async function fetchTotalStakedAmount(
     args?: Record<string, unknown> | Uint8Array
   ) => Promise<InvokeResult>
 ): Promise<string | null> {
-  try {
-    const result = await viewFunctionExecute({
+  return fetchWithViewFunction(
+    {
       contractId: validatorId,
       methodName: GET_ACCOUNT_TOTAL_BALANCE_METHOD_NAME,
       args: JSON.stringify({ account_id: accountId }),
-    });
-    const viewFunctionResult = result?.data;
-    const fnResult = JSON.parse(viewFunctionResult as any).result;
-    const parsedResult = new TextDecoder().decode(
-      Uint8Array.from(fnResult).buffer
-    );
-    return JSON.parse(parsedResult);
-  } catch {
-    return null;
-  }
+    },
+    viewFunctionExecute
+  );
 }
 
 export async function fetchAccountStakedBalance(
@@ -54,21 +48,14 @@ export async function fetchAccountStakedBalance(
     args?: Record<string, unknown> | Uint8Array
   ) => Promise<InvokeResult>
 ): Promise<string | null> {
-  try {
-    const result = await viewFunctionExecute({
+  return fetchWithViewFunction(
+    {
       contractId: validatorId,
       methodName: GET_ACCOUNT_STAKED_BALANCE_METHOD_NAME,
       args: JSON.stringify({ account_id: accountId }),
-    });
-    const viewFunctionResult = result?.data;
-    const fnResult = JSON.parse(viewFunctionResult as any).result;
-    const parsedResult = new TextDecoder().decode(
-      Uint8Array.from(fnResult).buffer
-    );
-    return JSON.parse(parsedResult);
-  } catch {
-    return null;
-  }
+    },
+    viewFunctionExecute
+  );
 }
 
 export async function fetchAccountUnstakedBalance(
@@ -78,21 +65,14 @@ export async function fetchAccountUnstakedBalance(
     args?: Record<string, unknown> | Uint8Array
   ) => Promise<InvokeResult>
 ): Promise<string | null> {
-  try {
-    const result = await viewFunctionExecute({
+  return fetchWithViewFunction(
+    {
       contractId: validatorId,
       methodName: GET_ACCOUNT_UNSTAKED_BALANCE_METHOD_NAME,
       args: JSON.stringify({ account_id: accountId }),
-    });
-    const viewFunctionResult = result?.data;
-    const fnResult = JSON.parse(viewFunctionResult as any).result;
-    const parsedResult = new TextDecoder().decode(
-      Uint8Array.from(fnResult).buffer
-    );
-    return JSON.parse(parsedResult);
-  } catch {
-    return null;
-  }
+    },
+    viewFunctionExecute
+  );
 }
 
 export async function fetchIsAccountUnstakedBalanceAvailable(
@@ -102,19 +82,12 @@ export async function fetchIsAccountUnstakedBalanceAvailable(
     args?: Record<string, unknown> | Uint8Array
   ) => Promise<InvokeResult>
 ): Promise<string | null> {
-  try {
-    const result = await viewFunctionExecute({
+  return fetchWithViewFunction(
+    {
       contractId: validatorId,
       methodName: GET_IS_ACCOUNT_UNSTAKED_BALANCE_AVAILABLE_METHOD_NAME,
       args: JSON.stringify({ account_id: accountId }),
-    });
-    const viewFunctionResult = result?.data;
-    const fnResult = JSON.parse(viewFunctionResult as any).result;
-    const parsedResult = new TextDecoder().decode(
-      Uint8Array.from(fnResult).buffer
-    );
-    return JSON.parse(parsedResult);
-  } catch {
-    return null;
-  }
+    },
+    viewFunctionExecute
+  );
 }
