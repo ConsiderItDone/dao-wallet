@@ -89,13 +89,9 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
   async setLastSelectedAccountIndex(index: number): Promise<void> {
     try {
-      const result = await this.set({
+      return await this.set({
         [LAST_SELECTED_ACCOUNT_INDEX_KEY]: index,
       });
-      if (isInDevelopmentMode) {
-        window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
-      }
-      return result;
     } catch (error) {
       console.error("[SetLastSelectedAccountIndex]:", error);
     }
