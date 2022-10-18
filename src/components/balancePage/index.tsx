@@ -22,6 +22,14 @@ const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
 export const ACCOUNT_BALANCE_METHOD_NAME = "getAccountBalance";
 
+const formatTokenAmount = (amount: number, fractionDigits: number = 5) => {
+  return Number(amount.toFixed(fractionDigits));
+};
+
+const formatUSDAmount = (amount: number, fractionDigits: number = 2) => {
+  return Number(amount.toFixed(fractionDigits));
+};
+
 export interface AccountBalance {
   available: number;
   staked: number;
@@ -59,7 +67,11 @@ const BalancePage = () => {
 
   const [tokenList, setTokenList] = useState<TokenAmountData[] | null>(null);
 
-  const accountTotalStakedAmount = useStakingData(account?.accountId);
+  const {
+    totalStaked,
+    totalPending: totalStakedPending,
+    totalAvailable: totalStakedAvailable,
+  } = useStakingData(account?.accountId);
 
   useEffect(() => {
     if (account?.accountId) {
@@ -164,16 +176,13 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountTotalStakedAmount
-                  ? accountTotalStakedAmount.toFixed(5)
-                  : 0}{" "}
-                NEAR
+                {totalStaked ? formatTokenAmount(totalStaked) : 0} NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
-              {accountTotalStakedAmount && nearToUsdRatio
-                ? (accountTotalStakedAmount * nearToUsdRatio).toFixed(5)
+              {totalStaked && nearToUsdRatio
+                ? formatUSDAmount(totalStaked * nearToUsdRatio)
                 : 0}{" "}
               USD
             </div>
@@ -193,14 +202,23 @@ const BalancePage = () => {
           className="btn"
         >
           <div className="name">
-            <div>Pending release </div>
+            <div>Pending release</div>
           </div>
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">0 NEAR</div>
+              <div className="value">
+                {totalStakedPending ? formatTokenAmount(totalStakedPending) : 0}{" "}
+                NEAR
+              </div>
             </div>
-            <div className="valueBalance">≈ $0 USD</div>
+            <div className="valueBalance">
+              ≈ $
+              {totalStakedPending && nearToUsdRatio
+                ? formatUSDAmount(totalStakedPending * nearToUsdRatio)
+                : 0}{" "}
+              USD
+            </div>
           </div>
         </button>
         <button
@@ -217,14 +235,25 @@ const BalancePage = () => {
           className="btn"
         >
           <div className="name">
-            <div>Reserved for transactions</div>
+            <div>Available for withdrawal</div>
           </div>
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">0 NEAR</div>
+              <div className="value">
+                {totalStakedAvailable
+                  ? formatTokenAmount(totalStakedAvailable)
+                  : 0}{" "}
+                NEAR
+              </div>
             </div>
-            <div className="valueBalance">≈ $0 USD</div>
+            <div className="valueBalance">
+              ≈ $
+              {totalStakedAvailable && nearToUsdRatio
+                ? formatUSDAmount(totalStakedAvailable * nearToUsdRatio)
+                : 0}{" "}
+              USD
+            </div>
           </div>
         </button>
       </div>
@@ -248,21 +277,23 @@ const BalancePage = () => {
           className="btn"
         >
           <div className="name">
-            <div>Total balance </div>
+            <div>Total balance</div>
             <Icon className="arrow" src={iconsObj.arrowGrey} />
           </div>
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountBalance?.total ? accountBalance.total.toFixed(5) : 0}{" "}
+                {accountBalance?.total
+                  ? formatTokenAmount(accountBalance.total)
+                  : 0}{" "}
                 NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
               {accountBalance?.total && nearToUsdRatio
-                ? (accountBalance.total * nearToUsdRatio).toFixed(5)
+                ? formatUSDAmount(accountBalance.total * nearToUsdRatio, 5)
                 : 0}{" "}
               USD
             </div>
@@ -281,23 +312,21 @@ const BalancePage = () => {
           type="button"
           className="btn"
         >
-          <div className="name">
-            Reserved for storage<div></div>
-          </div>
+          <div className="name">Reserved for storage</div>
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountTotalStakedAmount
-                  ? accountTotalStakedAmount.toFixed(5)
+                {accountBalance?.stateStaked
+                  ? formatTokenAmount(accountBalance.stateStaked)
                   : 0}{" "}
                 NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
-              {accountTotalStakedAmount && nearToUsdRatio
-                ? (accountTotalStakedAmount * nearToUsdRatio).toFixed(2)
+              {accountBalance?.stateStaked && nearToUsdRatio
+                ? formatUSDAmount(accountBalance.stateStaked * nearToUsdRatio)
                 : 0}{" "}
               USD
             </div>
@@ -327,7 +356,9 @@ const BalancePage = () => {
             <div className="valueBalance">
               ≈ $
               {nearToUsdRatio
-                ? (RESERVED_FOR_TRANSACTION_FEES * nearToUsdRatio).toFixed(2)
+                ? formatUSDAmount(
+                    RESERVED_FOR_TRANSACTION_FEES * nearToUsdRatio
+                  )
                 : 0}{" "}
               USD
             </div>
@@ -345,11 +376,13 @@ const BalancePage = () => {
           title="Available Balance"
           walletAddress={account?.accountId || ""}
           nearAmount={
-            accountBalance?.available ? accountBalance.available.toFixed(4) : 0
+            accountBalance?.available
+              ? formatTokenAmount(accountBalance.available, 4)
+              : 0
           }
           usdAmount={
             accountBalance?.available
-              ? (accountBalance.available * nearToUsdRatio).toFixed(2)
+              ? formatUSDAmount(accountBalance.available * nearToUsdRatio)
               : 0
           }
           isLoading={isLoadingAccountBalance || !account || !accountBalance}
@@ -374,7 +407,9 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountBalance?.total ? accountBalance.total.toFixed(5) : 0}{" "}
+                {accountBalance?.total
+                  ? formatTokenAmount(accountBalance.total)
+                  : 0}{" "}
                 NEAR
               </div>
             </div>
@@ -407,15 +442,9 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountTotalStakedAmount
-                  ? accountTotalStakedAmount.toFixed(5)
-                  : 0}{" "}
-                NEAR
+                {totalStaked ? formatTokenAmount(totalStaked) : 0} NEAR
               </div>
             </div>
-            {!!stakeValue?.balance && !stakeVisible && (
-              <div className="valueBalance">{stakeValue?.balance}</div>
-            )}
           </button>
         ) : (
           balanceSecondary()

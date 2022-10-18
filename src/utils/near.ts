@@ -22,6 +22,7 @@ export function getNearConnectionConfig(
   };
 }
 
-export function parseNearTokenAmount(amount: string | number) {
+export function parseNearTokenAmount(amount: string | number | null) {
+  if (!amount) return 0;
   return bignumberToNumber(ethers.BigNumber.from(amount), NEAR_TOKEN.decimals);
 }

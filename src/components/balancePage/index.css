@@ -51,6 +51,7 @@
 .balancePageContainer .body .valueContainer{
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 .balancePageContainer .body .balanceMenu .valueContainer,
 .balancePageContainer .body .balanceMenu .dropdownStake {
