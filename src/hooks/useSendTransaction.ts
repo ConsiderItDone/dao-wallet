@@ -35,8 +35,9 @@ export const useSendTransaction = (
           amount: formatNearAmount(amount),
         },
       });
-      setState({ ...result, loading: false });
-      return state;
+      const newState = { ...result, loading: false };
+      setState(newState);
+      return newState;
     } else {
       const { data: transaction, error: createTransactionError } = await invoke(
         {
@@ -81,20 +82,23 @@ export const useSendTransaction = (
           if (sendTxError) {
             error = sendTxError;
           }
-          setState({
+          const newState = {
             ...sendTxResult,
             loading: false,
-          });
-          return state;
+          };
+          setState(newState);
+          return newState;
         }
       }
 
-      setState((state) => ({
+      const newState = {
         ...state,
         loading: false,
+        //@ts-ignore
         error: error,
-      }));
-      return state;
+      };
+      setState(newState);
+      return newState;
     }
   };
 
