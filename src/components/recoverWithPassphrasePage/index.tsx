@@ -97,6 +97,7 @@ export const RecoverWithPassphrasePage = () => {
 
       await addAccount({
         accountId: accountIds[0],
+        privateKey,
         encryptedPrivateKey,
         tokens: [],
         isLedger: false,

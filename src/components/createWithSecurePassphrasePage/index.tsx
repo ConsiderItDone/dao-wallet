@@ -138,6 +138,7 @@ const CreateWithSecurePassphrasePage = () => {
       await createNewAccount(accountId, privateKey, network);
       await addAccount({
         accountId,
+        privateKey,
         encryptedPrivateKey,
         tokens: [],
         isLedger: false,
