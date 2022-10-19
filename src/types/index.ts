@@ -8,3 +8,12 @@ export interface AccountData {
 }
 
 export type Network = "mainnet" | "testnet" | "betanet";
+
+export interface NFT {
+  title: string;
+  description: string;
+  media: string;
+  tokenId: string;
+  owner: string;
+  contractName: string;
+}

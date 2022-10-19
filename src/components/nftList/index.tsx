@@ -2,6 +2,8 @@ import "./index.css";
 import { NftCollection } from "../../hooks/useAccountNftCollections";
 import iconsObj from "../../assets/icons";
 import React from "react";
+import { goTo } from "react-chrome-extension-router";
+import { NftPage } from "../nftPage";
 
 interface Props {
   nftCollections: NftCollection[];
@@ -35,7 +37,16 @@ export const NftList = ({ nftCollections }: Props) => {
             </div>
             <div className="nftsContainer">
               {collection?.nfts?.map((nft, index) => (
-                <div className="nftWrapper" key={index}>
+                <div
+                  className="nftWrapper"
+                  key={index}
+                  onClick={() => {
+                    goTo(NftPage, {
+                      nft,
+                    });
+                    window.scrollTo(0, 0);
+                  }}
+                >
                   <img src={nft?.media} alt="" className="nftImage" />
                 </div>
               ))}

@@ -6,19 +6,13 @@ import {
 } from "../utils/nfts";
 import { useQuery } from "./useQuery";
 import { VIEW_FUNCTION_METHOD_NAME } from "../consts/wrapper";
+import { NFT } from "../types";
 
 export interface NftCollection {
   name: string;
   icon: string;
   contractName: string;
-  nfts: Nft[];
-}
-
-export interface Nft {
-  title: string;
-  description: string;
-  media: string;
-  tokenId: string;
+  nfts: NFT[];
 }
 
 export const useAccountNftCollections = (
@@ -67,6 +61,8 @@ export const useAccountNftCollections = (
               description: nftMetadata?.metadata?.description,
               media: nftMetadata?.metadata?.media,
               tokenId: nftMetadata?.token_id,
+              owner: nftMetadata?.owner_id,
+              contractName: collectionContractName,
             })) || [],
         });
       }

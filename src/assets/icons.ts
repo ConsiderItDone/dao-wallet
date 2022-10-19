@@ -15,6 +15,8 @@ import { IconsMapper } from "./icons.types";
 import arrow from "../images/arrow.svg";
 import wrappedNearTokenIcon from "../images/wrappedNearTokenIcon.svg";
 import arrowRight from "../images/arrowRight.svg";
+import verticalDots from "../images/verticalDots.svg";
+import arrowUp from "../images/arrowUp.svg";
 
 const iconsObj: IconsMapper = {
   transactionIcon,
@@ -33,6 +35,8 @@ const iconsObj: IconsMapper = {
   arrow,
   wrappedNearTokenIcon,
   arrowRight,
+  verticalDots,
+  arrowUp,
 };
 
 export default iconsObj;

@@ -15,4 +15,6 @@ export interface IconsMapper extends Record<string, unknown> {
   arrow: string;
   wrappedNearTokenIcon: string;
   arrowRight: string;
+  verticalDots: string;
+  arrowUp: string;
 }

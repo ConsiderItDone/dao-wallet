@@ -1,0 +1,139 @@
+.nftPageContainer {
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    background-color: var(--white_col);
+    background-image: url(../../images/bgInfo.svg);
+    background-size: cover;
+    background-position: center;
+    font-family: var(--font_manrope);
+    color: var(--black_color_secondary);
+}
+
+.nftPageContainer .body {
+    border-radius: 8px;
+    height: calc(100% - 80px);
+    padding: 12px 24px 30px;
+    max-width: 320px;
+    margin: 0 auto;
+    background-color: var(--white_col);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    margin-top: 32px;
+}
+
+.nftPageContainer .body .nftHeaderWrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nftPageContainer .body .nftHeaderWrapper .nftTitle {
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 110%;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nftPageContainer .body .nftHeaderWrapper .contextMenuDotsWrapper {
+    display: flex;
+    width: 20px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.nftPageContainer .body .nftHeaderWrapper .contextMenuDotsWrapper:hover  {
+    opacity: 0.8;
+}
+
+.nftPageContainer .body .nftMediaWrapper {
+    margin: 17.5px auto 0;
+    border-radius: 8px;
+}
+
+.nftPageContainer .body .nftMediaWrapper .nftMedia {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.nftPageContainer .body .ownerWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 12px;
+}
+
+.nftPageContainer .body .ownerWrapper .label {
+    opacity: 0.4;
+    font-weight: 600;
+}
+
+.nftPageContainer .body .ownerWrapper .value {
+    font-weight: 700;
+}
+
+.nftPageContainer .body .descriptionWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: 26px;
+}
+
+.nftPageContainer .body .descriptionWrapper .descriptionHeader {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nftPageContainer .body .descriptionWrapper .descriptionHeader:hover {
+    opacity: 0.8;
+}
+
+.nftPageContainer .body .descriptionWrapper .descriptionHeader .label {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 700;
+}
+
+.nftPageContainer .body .descriptionWrapper .descriptionHeader .showDescriptionWrapper {
+
+}
+
+.nftPageContainer .body .descriptionWrapper .descriptionHeader .showDescriptionWrapper .showDescriptionIcon {
+
+}
+
+.nftPageContainer .body .descriptionWrapper .description {
+    font-size: 14px;
+    line-height: 19px;
+    margin-top: 8px;
+}
+
+.nftPageContainer .body .transferButton {
+    min-width: 113px;
+    height: 48px;
+    text-align: center;
+    margin: 31px auto 0;
+    border-radius: 88px;
+    background: #202020;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    color: var(--white_col);
+    cursor: pointer;
+}
+
+.nftPageContainer .body .transferButton:hover {
+    opacity: 0.8;
+}
+
+.nftPageContainer .body .transferButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
