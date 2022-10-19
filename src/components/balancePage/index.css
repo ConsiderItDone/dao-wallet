@@ -148,3 +148,8 @@
   text-align: right;
   color: #20202040;
 }
+
+.footerLoadingContainer {
+  max-width: 200px;
+  margin: 0 auto;
+}

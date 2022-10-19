@@ -10,6 +10,7 @@ import "./index.css";
 import { SessionStorage } from "../../services/chrome/sessionStorage";
 import ChooseMethod from "../chooseMethod";
 import { useAuth } from "../../hooks";
+import BalancePage from "../balancePage";
 
 const formatWalletName = (str: string) => {
   if (str?.length <= 8) {
@@ -36,6 +37,7 @@ const Header = () => {
   const handleWalletChange = async (walletIndex: number) => {
     setDropdownVisible(!dropdownVisible);
     selectAccount(walletIndex);
+    goTo(BalancePage);
   };
 
   const handleGoBack = async () => {

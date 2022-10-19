@@ -1,57 +1,18 @@
 import "./index.css";
-import { NftCollection } from "../../hooks/useAccountNftCollections";
-import iconsObj from "../../assets/icons";
 import React from "react";
-import { goTo } from "react-chrome-extension-router";
-import { NftPage } from "../nftPage";
+import { NftCollection } from "../../types";
+import { NftCollectionGrid } from "../nftCollectionGrid";
 
 interface Props {
   nftCollections: NftCollection[];
 }
 
-export const NftList = ({ nftCollections }: Props) => {
+export const NftCollectionsList = ({ nftCollections }: Props) => {
   return (
     <div className="nftCollectionsContainer">
       {nftCollections?.length ? (
-        nftCollections.map((collection, index) => (
-          <div className="collection" key={index}>
-            <div className="collectionHeader">
-              <div className="leftPartWrapper">
-                <div className="collectionIconWrapper">
-                  <img
-                    src={collection?.icon}
-                    alt=""
-                    className="collectionIcon"
-                  />
-                </div>
-                <div className="nameAndCountWrapper">
-                  <div className="name">{collection?.name}</div>
-                  <div className="count">{collection?.nfts?.length}</div>
-                </div>
-              </div>
-              <div className="rightPartWrapper">
-                <div className="arrowWrapper">
-                  <img src={iconsObj.arrowRight} alt="" className="arrow" />
-                </div>
-              </div>
-            </div>
-            <div className="nftsContainer">
-              {collection?.nfts?.map((nft, index) => (
-                <div
-                  className="nftWrapper"
-                  key={index}
-                  onClick={() => {
-                    goTo(NftPage, {
-                      nft,
-                    });
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  <img src={nft?.media} alt="" className="nftImage" />
-                </div>
-              ))}
-            </div>
-          </div>
+        nftCollections.map((collection) => (
+          <NftCollectionGrid collection={collection} />
         ))
       ) : (
         <div className="noCollections">You don't have NFTs</div>

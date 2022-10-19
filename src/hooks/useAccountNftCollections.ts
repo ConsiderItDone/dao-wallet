@@ -6,14 +6,7 @@ import {
 } from "../utils/nfts";
 import { useQuery } from "./useQuery";
 import { VIEW_FUNCTION_METHOD_NAME } from "../consts/wrapper";
-import { NFT } from "../types";
-
-export interface NftCollection {
-  name: string;
-  icon: string;
-  contractName: string;
-  nfts: NFT[];
-}
+import { NftCollection } from "../types";
 
 export const useAccountNftCollections = (
   accountId: string | undefined
@@ -26,12 +19,16 @@ export const useAccountNftCollections = (
 
   useEffect(() => {
     const getAccountNfts = async () => {
-      setNftCollections(undefined);
-
-      if (!accountId) return;
+      if (!accountId) {
+        setNftCollections([]);
+        return;
+      } else {
+        setNftCollections(undefined);
+      }
 
       const likelyNftContractsList = await listLikelyNftsContracts(accountId);
       if (!likelyNftContractsList?.list) {
+        setNftCollections([]);
         return;
       }
 

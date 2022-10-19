@@ -17,3 +17,10 @@ export interface NFT {
   owner: string;
   contractName: string;
 }
+
+export interface NftCollection {
+  name: string;
+  icon: string;
+  contractName: string;
+  nfts: NFT[];
+}

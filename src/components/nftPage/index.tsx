@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.css";
 import Header from "../header";
 import { NFT } from "../../types";
@@ -9,6 +9,13 @@ interface Props {
 }
 
 export const NftPage = ({ nft }: Props) => {
+  const [shouldShowDescription, setShouldShowDescription] =
+    useState<boolean>(true);
+
+  const onShowDescription = () => {
+    setShouldShowDescription((prevState) => !prevState);
+  };
+
   return (
     <div className="nftPageContainer">
       <Header />
@@ -31,17 +38,25 @@ export const NftPage = ({ nft }: Props) => {
           <div className="value">{nft?.owner}</div>
         </div>
         <div className="descriptionWrapper">
-          <div className="descriptionHeader">
+          <div className="descriptionHeader" onClick={onShowDescription}>
             <div className="label">Description</div>
             <div className="showDescriptionWrapper">
               <img
                 src={iconsObj.arrowUp}
                 alt=""
-                className="showDescriptionIcon"
+                className={`showDescriptionIcon ${
+                  !shouldShowDescription ? "reversed" : ""
+                }`}
               />
             </div>
           </div>
-          <div className="description">{nft?.description}</div>
+          <div
+            className={`description ${
+              !shouldShowDescription ? "descriptionHidden" : ""
+            }`}
+          >
+            {nft?.description}
+          </div>
         </div>
         <button className="transferButton">Transfer</button>
       </div>

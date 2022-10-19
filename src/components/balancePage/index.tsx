@@ -11,7 +11,7 @@ import { AccountWithPrivateKey } from "../../services/chrome/localStorage";
 import { useAuth, useQuery } from "../../hooks";
 import { getNearToUSDRatio } from "../../services/coingecko/api";
 import { NEAR_TOKEN } from "../../consts/near";
-import { NftList } from "../nftList";
+import { NftCollectionsList } from "../nftList";
 import { TokenAmountData, TokenList } from "../tokenList";
 import { fetchTokenBalance, TokenMetadata } from "../../utils/fungibleTokens";
 import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
@@ -20,6 +20,7 @@ import { parseNearTokenAmount } from "../../utils/near";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useAccountNftCollections } from "../../hooks/useAccountNftCollections";
+import { Loading } from "../animations/loading";
 
 const RESERVED_FOR_TRANSACTION_FEES = 0.05;
 
@@ -143,6 +144,8 @@ const BalancePage = () => {
       accountBalance: AccountBalance,
       nearToUsdRatio: number
     ) => {
+      setTokenList(null);
+
       const newTokenList: TokenAmountData[] = [];
 
       const nearTokenAmountData: TokenAmountData = {
@@ -450,9 +453,19 @@ const BalancePage = () => {
         <NavFooter step={footerTab} setStep={setFooterTab} />
       </div>
       {footerTab === "tokens" ? (
-        <TokenList tokens={tokenList || []} />
+        Array.isArray(tokenList) ? (
+          <TokenList tokens={tokenList} />
+        ) : (
+          <div className="footerLoadingContainer">
+            <Loading />
+          </div>
+        )
+      ) : Array.isArray(nftCollections) ? (
+        <NftCollectionsList nftCollections={nftCollections} />
       ) : (
-        <NftList nftCollections={nftCollections || []} />
+        <div className="footerLoadingContainer">
+          <Loading />
+        </div>
       )}
     </div>
   );

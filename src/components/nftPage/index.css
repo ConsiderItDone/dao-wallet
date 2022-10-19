@@ -24,7 +24,7 @@
 
 .nftPageContainer .body .nftHeaderWrapper {
     display: flex;
-    justify-content: space-between;
+    position: relative;
 }
 
 .nftPageContainer .body .nftHeaderWrapper .nftTitle {
@@ -34,10 +34,12 @@
     max-width: 250px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .nftPageContainer .body .nftHeaderWrapper .contextMenuDotsWrapper {
+    position: absolute;
+    top: 0;
+    right: -8px;
     display: flex;
     width: 20px;
     justify-content: center;
@@ -88,6 +90,8 @@
     cursor: pointer;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    user-select: none;
 }
 
 .nftPageContainer .body .descriptionWrapper .descriptionHeader:hover {
@@ -101,17 +105,26 @@
 }
 
 .nftPageContainer .body .descriptionWrapper .descriptionHeader .showDescriptionWrapper {
-
+    display: flex;
+    align-items: center;
 }
 
 .nftPageContainer .body .descriptionWrapper .descriptionHeader .showDescriptionWrapper .showDescriptionIcon {
+    transition: transform 0.3s;
+}
 
+.nftPageContainer .body .descriptionWrapper .descriptionHeader .showDescriptionWrapper .reversed {
+    transform: rotate(180deg);
 }
 
 .nftPageContainer .body .descriptionWrapper .description {
     font-size: 14px;
     line-height: 19px;
     margin-top: 8px;
+}
+
+.nftPageContainer .body .descriptionWrapper .descriptionHidden {
+    display: none;
 }
 
 .nftPageContainer .body .transferButton {
