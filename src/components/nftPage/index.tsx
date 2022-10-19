@@ -3,6 +3,8 @@ import "./index.css";
 import Header from "../header";
 import { NFT } from "../../types";
 import iconsObj from "../../assets/icons";
+import { goTo } from "react-chrome-extension-router";
+import { TransferNftPage } from "../transferNftPage";
 
 interface Props {
   nft: NFT;
@@ -14,6 +16,10 @@ export const NftPage = ({ nft }: Props) => {
 
   const onShowDescription = () => {
     setShouldShowDescription((prevState) => !prevState);
+  };
+
+  const onTransfer = () => {
+    goTo(TransferNftPage, { nft });
   };
 
   return (
@@ -58,7 +64,9 @@ export const NftPage = ({ nft }: Props) => {
             {nft?.description}
           </div>
         </div>
-        <button className="transferButton">Transfer</button>
+        <button className="transferButton" onClick={onTransfer}>
+          Transfer
+        </button>
       </div>
     </div>
   );
