@@ -11,8 +11,8 @@ export const NftCollectionsList = ({ nftCollections }: Props) => {
   return (
     <div className="nftCollectionsContainer">
       {nftCollections?.length ? (
-        nftCollections.map((collection) => (
-          <NftCollectionGrid collection={collection} />
+        nftCollections.map((collection, index) => (
+          <NftCollectionGrid collection={collection} key={index} />
         ))
       ) : (
         <div className="noCollections">You don't have NFTs</div>

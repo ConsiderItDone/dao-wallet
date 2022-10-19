@@ -17,7 +17,7 @@ export const NftCollectionGrid = ({ collection }: Props) => {
   };
 
   return (
-    <div className="collection" key={collection?.contractName}>
+    <div className="collection">
       <div className="collectionHeader">
         <div className="leftPartWrapper">
           <div className="collectionIconWrapper">
