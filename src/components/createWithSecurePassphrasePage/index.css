@@ -172,3 +172,8 @@
 .createWithSecurePassphrasePageContainer .body .cancel:hover {
   opacity: 0.8;
 }
+
+.createWithSecurePassphrasePageContainer .body .cancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

@@ -17,4 +17,5 @@ export interface IconsMapper extends Record<string, unknown> {
   arrowRight: string;
   verticalDots: string;
   arrowUp: string;
+  successBigIcon: string;
 }

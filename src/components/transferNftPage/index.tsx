@@ -4,13 +4,11 @@ import { NFT } from "../../types";
 import Header from "../header";
 import { accountExists } from "../../utils/account";
 import { useQuery } from "../../hooks";
-import BalancePage, {
-  ACCOUNT_BALANCE_METHOD_NAME,
-  AccountBalance,
-} from "../balancePage";
+import { ACCOUNT_BALANCE_METHOD_NAME, AccountBalance } from "../balancePage";
 import { ClipLoader } from "react-spinners";
 import { goBack, goTo } from "react-chrome-extension-router";
 import { makeNftTransfer } from "../../utils/nfts";
+import { NftTransferSuccessPage } from "../nftTransferSuccessPage";
 
 interface Props {
   nft: NFT;
@@ -97,7 +95,7 @@ export const TransferNftPage = ({ nft }: Props) => {
         recipientAccountId,
         functionCallExecute
       );
-      goTo(BalancePage);
+      goTo(NftTransferSuccessPage);
     } catch (error) {
       console.error("[HandleTransferNft]:", error);
     } finally {

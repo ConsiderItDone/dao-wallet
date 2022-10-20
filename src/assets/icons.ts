@@ -17,6 +17,7 @@ import wrappedNearTokenIcon from "../images/wrappedNearTokenIcon.svg";
 import arrowRight from "../images/arrowRight.svg";
 import verticalDots from "../images/verticalDots.svg";
 import arrowUp from "../images/arrowUp.svg";
+import successBigIcon from "../images/successBigIcon.svg";
 
 const iconsObj: IconsMapper = {
   transactionIcon,
@@ -37,6 +38,7 @@ const iconsObj: IconsMapper = {
   arrowRight,
   verticalDots,
   arrowUp,
+  successBigIcon,
 };
 
 export default iconsObj;

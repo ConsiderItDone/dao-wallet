@@ -1,0 +1,57 @@
+.nftTransferSuccessPageContainer {
+    width: 100%;
+    height: 100vh;
+    min-height: 491px;
+    background-color: #fff;
+}
+
+.nftTransferSuccessPageContainer .body {
+    background-image: url(../../images/bgInfo.svg);
+    background-position: center;
+    text-align: center;
+    padding-top: 32px;
+    background-size: cover;
+    height: calc(100% - 90px);
+    border-radius: 0 0 20px 20px;
+}
+
+.nftTransferSuccessPageContainer .body .successIconWrapper {
+    margin: 0 auto;
+    width: 70px;
+    height: 70px;
+}
+
+.nftTransferSuccessPageContainer .body .successIconWrapper .successIcon {
+    width: 100%;
+    height: 100%;
+}
+
+.nftTransferSuccessPageContainer .body .title {
+    font-family: var(--font_extra_bold);
+    font-style: normal;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 110%;
+    color: var(--black_color_secondary);
+    margin-top: 31px;
+}
+
+.nftTransferSuccessPageContainer .body .btnContinue {
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    color: var(--white_col);
+    padding: 0 24px;
+    height: 48px;
+    width: 121px;
+    background: var(--black_color_secondary);
+    border-radius: 88px;
+    margin: 40px auto 0;
+    cursor: pointer;
+}
+
+.nftTransferSuccessPageContainer .body .btnContinue:hover {
+    opacity: 0.8;
+}
