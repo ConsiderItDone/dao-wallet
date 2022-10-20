@@ -1088,10 +1088,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cidt/near-plugin-js@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@cidt/near-plugin-js/-/near-plugin-js-0.0.4.tgz#942a3f9aa9d3ca289b9b4c01e6a98a24699d6c30"
-  integrity sha512-+V6J4bBcmivxqhV7GmFnm+UAiCitgjOB9r+sTvOIpmWZdFNOld5eRzQkaEwj3hMyIeh66fxvmWOt28oPne+EsQ==
+"@cidt/near-plugin-js@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@cidt/near-plugin-js/-/near-plugin-js-0.0.5.tgz#b583002da27cfa45bf0b9750568d75ad35c3e282"
+  integrity sha512-9UIZBVyDe2GBAqM/JKdUWAl0Pz5TBo/fCZxqvQJhraPjhOHBYh4CcB0De9+45tVPga6I2XsHfM/9RXWoWQpHSQ==
   dependencies:
     "@polywrap/core-js" "0.2.0"
     bn.js "5.2.0"

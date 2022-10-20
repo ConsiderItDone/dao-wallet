@@ -17,8 +17,7 @@ interface Props {
 
 const ConfirmationPage = ({ amount, token, receiver }: Props) => {
   const { currentAccount: account } = useAuth();
-
-  const { execute, loading } = useSendTransaction(account?.accountId!);
+  const { execute, loading } = useSendTransaction();
 
   const onSubmit = async () => {
     const { data, error } = await execute({

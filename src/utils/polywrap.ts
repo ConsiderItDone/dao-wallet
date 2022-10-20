@@ -25,9 +25,6 @@ export function getPolywrapConfig(
     if (account?.privateKey) {
       const keyPair = KeyPair.fromString(account.privateKey);
       keyStore.setKey(networkId, account.accountId, keyPair);
-    } else {
-      const keyPair = KeyPair.fromRandom("ed25519");
-      keyStore.setKey(networkId, account.accountId, keyPair);
     }
   }
 

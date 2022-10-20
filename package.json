@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@cidt/near-plugin-js": "^0.0.4",
+    "@cidt/near-plugin-js": "^0.0.5",
     "@craco/craco": "^6.4.5",
     "@metamask/browser-passworder": "^3.0.0",
     "@polywrap/client-js": "0.2.0",

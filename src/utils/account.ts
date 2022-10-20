@@ -61,7 +61,7 @@ export async function accountExists(
   }
 }
 
-export async function getAccountIds(publicKey: string) {
+export async function getAccountIds(publicKey: string): Promise<string[]> {
   return fetch(`${INDEXER_SERVICE_URL}/publicKey/${publicKey}/accounts`, {
     headers: {
       ...CUSTOM_REQUEST_HEADERS,

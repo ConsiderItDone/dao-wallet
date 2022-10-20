@@ -18,8 +18,6 @@ export const useLedger = () => {
     const transport = await getSupportedTransport();
     transport.setScrambleKey("NEAR");
 
-    console.log("Transport connected", transport);
-
     transport.on("disconnect", () => {
       console.log("DISCONNECT");
     });
@@ -33,11 +31,9 @@ export const useLedger = () => {
       }
 
       const client = await createClient(transportRef.current);
-      console.log("Client created", client);
       clientRef.current = client;
 
       if (callback) {
-        console.log("callback", callback.name);
         const res = await callback(client);
 
         closeConnection();
@@ -72,7 +68,6 @@ export const useLedger = () => {
 
   const sign = useCallback(
     async (transactionData: any, path?: string) => {
-      console.log("ledgerClient", client);
       if (client) {
         return await client.sign(transactionData, path);
       } else {

@@ -2,18 +2,19 @@ import base58 from "bs58";
 import { goTo } from "react-chrome-extension-router";
 import { useNavigate } from "react-router-dom";
 import { useLedger } from "../../hooks/useLedger";
-import { LocalStorage } from "../../services/chrome/localStorage";
 import Header from "../header";
 import HomePage from "../homePage";
 import "./index.css";
 import { getAccountIds } from "../../utils/account";
+import { useAuth } from "../../hooks";
+import { toPublicKey } from "../../utils/near";
 
 const LedgerConnect = () => {
   const { connect } = useLedger();
   const navigate = useNavigate();
+  const { addAccount } = useAuth();
 
   const onAfterConnect = () => {
-    console.log("onAfterConnect");
     //TODO if(devMode)
     if (chrome.tabs) {
       navigate("/");
@@ -24,24 +25,26 @@ const LedgerConnect = () => {
 
   const handleOnConnect = async () => {
     connect(async () => {
-      const pkData = await connect((client) => client.getPublicKey());
+      const pkData: Buffer = await connect((client) => client.getPublicKey());
 
       const implicitAccountId = Buffer.from(pkData).toString("hex");
-      console.log("implicitAccountId", implicitAccountId);
-      //const { accountId, privateKey } = createNewWallet(implicitAccountId);
-      //TODO
-      const ids = await getAccountIds(base58.encode(pkData));
-      console.log("pk accounts", ids);
 
-      try {
-        await new LocalStorage().addAccount({
-          accountId: implicitAccountId,
-          encryptedPrivateKey: "",
-          tokens: [],
-        });
-      } catch (e) {
-        console.log("[Try to add ledger acc to localStorage]:", e);
+      const publicKeyString = toPublicKey(pkData, true) as string;
+      const ids = await getAccountIds(publicKeyString);
+
+      if (!ids.length) {
+        console.log("Account Not Funded");
+        //Account not funded
+        return;
       }
+      await addAccount({
+        accountId: implicitAccountId,
+        tokens: [],
+        publicKey: `ed25519:${base58.encode(pkData)}`,
+        encryptedPrivateKey: "", // + pkString,
+        isLedger: true,
+      });
+
       onAfterConnect();
     });
   };
