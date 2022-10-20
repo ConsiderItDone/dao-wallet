@@ -8,6 +8,7 @@
   --font_extra_bold: 'ManropeExtraBold';
   --font_regular: 'ManropeRegular';
   --font_manrope: 'Manrope', sans-serif;
+  --header_height: 40px;
 }
 *::-webkit-scrollbar {
   display: none;
@@ -80,4 +81,5 @@ input::placeholder {
 }
 #root {
   min-width: 440px;
+  height: calc(100vh + var(--header_height));
 }
