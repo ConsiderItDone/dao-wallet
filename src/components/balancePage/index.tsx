@@ -119,6 +119,13 @@ const BalancePage = () => {
             console.error(
               "[GetAccountBalance]: received empty account balance data"
             );
+            //TODO handle not funded account status
+            setAccountBalance({
+              available: 0,
+              staked: 0,
+              stateStaked: 0,
+              total: 0,
+            });
           }
         })
         .catch((error) => {

@@ -3,7 +3,6 @@ import { isEmpty } from "../../utils/common";
 import { BrowserStorageWrapper } from "./browserStorageWrapper";
 import { SessionStorage } from "./sessionStorage";
 import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
-import { KeyPair } from "@cidt/near-plugin-js";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 export const ACCOUNTS_KEY = "accounts";
@@ -110,9 +109,10 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       }
       let decryptedPrivateKey = "";
       try {
+        //TODO: handle if no private key (Ledger)
         decryptedPrivateKey = await decryptPrivateKeyWithPassword(
           password,
-          currentAccount.encryptedPrivateKey
+          currentAccount.encryptedPrivateKey!
         );
       } catch (error) {
         console.log("[DecryptedPrivateKet]:", error);
@@ -214,7 +214,7 @@ export interface LocalStorageAccount {
   /**
    * Private key of account gets encrypted/decrypted with hashedPassword.
    */
-  encryptedPrivateKey: string;
+  encryptedPrivateKey?: string;
   /**
    * List of account tokens added by user. Does not include default NEAR token.
    */
@@ -229,7 +229,6 @@ export interface AccountWithPrivateKey extends LocalStorageAccount {
    * Decrypted private key.
    */
   privateKey?: string;
-  keyPairs?: KeyPair[];
 }
 
 export interface Token {
