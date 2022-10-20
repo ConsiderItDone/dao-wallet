@@ -1,5 +1,5 @@
 .unlockWalletPageContainer{
-    width: 440px;
+    width: 100%;
   }
   .unlockWalletPageContainer .body {
     background-image: url(../../images/bgInfo.svg);

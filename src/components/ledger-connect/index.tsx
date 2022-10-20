@@ -28,9 +28,7 @@ const LedgerConnect = () => {
 
   const handleOnConnect = async () => {
     connect(async () => {
-      const pkData: Buffer = await connect((client) =>
-        client.getPublicKey()
-      );
+      const pkData: Buffer = await connect((client) => client.getPublicKey());
 
       const implicitAccountId = Buffer.from(pkData).toString("hex");
 

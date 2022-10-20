@@ -4,9 +4,7 @@ import Header from "../header";
 import { goBack, goTo } from "react-chrome-extension-router";
 import BalancePage from "../balancePage";
 import { useAuth } from "../../hooks";
-import {
-  LocalStorageAccount,
-} from "../../services/chrome/localStorage";
+import { LocalStorageAccount } from "../../services/chrome/localStorage";
 
 interface Props {
   account: LocalStorageAccount;
