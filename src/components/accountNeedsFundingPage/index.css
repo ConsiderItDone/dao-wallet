@@ -39,7 +39,7 @@
     text-align: center;
 }
 
-.accountNeedsFundingPageContainer .body .textContainer .ledgerKey {
+.accountNeedsFundingPageContainer .body .textContainer .accountKey {
     font-weight: 700;
     font-size: 16px;
     line-height: 20px;

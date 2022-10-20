@@ -4,7 +4,15 @@ import Header from "../header";
 import { goBack, goTo } from "react-chrome-extension-router";
 import BalancePage from "../balancePage";
 
-export const AccountNeedsFundingPage = () => {
+interface Props {
+  accountKey: string;
+  isAccountImportedWithLedger: boolean;
+}
+
+export const AccountNeedsFundingPage = ({
+  accountKey,
+  isAccountImportedWithLedger = false,
+}: Props) => {
   const onOk = () => {
     goTo(BalancePage);
   };
@@ -20,12 +28,11 @@ export const AccountNeedsFundingPage = () => {
         <div className="title">Account Imported</div>
         <div className="textContainer">
           <div className="text">
-            The following account was successfully imported using the ledger key
-            you provided:
+            The following account was successfully imported using the{" "}
+            {isAccountImportedWithLedger ? "ledger key" : "passphrase"} you
+            provided:
           </div>
-          <div className="ledgerKey">
-            3b07ebb65199018cdKX7682EBJKZ99286723jbzknccs7376289e92
-          </div>
+          <div className="accountKey">{accountKey}</div>
           <div className="text">
             The account has not yet been funded. Purchase $NEAR to perform
             transactions with the account
