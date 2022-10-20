@@ -10,7 +10,8 @@ interface Props {
 export const NftCollectionsList = ({ nftCollections }: Props) => {
   return (
     <div className="nftCollectionsContainer">
-      {nftCollections?.length ? (
+      {nftCollections?.length &&
+      nftCollections.some((collection) => collection?.nfts?.length > 0) ? (
         nftCollections.map((collection, index) => (
           <NftCollectionGrid collection={collection} key={index} />
         ))

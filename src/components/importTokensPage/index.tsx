@@ -11,6 +11,7 @@ import {
   TokenMetadata,
 } from "../../utils/fungibleTokens";
 import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
+import { ClipLoader } from "react-spinners";
 
 const formatBalance = (balance: number) => {
   if (!balance) return balance;
@@ -195,12 +196,15 @@ export const ImportTokensPage = () => {
           </div>
         )}
         <button
-          className="addTokenBtn"
+          className={`addTokenBtn ${
+            !isTokenAddressInputStep ? "importTokenBtn" : ""
+          }`}
           disabled={
             !contractAddress ||
             contractAddressError === undefined ||
             !!contractAddressError ||
-            isValidatingContractAddress
+            isValidatingContractAddress ||
+            isImportingToken
           }
           onClick={
             isTokenAddressInputStep
@@ -208,18 +212,25 @@ export const ImportTokensPage = () => {
               : handleAddTokenOnTokenImportConfirm
           }
         >
-          {isTokenAddressInputStep ? "Add Token" : "Import Token"}
+          {isTokenAddressInputStep ? (
+            "Add Token"
+          ) : isImportingToken ? (
+            <ClipLoader color="#fff" size={14} />
+          ) : (
+            "Import Token"
+          )}
         </button>
-        <div
+        <button
           className="cancel"
           onClick={
             isTokenAddressInputStep
               ? handleCancelOnAddressInput
               : handleCancelOnTokenImportConfirm
           }
+          disabled={isImportingToken}
         >
           Cancel
-        </div>
+        </button>
       </div>
     </div>
   );

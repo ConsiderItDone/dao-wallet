@@ -6,7 +6,9 @@ import { accountExists } from "../../utils/account";
 import { useQuery } from "../../hooks";
 import { ACCOUNT_BALANCE_METHOD_NAME, AccountBalance } from "../balancePage";
 import { ClipLoader } from "react-spinners";
-import { goBack } from "react-chrome-extension-router";
+import { goBack, goTo } from "react-chrome-extension-router";
+import { makeNftTransfer } from "../../utils/nfts";
+import { NftTransferSuccessPage } from "../nftTransferSuccessPage";
 
 interface Props {
   nft: NFT;
@@ -22,11 +24,12 @@ export const TransferNftPage = ({ nft }: Props) => {
     useState<boolean>(false);
   const [isTransferringNft, setIsTransferringNft] = useState<boolean>(false);
 
+  const [isRecipientEnterStep, setIsRecipientEnterStep] = useState(true);
+
   const [executeAccountBalanceQuery] = useQuery<AccountBalance>(
     ACCOUNT_BALANCE_METHOD_NAME
   );
-
-  const [isRecipientEnterStep, setIsRecipientEnterStep] = useState(true);
+  const [functionCallExecute] = useQuery("functionCall");
 
   useEffect(() => {
     const validateRecipientAccountId = async (
@@ -80,12 +83,19 @@ export const TransferNftPage = ({ nft }: Props) => {
     goBack();
   };
 
-  const handleTransferNft = () => {
+  const handleTransferNft = async () => {
     if (isTransferringNft) return;
 
     setIsTransferringNft(true);
     try {
-      // TODO: transfer NFT
+      await makeNftTransfer(
+        nft?.contractName,
+        nft?.tokenId,
+        nft?.owner,
+        recipientAccountId,
+        functionCallExecute
+      );
+      goTo(NftTransferSuccessPage);
     } catch (error) {
       console.error("[HandleTransferNft]:", error);
     } finally {

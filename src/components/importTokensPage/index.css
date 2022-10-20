@@ -98,8 +98,12 @@
     cursor: not-allowed;
 }
 
+.importTokensPageContainer .body .importTokenBtn {
+    min-width: 149px;
+}
+
 .importTokensPageContainer .body .inputError {
-    background: #FFCCCC  !important;
+    background: #FFCCCC !important;
 }
 
 .importTokensPageContainer .body .cancel {

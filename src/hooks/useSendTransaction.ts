@@ -111,7 +111,6 @@ export const useSendTransaction = (): UsePolywrapInvokeState & {
               return newState;
             }
           }
-
           const newState = {
             ...state,
             loading: false,
@@ -122,6 +121,15 @@ export const useSendTransaction = (): UsePolywrapInvokeState & {
           return newState;
         }
       }
+
+      const newState = {
+        ...state,
+        loading: false,
+        //@ts-ignore
+        error: error,
+      };
+      setState(newState);
+      return newState;
     }
     return state;
   };
