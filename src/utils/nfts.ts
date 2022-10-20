@@ -1,4 +1,8 @@
-import { INDEXER_SERVICE_URL } from "../consts/near";
+import {
+  INDEXER_SERVICE_URL,
+  NFT_TRANSFER_GAS,
+  TOKEN_TRANSFER_DEPOSIT,
+} from "../consts/near";
 import { InvokeResult } from "@polywrap/core-js";
 import { fetchWithViewFunction } from "./polywrap";
 
@@ -6,9 +10,6 @@ const NFT_METADATA_METHOD_NAME = "nft_metadata";
 const NFT_TOKENS_FOR_ACCOUNT_FROM_COLLECTION_METHOD_NAME =
   "nft_tokens_for_owner";
 const NFT_TRANSFER_METHOD_NAME = "nft_transfer";
-
-const NFT_TRANSFER_GAS = "30000000000000";
-const TOKEN_TRANSFER_DEPOSIT = "1";
 
 interface AccountLikelyNftContractsList {
   lastBlockTimestamp: string;

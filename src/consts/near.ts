@@ -11,3 +11,7 @@ export const NEAR_TOKEN: Token = {
 };
 
 export const INDEXER_SERVICE_URL = "https://testnet-api.kitwallet.app";
+
+export const FT_TRANSFER_GAS = "15000000000000";
+export const NFT_TRANSFER_GAS = "30000000000000";
+export const TOKEN_TRANSFER_DEPOSIT = "1";
