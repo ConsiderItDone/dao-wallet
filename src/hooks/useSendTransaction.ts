@@ -131,7 +131,6 @@ export const useSendTransaction = (): UsePolywrapInvokeState & {
       setState(newState);
       return newState;
     }
-    return state;
   };
 
   return { execute, ...state };
