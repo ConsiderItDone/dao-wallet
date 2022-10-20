@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLedger, useBorsh, useInvoke, useAuth, useQuery } from "./";
 import { UsePolywrapInvokeState } from "@polywrap/react/build/invoke";
 import { formatNearAmount } from "../utils/format";
-import base58 from "bs58";
 import { BigNumber } from "ethers";
 import { AccessKey } from "@cidt/near-plugin-js/build/wrap";
 import { toPublicKey } from "../utils/near";

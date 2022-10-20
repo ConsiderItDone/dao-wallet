@@ -1,4 +1,3 @@
-import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import { PolywrapProvider } from "@polywrap/react";
 import { useMemo } from "react";
 import {
