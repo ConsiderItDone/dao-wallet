@@ -6,7 +6,7 @@ import Icon from "../icon";
 import "./index.css";
 import { goTo, goBack } from "react-chrome-extension-router";
 import { Formik, Form, Field, FormikProps, FieldProps } from "formik";
-import { useAuth } from "../../hooks";
+import { useAuth, useQuery } from "../../hooks";
 import { Token } from "../../services/chrome/localStorage";
 import Select from "react-select";
 import { NEAR_TOKEN } from "../../consts/near";
@@ -23,14 +23,20 @@ const Info = () => {
   const { currentAccount } = useAuth();
   const [receiverValidated, setReceiverValidated] = useState<boolean>();
   const [usdValue, setUsdValue] = useState<number>();
+  const [getAccount] = useQuery("getAccountBalance");
+
+  const validateAccount = async (accountId: string) => {
+    const { data: accountExists } = await getAccount({ accountId });
+    if (accountExists) {
+      return true;
+    }
+    return false;
+  };
 
   const onSubmit = (values: SendProps) => {
     const { receiver, amount, token } = values;
     if (receiverValidated) {
       goTo(ConfirmationPage, { receiver, amount, token: token });
-    }
-    if (!receiverValidated) {
-      setReceiverValidated(true);
     }
   };
 
@@ -72,7 +78,6 @@ const Info = () => {
 
   //TODO token usdt ratio
   const handleAmountChange = (token: string, value: number) => {
-    console.log("token", token);
     setUsdValue(value * 6.9208 || undefined);
   };
 
@@ -81,6 +86,21 @@ const Info = () => {
     const maxAmount = 999;
     formik.setFieldValue("amount", maxAmount);
     handleAmountChange(formik.getFieldProps("token").value, maxAmount);
+  };
+
+  let timeout: NodeJS.Timeout;
+
+  const handleReceiverChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    handler: (event: any) => any
+  ) => {
+    if (timeout) clearTimeout(timeout);
+    handler(event);
+    timeout = setTimeout(async () => {
+      validateAccount(event.target.value).then((validated) => {
+        setReceiverValidated(validated);
+      });
+    }, 1000);
   };
 
   const customStyles = {
@@ -169,7 +189,14 @@ const Info = () => {
                     return (
                       <>
                         {field.value && <div className="visibleAmount">To</div>}
-                        <input {...field} className="to" placeholder="To" />
+                        <input
+                          {...field}
+                          onChange={(e) =>
+                            handleReceiverChange(e, field.onChange)
+                          }
+                          className="to"
+                          placeholder="To"
+                        />
                         {receiverValidated && (
                           <Icon
                             src={iconsObj.success}
@@ -181,7 +208,15 @@ const Info = () => {
                   }}
                 </Field>
               </div>
-              <button type="submit" className="btnSubmit">
+              <button
+                type="submit"
+                className="btnSubmit"
+                disabled={
+                  !receiverValidated ||
+                  !props.getFieldProps("receiver").value ||
+                  !props.getFieldProps("amount").value
+                }
+              >
                 Submit
               </button>
             </Form>
