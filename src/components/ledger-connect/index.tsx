@@ -8,6 +8,9 @@ import "./index.css";
 import { getAccountIds } from "../../utils/account";
 import { useAuth } from "../../hooks";
 import { toPublicKey } from "../../utils/near";
+import { AccountNeedsFundingPage } from "../accountNeedsFundingPage";
+
+//const DEFAULT_PATH = "44'/397'/0'/0'/1'";
 
 const LedgerConnect = () => {
   const { connect } = useLedger();
@@ -32,18 +35,23 @@ const LedgerConnect = () => {
       const publicKeyString = toPublicKey(pkData, true) as string;
       const ids = await getAccountIds(publicKeyString);
 
-      if (!ids.length) {
-        console.log("Account Not Funded");
-        //Account not funded
-        return;
-      }
-      await addAccount({
+      const newAccount = {
         accountId: implicitAccountId,
         tokens: [],
         publicKey: `ed25519:${base58.encode(pkData)}`,
         encryptedPrivateKey: "", // + pkString,
         isLedger: true,
-      });
+      };
+
+      if (!ids.length) {
+        console.log("Account Not Funded");
+        goTo(AccountNeedsFundingPage, {
+          account: newAccount,
+        });
+        //Account not funded
+        return;
+      }
+      await addAccount(newAccount);
 
       onAfterConnect();
     });
@@ -58,6 +66,7 @@ const LedgerConnect = () => {
           Unlock your device & open NEAR App <br /> to connect Ledger
         </div>
         <div className="icon" />
+
         <button type="button" className="connect" onClick={handleOnConnect}>
           Connect Ledger
         </button>

@@ -65,6 +65,15 @@ type FormInstance = FormikProps<SendProps>;
 const SendPage = () => {
   const { currentAccount } = useAuth();
   const [usdValue, setUsdValue] = useState<number>();
+  const [getAccount] = useQuery("getAccountBalance");
+
+  const validateAccount = async (accountId: string) => {
+    const { data: accountExists } = await getAccount({ accountId });
+    if (accountExists) {
+      return true;
+    }
+    return false;
+  };
 
   const { accountNearBalance, isLoadingAccountBalance } = useAccountNearBalance(
     currentAccount?.accountId
