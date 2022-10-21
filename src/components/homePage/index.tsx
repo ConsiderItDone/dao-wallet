@@ -11,10 +11,13 @@ import CreatePasswordPage from "../createPasswordPage";
 import { isPasswordCorrect } from "../../utils/encryption";
 import { ClipLoader } from "react-spinners";
 import { InputField } from "../form/inputField";
+import { useAuth } from "../../hooks";
 
 const HomePage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
+
+  const { initProvider } = useAuth();
 
   const [isUnlocking, setIsUnlocking] = useState<boolean>(false);
   const [shouldInitialize, setShouldInitialize] = useState<boolean>(true);
@@ -93,6 +96,7 @@ const HomePage = () => {
         if (shouldCreateAccount) {
           goTo(ChooseMethod);
         } else {
+          await initProvider();
           goTo(BalancePage);
         }
       } else {

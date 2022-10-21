@@ -1,12 +1,6 @@
 import { PolywrapProvider } from "@polywrap/react";
-import { useMemo } from "react";
-import {
-  createContext,
-  ProviderProps,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useMemo } from "react";
+import { createContext, ProviderProps, useCallback, useState } from "react";
 import {
   ACCOUNTS_KEY,
   LAST_SELECTED_ACCOUNT_INDEX_KEY,
@@ -27,6 +21,7 @@ interface AuthProviderValue extends AuthState {
   addAccount: (newAccount: AccountWithPrivateKey) => Promise<Boolean>;
   selectAccount: (index: number) => Promise<void>;
   changeNetwork: (newNetwork: Network) => Promise<Boolean>;
+  initProvider: () => Promise<void>;
 }
 
 export interface AuthState {
@@ -139,25 +134,27 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     return accounts;
   }, []);
 
-  const init = useCallback(async (network: Network = "testnet") => {
+  const initState = useCallback(async (network: Network = "testnet") => {
     const accounts = await initAccounts();
     setState((state) => ({ ...state, network, accounts, loading: false }));
   }, []); //eslint-disable-line
 
-  useEffect(() => {
+  const initProvider = useCallback(async () => {
     const updateAccount = async () => {
       console.log("updateAccount called");
       const currentAccount = await appLocalStorage.getCurrentAccount();
       if (currentAccount) {
-        selectAccount(currentAccount.accountId);
+        await selectAccount(currentAccount.accountId);
       }
     };
 
-    init();
-    updateAccount();
-    const clearEventListeners = setEventListeners(updateAccount);
+    await initState();
+    await updateAccount();
+    setEventListeners(updateAccount);
+  }, []); //eslint-disable-line
 
-    return clearEventListeners;
+  useEffect(() => {
+    initProvider();
   }, []); //eslint-disable-line
 
   return (
@@ -169,6 +166,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         selectAccount,
         addPublicKey,
         changeNetwork,
+        initProvider,
       }}
     >
       <PolywrapProvider {...getPolywrapConfig(state)}>
