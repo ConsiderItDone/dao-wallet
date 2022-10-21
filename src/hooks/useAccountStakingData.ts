@@ -12,7 +12,7 @@ import { parseNearTokenAmount } from "../utils/near";
 
 const MIN_STAKED_DISPLAY_AMOUNT = parseNearTokenAmount("100");
 
-export const useStakingData = (
+export const useAccountStakingData = (
   accountId: string | undefined
 ): {
   totalStaked: number | null | undefined;

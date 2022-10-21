@@ -19,7 +19,7 @@ interface SendProps {
 
 type FormInstance = FormikProps<SendProps>;
 
-const Info = () => {
+const SendPage = () => {
   const { currentAccount } = useAuth();
   const [receiverValidated, setReceiverValidated] = useState<boolean>();
   const [usdValue, setUsdValue] = useState<number>();
@@ -195,4 +195,4 @@ const Info = () => {
   );
 };
 
-export default Info;
+export default SendPage;

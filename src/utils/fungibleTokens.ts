@@ -2,7 +2,11 @@ import { bignumberToNumber } from "./bignumber";
 import { ethers } from "ethers";
 import { InvokeResult } from "@polywrap/core-js";
 import { fetchWithViewFunction } from "./polywrap";
-import { FT_TRANSFER_GAS, TOKEN_TRANSFER_DEPOSIT } from "../consts/near";
+import {
+  FT_TRANSFER_GAS,
+  INDEXER_SERVICE_URL,
+  TOKEN_TRANSFER_DEPOSIT,
+} from "../consts/near";
 import { formatFungibleTokenAmount } from "./format";
 
 const TOKEN_METADATA_METHOD_NAME = "ft_metadata";
@@ -12,8 +16,8 @@ const TOKEN_TRANSFER_METHOD_NAME = "ft_transfer";
 export interface TokenMetadata {
   name: string;
   symbol: string;
-  icon: string;
   decimals: number;
+  icon?: string;
 }
 
 export async function fetchTokenMetadata(
@@ -79,4 +83,15 @@ export async function sendFungibleToken(
     deposit: TOKEN_TRANSFER_DEPOSIT,
     signerId: ownerAccountId,
   });
+}
+
+// Returns contract addresses of account fungible tokens
+export async function getAccountFungibleTokens(
+  accountId: string
+): Promise<string[]> {
+  return fetch(
+    `${INDEXER_SERVICE_URL}/account/${accountId}/likelyTokensFromBlock`
+  )
+    .then((res) => res.json())
+    .then((jsonResult: any) => jsonResult?.list);
 }

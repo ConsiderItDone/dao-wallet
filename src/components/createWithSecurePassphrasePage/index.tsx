@@ -5,10 +5,7 @@ import { SessionStorage } from "../../services/chrome/sessionStorage";
 import Header from "../header";
 import HomePage from "../homePage";
 import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
-import BalancePage, {
-  ACCOUNT_BALANCE_METHOD_NAME,
-  AccountBalance,
-} from "../balancePage";
+import BalancePage, { AccountBalance } from "../balancePage";
 import {
   createNewAccount,
   generateNewSeedPhrase,
@@ -19,6 +16,7 @@ import { accountExists } from "../../utils/account";
 import { ClipLoader } from "react-spinners";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Network } from "../../types";
+import { ACCOUNT_BALANCE_METHOD_NAME } from "../../hooks/useAccountNearBalance";
 
 const ACCOUNT_ID_PATTERN = /[^a-zA-Z0-9_-]/;
 

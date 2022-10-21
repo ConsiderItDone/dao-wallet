@@ -12,6 +12,7 @@ import {
 } from "../../utils/fungibleTokens";
 import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
 import { ClipLoader } from "react-spinners";
+import defaultTokenIcon from "../../images/defaultTokenIcon.svg";
 
 const formatBalance = (balance: number) => {
   if (!balance) return balance;
@@ -41,7 +42,7 @@ export const ImportTokensPage = () => {
     useState<boolean>(true);
   const [isImportingToken, setIsImportingToken] = useState<boolean>(false);
 
-  const [execute] = useQuery(VIEW_FUNCTION_METHOD_NAME);
+  const [viewFunctionExecute] = useQuery(VIEW_FUNCTION_METHOD_NAME);
 
   useEffect(() => {
     const getTokenData = async (tokenAddress: string) => {
@@ -53,7 +54,10 @@ export const ImportTokensPage = () => {
           return;
         }
 
-        const tokenData = await fetchTokenMetadata(tokenAddress, execute);
+        const tokenData = await fetchTokenMetadata(
+          tokenAddress,
+          viewFunctionExecute
+        );
         if (!tokenData) {
           throw new Error("Failed to get token metadata");
         }
@@ -63,6 +67,7 @@ export const ImportTokensPage = () => {
           await localStorage.currentUserHasToken({
             ...tokenData,
             address: tokenAddress,
+            icon: tokenData?.icon || defaultTokenIcon,
           });
         if (hasUserAlreadyAddedChosenToken) {
           setContractAddressError("You have already added this token");
@@ -74,7 +79,7 @@ export const ImportTokensPage = () => {
             tokenAddress,
             tokenData.decimals,
             account.accountId,
-            execute
+            viewFunctionExecute
           );
           setTokenBalance(tokenBalance);
         }
@@ -121,6 +126,7 @@ export const ImportTokensPage = () => {
       await localStorage.addTokenForCurrentAccount({
         ...tokenMetadata,
         address: contractAddress,
+        icon: tokenMetadata?.icon || defaultTokenIcon,
       });
       goTo(BalancePage);
     } catch (error) {

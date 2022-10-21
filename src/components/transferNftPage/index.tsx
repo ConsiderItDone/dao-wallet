@@ -4,11 +4,12 @@ import { NFT } from "../../types";
 import Header from "../header";
 import { accountExists } from "../../utils/account";
 import { useQuery } from "../../hooks";
-import { ACCOUNT_BALANCE_METHOD_NAME, AccountBalance } from "../balancePage";
+import { AccountBalance } from "../balancePage";
 import { ClipLoader } from "react-spinners";
 import { goBack, goTo } from "react-chrome-extension-router";
 import { makeNftTransfer } from "../../utils/nfts";
 import { NftTransferSuccessPage } from "../nftTransferSuccessPage";
+import { ACCOUNT_BALANCE_METHOD_NAME } from "../../hooks/useAccountNearBalance";
 
 interface Props {
   nft: NFT;

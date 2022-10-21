@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NavFooter from "../navFooter";
 import Header from "../header";
 import BalanceCard from "../balanceCard";
@@ -7,24 +7,18 @@ import iconsObj from "../../assets/icons";
 import "./index.css";
 import SendPage from "../sendPage";
 import { goTo } from "react-chrome-extension-router";
-import { AccountWithPrivateKey } from "../../services/chrome/localStorage";
-import { useAuth, useQuery } from "../../hooks";
-import { getNearToUSDRatio } from "../../services/coingecko/api";
-import { NEAR_TOKEN } from "../../consts/near";
+import { useAuth } from "../../hooks";
+import { NEAR_RESERVED_FOR_TRANSACTION_FEES } from "../../consts/near";
 import { NftCollectionsList } from "../nftList";
-import { TokenAmountData, TokenList } from "../tokenList";
-import { fetchTokenBalance, TokenMetadata } from "../../utils/fungibleTokens";
-import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
-import { useStakingData } from "../../hooks/useStakingData";
-import { parseNearTokenAmount } from "../../utils/near";
+import { TokenList } from "../tokenList";
+import { useAccountStakingData } from "../../hooks/useAccountStakingData";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useAccountNftCollections } from "../../hooks/useAccountNftCollections";
 import { Loading } from "../animations/loading";
-
-const RESERVED_FOR_TRANSACTION_FEES = 0.05;
-
-export const ACCOUNT_BALANCE_METHOD_NAME = "getAccountBalance";
+import { useAccountTokens } from "../../hooks/useAccountTokens";
+import { useNearToUsdRatio } from "../../hooks/useNearToUsdRatio";
+import { useAccountNearBalance } from "../../hooks/useAccountNearBalance";
 
 const formatTokenAmount = (
   amount: number | null | undefined,
@@ -74,112 +68,23 @@ const BalancePage = () => {
     useState(true);
   const [isStakeDropdownVisible, setIsStakeDropdownVisible] = useState(true);
 
-  const [accountBalanceQueryExecute, { loading: isLoadingAccountBalance }] =
-    useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
-  const [viewFunctionExecute] = useQuery<TokenMetadata>(
-    VIEW_FUNCTION_METHOD_NAME
-  );
-
   const { currentAccount: account } = useAuth();
 
-  const [accountBalance, setAccountBalance] = useState<AccountBalance | null>(
-    null
+  const { accountNearBalance, isLoadingAccountBalance } = useAccountNearBalance(
+    account?.accountId
   );
-  const [nearToUsdRatio, setNearToUsdRatio] = useState<number>(0);
-
-  const [tokenList, setTokenList] = useState<TokenAmountData[] | null>(null);
-
+  const nearToUsdRatio = useNearToUsdRatio();
   const {
     totalStaked,
     totalPending: totalStakedPending,
     totalAvailable: totalStakedAvailable,
-  } = useStakingData(account?.accountId);
+  } = useAccountStakingData(account?.accountId);
 
+  const fungibleTokensList = useAccountTokens(
+    account?.accountId,
+    accountNearBalance?.available
+  );
   const nftCollections = useAccountNftCollections(account?.accountId);
-
-  useEffect(() => {
-    setAccountBalance(null);
-    if (account?.accountId) {
-      accountBalanceQueryExecute({ accountId: account?.accountId })
-        .then((balanceData) => {
-          if (balanceData?.error) {
-            console.error("[GetAccountBalanceBalanceData]:", balanceData.error);
-          }
-          const data = balanceData?.data;
-          if (data) {
-            setAccountBalance({
-              available:
-                parseNearTokenAmount(data?.available) -
-                RESERVED_FOR_TRANSACTION_FEES,
-              staked: parseNearTokenAmount(data?.staked),
-              stateStaked: parseNearTokenAmount(data?.stateStaked),
-              total: parseNearTokenAmount(data?.total),
-            });
-          } else {
-            console.error(
-              "[GetAccountBalance]: received empty account balance data"
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("[GetAccountBalance]:", error);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account?.accountId]);
-
-  useEffect(() => {
-    getNearToUSDRatio()
-      .then((ratio) => {
-        setNearToUsdRatio(ratio);
-      })
-      .catch((error) => {
-        console.error("[BalancePageGetNearToUSDRatio]:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    const formTokenList = async (
-      account: any | AccountWithPrivateKey,
-      accountBalance: AccountBalance,
-      nearToUsdRatio: number
-    ) => {
-      setTokenList(null);
-
-      const newTokenList: TokenAmountData[] = [];
-
-      const nearTokenAmountData: TokenAmountData = {
-        token: NEAR_TOKEN,
-        amount: accountBalance.available,
-        usdRatio: nearToUsdRatio,
-      };
-      newTokenList.push(nearTokenAmountData);
-
-      for (const token of account?.tokens) {
-        const tokenBalance = await fetchTokenBalance(
-          token.address,
-          token.decimals,
-          account.accountId,
-          viewFunctionExecute
-        );
-
-        newTokenList.push({
-          token,
-          amount: tokenBalance || undefined,
-          usdRatio: undefined,
-        });
-      }
-
-      setTokenList(newTokenList);
-    };
-
-    if (account && accountBalance && nearToUsdRatio) {
-      formTokenList(account, accountBalance, nearToUsdRatio);
-    } else {
-      setTokenList([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, accountBalance, nearToUsdRatio]);
 
   const balanceSecondary = () => {
     return (
@@ -293,16 +198,16 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountBalance?.total
-                  ? formatTokenAmount(accountBalance.total)
+                {accountNearBalance?.total
+                  ? formatTokenAmount(accountNearBalance.total)
                   : 0}{" "}
                 NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
-              {accountBalance?.total && nearToUsdRatio
-                ? formatUSDAmount(accountBalance.total * nearToUsdRatio, 5)
+              {accountNearBalance?.total && nearToUsdRatio
+                ? formatUSDAmount(accountNearBalance.total * nearToUsdRatio, 5)
                 : 0}{" "}
               USD
             </div>
@@ -321,16 +226,18 @@ const BalancePage = () => {
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
               <div className="value">
-                {accountBalance?.stateStaked
-                  ? formatTokenAmount(accountBalance.stateStaked)
+                {accountNearBalance?.stateStaked
+                  ? formatTokenAmount(accountNearBalance.stateStaked)
                   : 0}{" "}
                 NEAR
               </div>
             </div>
             <div className="valueBalance">
               ≈ $
-              {accountBalance?.stateStaked && nearToUsdRatio
-                ? formatUSDAmount(accountBalance.stateStaked * nearToUsdRatio)
+              {accountNearBalance?.stateStaked && nearToUsdRatio
+                ? formatUSDAmount(
+                    accountNearBalance.stateStaked * nearToUsdRatio
+                  )
                 : 0}{" "}
               USD
             </div>
@@ -350,13 +257,15 @@ const BalancePage = () => {
           <div>
             <div className="valueContainer">
               <Icon src={iconsObj.nearMenu} />
-              <div className="value">{RESERVED_FOR_TRANSACTION_FEES} NEAR</div>
+              <div className="value">
+                {NEAR_RESERVED_FOR_TRANSACTION_FEES} NEAR
+              </div>
             </div>
             <div className="valueBalance">
               ≈ $
               {nearToUsdRatio
                 ? formatUSDAmount(
-                    RESERVED_FOR_TRANSACTION_FEES * nearToUsdRatio
+                    NEAR_RESERVED_FOR_TRANSACTION_FEES * nearToUsdRatio
                   )
                 : 0}{" "}
               USD
@@ -375,16 +284,16 @@ const BalancePage = () => {
           title="Available Balance"
           walletAddress={account?.accountId || ""}
           nearAmount={
-            accountBalance?.available
-              ? formatTokenAmount(accountBalance.available, 4)
+            accountNearBalance?.available
+              ? formatTokenAmount(accountNearBalance.available, 4)
               : 0
           }
           usdAmount={
-            accountBalance?.available
-              ? formatUSDAmount(accountBalance.available * nearToUsdRatio)
+            accountNearBalance?.available && nearToUsdRatio
+              ? formatUSDAmount(accountNearBalance.available * nearToUsdRatio)
               : 0
           }
-          isLoading={isLoadingAccountBalance || !account || !accountBalance}
+          isLoading={isLoadingAccountBalance || !account || !accountNearBalance}
         />
         {isBalanceDropdownVisible ? (
           <button
@@ -400,11 +309,11 @@ const BalancePage = () => {
             </div>
             <div className="valueContainer">
               {wrapValueElementWithSkeletonLoading(
-                accountBalance?.total,
+                accountNearBalance?.total,
                 <>
                   <Icon src={iconsObj.nearMenu} />
                   <div className="value">
-                    {formatTokenAmount(accountBalance?.total)} NEAR
+                    {formatTokenAmount(accountNearBalance?.total)} NEAR
                   </div>{" "}
                 </>
               )}
@@ -453,8 +362,8 @@ const BalancePage = () => {
         <NavFooter step={footerTab} setStep={setFooterTab} />
       </div>
       {footerTab === "tokens" ? (
-        Array.isArray(tokenList) ? (
-          <TokenList tokens={tokenList} />
+        Array.isArray(fungibleTokensList) ? (
+          <TokenList tokens={fungibleTokensList} />
         ) : (
           <div className="footerLoadingContainer">
             <Loading />

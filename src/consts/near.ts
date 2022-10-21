@@ -18,3 +18,5 @@ export const ACCOUNT_HELPER_URL = "https://near-contract-helper.onrender.com";
 export const FT_TRANSFER_GAS = "15000000000000";
 export const NFT_TRANSFER_GAS = "30000000000000";
 export const TOKEN_TRANSFER_DEPOSIT = "1";
+
+export const NEAR_RESERVED_FOR_TRANSACTION_FEES = 0.05;
