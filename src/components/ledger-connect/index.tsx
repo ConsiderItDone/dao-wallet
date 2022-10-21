@@ -9,13 +9,24 @@ import { getAccountIds } from "../../utils/account";
 import { useAuth } from "../../hooks";
 import { toPublicKey } from "../../utils/near";
 import { AccountNeedsFundingPage } from "../accountNeedsFundingPage";
+import { useState } from "react";
+import iconsObj from "../../assets/icons";
+import Icon from "../icon";
 
-//const DEFAULT_PATH = "44'/397'/0'/0'/1'";
+const getLedgerHdPath = (path: string) => `44'/397'/0'/0'/${path}'`;
+
+type ConnectLedgerState = "connect" | "confirm" | "";
 
 const LedgerConnect = () => {
   const { connect } = useLedger();
   const navigate = useNavigate();
   const { addAccount } = useAuth();
+  const [path, setPath] = useState(1);
+  const [{ step, error }, setState] = useState({
+    error: "",
+    step: "" as ConnectLedgerState,
+    loading: false,
+  });
 
   const onAfterConnect = () => {
     //TODO if(devMode)
@@ -27,8 +38,14 @@ const LedgerConnect = () => {
   };
 
   const handleOnConnect = async () => {
+    setState((state) => ({ ...state, step: "connect" }));
     connect(async () => {
-      const pkData: Buffer = await connect((client) => client.getPublicKey());
+      setState((state) => ({ ...state, step: "confirm" }));
+      const hdpath = getLedgerHdPath(path.toString());
+
+      const pkData: Buffer = await connect((client) =>
+        client.getPublicKey(hdpath)
+      );
 
       const implicitAccountId = Buffer.from(pkData).toString("hex");
 
@@ -54,7 +71,24 @@ const LedgerConnect = () => {
       await addAccount(newAccount);
 
       onAfterConnect();
+    }).catch((e) => {
+      setState((state) => ({
+        ...state,
+        step: "",
+        loading: false,
+        error: e.message,
+      }));
     });
+  };
+
+  const increment = () => {
+    setPath(path + 1);
+  };
+
+  const decrement = () => {
+    if (path > 0) {
+      setPath(path - 1);
+    }
   };
 
   return (
@@ -66,13 +100,49 @@ const LedgerConnect = () => {
           Unlock your device & open NEAR App <br /> to connect Ledger
         </div>
         <div className="icon" />
-
-        <button type="button" className="connect" onClick={handleOnConnect}>
-          Connect Ledger
-        </button>
-        <button type="button" className="cancel">
-          Cancel
-        </button>
+        {step === "confirm" ? (
+          <h1>Please confirm the operation on your device...</h1>
+        ) : step === "connect" ? (
+          <h1>Connect to your Ledger device.</h1>
+        ) : (
+          <>
+            <div className="ledger-dropdown-content">
+              <div className="desc">
+                Specify an HD path to import its linked accounts.
+              </div>
+              <div className="path-wrapper">
+                <div className="default-paths">44 / 397 / 0 / 0</div>
+                <span>&ndash;</span>
+                <div className="custom-path">
+                  {path}
+                  <div className="buttons-wrapper">
+                    <div
+                      className="arrow-btn increment"
+                      role="button"
+                      onClick={increment}
+                    >
+                      <Icon src={iconsObj.arrow} />
+                    </div>
+                    <div
+                      className="arrow-btn decrement"
+                      role="button"
+                      onClick={decrement}
+                    >
+                      <Icon src={iconsObj.arrow} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="error-wrapper">{error}</div>
+            <button type="button" className="connect" onClick={handleOnConnect}>
+              Connect Ledger
+            </button>
+            <button type="button" className="cancel">
+              Cancel
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
