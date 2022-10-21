@@ -112,6 +112,7 @@
   align-items: center;
   justify-content: space-between;
   border: 1px solid #F0F0F1;
+  background: white;
   padding: 3px 3px 3px 12px;
   border-radius: 4px;
   min-width: 55px;
@@ -120,7 +121,6 @@
 
 .custom-path .buttons-wrapper {
   margin-left: 10px;
-  background: white;
 }
 
 .custom-path .arrow-btn {
