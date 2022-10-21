@@ -8,30 +8,48 @@ import { goBack, goTo } from "react-chrome-extension-router";
 import { useAuth, useSendTransaction } from "../../hooks";
 import { ClipLoader } from "react-spinners";
 import { Token } from "../../services/chrome/localStorage";
+import { EXPLORER_URL, NEAR_TOKEN } from "../../consts/near";
+import { useState } from "react";
 
 interface Props {
   receiver: string;
   token: Token;
   amount: number;
+  usdRatio?: number;
 }
 
-const ConfirmationPage = ({ amount, token, receiver }: Props) => {
+const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
   const { currentAccount: account } = useAuth();
-  const { execute, loading } = useSendTransaction();
+  const { execute, loading } = useSendTransaction(token);
+
+  const [errorTransactionHash, setErrorTransactionHash] = useState<
+    string | null
+  >(null);
 
   const onSubmit = async () => {
+    setErrorTransactionHash(null);
+
     const { data, error } = await execute({
       receiverId: receiver,
       amount: amount,
     });
 
     if (data) {
-      goTo(TransactionPage, {
-        amount,
-        receiver,
-        //@ts-ignore
-        hash: data?.transaction?.hash,
-      });
+      // @ts-ignore
+      const executeStatus: any = data?.status;
+      // @ts-ignore
+      const hash = data?.transaction?.hash;
+      if (executeStatus.SuccessValue === null) {
+        setErrorTransactionHash(`${EXPLORER_URL}/transactions/${hash}`);
+      } else {
+        goTo(TransactionPage, {
+          amount,
+          receiver,
+          tokenSymbol: token.symbol,
+          //@ts-ignore
+          hash,
+        });
+      }
     }
     if (error) {
       console.log("Error sending tx:", error);
@@ -42,9 +60,7 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
   const total = amount + fee;
 
   const toUsdAmount = (amount: number) => {
-    //TODO get usdRatio
-    const ratio = token.decimals;
-    return `< $${ratio * amount}USD`;
+    return usdRatio ? `< $${usdRatio * amount}USD` : "";
   };
 
   return (
@@ -79,9 +95,9 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
             <div className="title">Estimated fees</div>
             <div className="value">
               <div className="valueTitle">
-                <Icon src={token.icon} />
+                <Icon src={NEAR_TOKEN.icon} />
                 {fee}
-                {token.symbol}
+                {NEAR_TOKEN.symbol}
               </div>
               <div className="valueSecondaryTitle">{toUsdAmount(fee)}</div>
             </div>
@@ -90,9 +106,9 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
             <div className="title">Estimated total</div>
             <div className="value">
               <div className="valueTitle">
-                <Icon src={token.icon} />
+                <Icon src={NEAR_TOKEN.icon} />
                 {total}
-                {token.symbol}
+                {NEAR_TOKEN.symbol}
               </div>
               <div className="valueSecondaryTitle">{toUsdAmount(total)}</div>
             </div>
@@ -112,9 +128,20 @@ const ConfirmationPage = ({ amount, token, receiver }: Props) => {
             </div>
           )}
         </button>
-        <button onClick={() => goBack()} className="btnCancel" type="button">
+        <button
+          onClick={() => goBack()}
+          disabled={loading}
+          className="btnCancel"
+          type="button"
+        >
           Cancel
         </button>
+        {errorTransactionHash && (
+          <div className="transactionError">
+            <div className="label">Transaction Failed:</div>
+            <a href={errorTransactionHash}>View Transaction</a>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -100,6 +100,7 @@
   color: #202020;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   margin-bottom: 3px;
 }
 
@@ -146,6 +147,13 @@
   margin: 40px auto 12px;
   cursor: pointer;
 }
+.confirmationPageContainer .body .btnSend:hover{
+  opacity: 0.8;
+}
+.confirmationPageContainer .body .btnSend:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .confirmationPageContainer .body .btnCancel {
   font-family: var(--font_bold);
   font-style: normal;
@@ -154,4 +162,32 @@
   line-height: 18px;
   color: #20202050;
   margin: 0 auto;
+  cursor: pointer;
+}
+.confirmationPageContainer .body .btnCancel:hover {
+  opacity: 0.8;
+}
+.confirmationPageContainer .body .btnCancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.confirmationPageContainer .body .transactionError {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 10px;
+}
+.confirmationPageContainer .body .transactionError .label {
+  color: indianred;
+  font-size: 16px;
+  font-weight: 700;
+}
+.confirmationPageContainer .body .transactionError a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black_color_secondary);
+}
+.confirmationPageContainer .body .transactionError a:hover {
+  text-underline: indianred;
+  color: indianred;
 }

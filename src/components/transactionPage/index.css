@@ -53,6 +53,9 @@
   color: #9896F0;
   margin: 0 auto 40px;
 }
+.transactionPageContainer .body .recipient:hover{
+  opacity: 0.8;
+}
 
 .transactionPageContainer .body .recipient a {
   text-decoration: none;
@@ -73,4 +76,8 @@
   border-radius: 88px;
   margin: 0 auto;
   cursor: pointer;
+}
+
+.transactionPageContainer .body .btnContinue:hover{
+  opacity: 0.8;
 }

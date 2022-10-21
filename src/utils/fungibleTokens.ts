@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { InvokeResult } from "@polywrap/core-js";
 import { fetchWithViewFunction } from "./polywrap";
 import {
+  FT_STORAGE_DEPOSIT_GAS,
   FT_TRANSFER_GAS,
   INDEXER_SERVICE_URL,
   TOKEN_TRANSFER_DEPOSIT,
@@ -12,6 +13,8 @@ import { formatFungibleTokenAmount } from "./format";
 const TOKEN_METADATA_METHOD_NAME = "ft_metadata";
 const TOKEN_BALANCE_METHOD_NAME = "ft_balance_of";
 const TOKEN_TRANSFER_METHOD_NAME = "ft_transfer";
+const GET_TOKEN_STORAGE_BALANCE_METHOD_NAME = "storage_balance_of";
+const TRANSFER_STORAGE_DEPOSIT_METHOD_NAME = "storage_deposit";
 
 export interface TokenMetadata {
   name: string;
@@ -94,4 +97,62 @@ export async function getAccountFungibleTokens(
   )
     .then((res) => res.json())
     .then((jsonResult: any) => jsonResult?.list);
+}
+
+interface FungibleTokenAccountStorageBalance {
+  available: string;
+  total: string;
+}
+
+export async function getAccountStorageBalanceOfFungibleToken(
+  accountId: string,
+  tokenAddress: string,
+  viewFunctionExecute: (
+    args?: Record<string, unknown> | Uint8Array
+  ) => Promise<InvokeResult>
+): Promise<FungibleTokenAccountStorageBalance | null> {
+  return await fetchWithViewFunction(
+    {
+      contractId: tokenAddress,
+      methodName: GET_TOKEN_STORAGE_BALANCE_METHOD_NAME,
+      args: JSON.stringify({ account_id: accountId }),
+    },
+    viewFunctionExecute
+  );
+}
+
+export async function isStorageBalanceAvailable(
+  accountId: string,
+  tokenAddress: string,
+  viewFunctionExecute: (
+    args?: Record<string, unknown> | Uint8Array
+  ) => Promise<InvokeResult>
+): Promise<boolean> {
+  const storageBalance = await getAccountStorageBalanceOfFungibleToken(
+    accountId,
+    tokenAddress,
+    viewFunctionExecute
+  );
+  return !!storageBalance;
+}
+
+export async function transferStorageDeposit(
+  ownerAccountId: string,
+  receiverAccountId: string,
+  tokenAddress: string,
+  storageDepositAmount: string,
+  functionCallExecute: (
+    args?: Record<string, unknown> | Uint8Array
+  ) => Promise<InvokeResult>
+) {
+  return await functionCallExecute({
+    contractId: tokenAddress,
+    methodName: TRANSFER_STORAGE_DEPOSIT_METHOD_NAME,
+    args: JSON.stringify({
+      account_id: receiverAccountId,
+    }),
+    gas: FT_STORAGE_DEPOSIT_GAS,
+    deposit: storageDepositAmount,
+    signerId: ownerAccountId,
+  });
 }

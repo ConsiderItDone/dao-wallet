@@ -20,6 +20,16 @@
   border-radius:0 0 20px 20px;
   height: calc(100% - 80px);
 }
+.sendPageContainer .body .loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  max-width: 400px;
+  max-height: 400px;
+  margin: 0 auto;
+}
 .sendPageContainer .body .title {
   font-family: var(--font_extra_bold);
   font-style: normal;
@@ -43,6 +53,14 @@
   display: block;
   margin: 0 auto 12px auto;
   cursor: pointer;
+}
+.sendPageContainer .body .btnSubmit:hover {
+  opacity: 0.8;
+}
+
+.sendPageContainer .body .btnSubmit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 .sendPageContainer .body .dropDownContainer {
   display: flex;
@@ -143,12 +161,25 @@
 .react-select__option .container {
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
+}
+
+.react-select__option .container:hover {
+  opacity: 0.8;
 }
 
 .react-select__option .container .token, .react-select__value-container .container .token {
   display: flex;
   gap: 4px;
   align-items: center;
+}
+.react-select__option .container .token, .react-select__value-container .container .token .tokenName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.react-select__option .container .amount{
+  text-align: right;
+  white-space: nowrap;
 }
 .react-select__value-container .container .amount {
   display: none;
@@ -186,7 +217,7 @@
   border-radius: 8px;
   text-align: center;
   position: relative;
-  padding-top: 6px;
+  padding: 6px 10px 0;
   height: 41px;
   min-width: 92px;
 }
@@ -206,6 +237,8 @@
   font-size: 16px;
   line-height: 22px;
   color: var(--black_color_secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .sendPageContainer .body .amountContainer { 
   width: 100%;
@@ -230,7 +263,11 @@
   line-height: 22px;
   color: #202020;
 }
-.sendPageContainer .body .amountContainer .value {
+.sendPageContainer .body .amountContainer .amount:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+.sendPageContainer .body .amountContainer .usdValue {
   font-family: var(--font_semi_bold);
   font-style: normal;
   font-weight: 600;
@@ -243,6 +280,7 @@
   position: absolute;
   top: 50%;
   right: 88px;
+  user-select: none;
 }
 .sendPageContainer .body .amountContainer .amount::placeholder{
   color: black !important;
@@ -291,6 +329,10 @@
   line-height: 22px;
   background: transparent;
 }
+.sendPageContainer .toContainer input:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
 
 .sendPageContainer .toContainer .successIcon{
   position: absolute;
@@ -309,6 +351,13 @@
   margin: 0 auto;
   cursor: pointer;
 }
+.sendPageContainer .btnCancel:hover {
+  opacity: 0.8;
+}
+.sendPageContainer .btnCancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .sendPageContainer .visibleAmount {
   position: absolute;
   top: 3px;
@@ -319,6 +368,7 @@
   font-size: 10px;
   line-height: 14px;
   color: var(--black_color_secondary_opacity);
+  user-select: none;
 }
 .sendPageContainer .dropDownContainer .iconMenu > svg {
   width: 16px;
@@ -359,4 +409,7 @@
 }
 .sendPageContainer .dropDownContainer .icon {
   margin-right: 4px;
+}
+.sendPageContainer .body .fieldError {
+  background: #FFCCCC;
 }

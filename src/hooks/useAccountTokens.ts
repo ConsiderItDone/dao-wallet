@@ -73,6 +73,7 @@ export const useAccountTokens = (
             continue;
           }
 
+          // TODO: fetch usd ratio for all tokens
           newTokenList.push({
             token: {
               ...token,

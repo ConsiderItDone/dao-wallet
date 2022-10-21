@@ -5,13 +5,26 @@ import { formatNearAmount } from "../utils/format";
 import { BigNumber } from "ethers";
 import { AccessKey } from "@cidt/near-plugin-js/build/wrap";
 import { toPublicKey } from "../utils/near";
+import {
+  FT_MINIMUM_STORAGE_BALANCE,
+  FT_MINIMUM_STORAGE_BALANCE_LARGE,
+  NEAR_TOKEN,
+} from "../consts/near";
+import {
+  isStorageBalanceAvailable,
+  sendFungibleToken,
+  transferStorageDeposit,
+} from "../utils/fungibleTokens";
+import { VIEW_FUNCTION_METHOD_NAME } from "../consts/wrapper";
 
 interface SendTxArgs {
   receiverId: string;
   amount: number;
 }
 
-export const useSendTransaction = (): UsePolywrapInvokeState & {
+export const useSendTransaction = (
+  token = NEAR_TOKEN
+): UsePolywrapInvokeState & {
   execute: (args: SendTxArgs) => Promise<UsePolywrapInvokeState>;
 } => {
   const [state, setState] = useState<UsePolywrapInvokeState>({
@@ -27,18 +40,66 @@ export const useSendTransaction = (): UsePolywrapInvokeState & {
   const [getAccessKeys] =
     useQuery<{ accessKey: AccessKey; publicKey: string }[]>("getAccessKeys");
 
+  const [viewFunctionExecute] = useQuery(VIEW_FUNCTION_METHOD_NAME);
+  const [functionCallExecute] = useQuery("functionCall");
+
   const execute = async ({ receiverId, amount }: SendTxArgs) => {
     setState((state) => ({ ...state, loading: true }));
     let error: Error;
     if (!currentAccount!.isLedger) {
-      const result = await invoke({
-        method: "sendMoney",
-        args: {
-          signerId: currentAccount!.accountId,
-          receiverId: receiverId,
-          amount: formatNearAmount(amount),
-        },
-      });
+      let result;
+      if (token.address === NEAR_TOKEN.address) {
+        result = await invoke({
+          method: "sendMoney",
+          args: {
+            signerId: currentAccount!.accountId,
+            receiverId: receiverId,
+            amount: formatNearAmount(amount),
+          },
+        });
+      } else {
+        /*
+         If storage balance of fungible token is not available for receiver account
+         we need to transfer deposit to storage with NEAR token
+         before sending chosen fungible token to receiver.
+        */
+        const isTokenTransferAvailable = await isStorageBalanceAvailable(
+          receiverId,
+          token.address,
+          viewFunctionExecute
+        );
+
+        if (!isTokenTransferAvailable) {
+          try {
+            await transferStorageDeposit(
+              currentAccount!.accountId,
+              receiverId,
+              token.address,
+              FT_MINIMUM_STORAGE_BALANCE,
+              functionCallExecute
+            );
+          } catch (error: any) {
+            if (error?.message?.includes("attached deposit is less than")) {
+              await transferStorageDeposit(
+                currentAccount!.accountId,
+                receiverId,
+                token.address,
+                FT_MINIMUM_STORAGE_BALANCE_LARGE,
+                functionCallExecute
+              );
+            }
+          }
+        }
+
+        result = await sendFungibleToken(
+          token.address,
+          amount,
+          token.decimals,
+          currentAccount!.accountId,
+          receiverId,
+          functionCallExecute
+        );
+      }
       const newState = { ...result, loading: false };
       setState(newState);
       return newState;
