@@ -10,7 +10,5 @@ export { default as BalanceCard } from "./balanceCard";
 export { default as NavFooter } from "./navFooter";
 export { default as SendPage } from "./sendPage";
 export { default as HomePage } from "./homePage";
-export { default as Footer } from "./footer";
-export { default as Info } from "./Info";
 export { default as LedgerConnect } from "./ledger-connect";
 export { default as CreateWithSecurePassphrasePage } from "./createWithSecurePassphrasePage";
