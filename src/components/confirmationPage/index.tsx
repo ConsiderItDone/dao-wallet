@@ -20,7 +20,7 @@ interface Props {
 
 const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
   const { currentAccount: account } = useAuth();
-  const { execute, loading } = useSendTransaction(token);
+  const { execute, loading, error, confirmLedger } = useSendTransaction(token);
 
   const [errorTransactionHash, setErrorTransactionHash] = useState<
     string | null
@@ -38,7 +38,7 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
       // @ts-ignore
       const executeStatus: any = data?.status;
       // @ts-ignore
-      const hash = data?.transaction?.hash;
+      const hash = data?.transaction?.hash as string;
       if (executeStatus.SuccessValue === null) {
         setErrorTransactionHash(`${EXPLORER_URL}/transactions/${hash}`);
       } else {
@@ -46,7 +46,6 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
           amount,
           receiver,
           tokenSymbol: token.symbol,
-          //@ts-ignore
           hash,
         });
       }
@@ -114,6 +113,21 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
             </div>
           </div>
         </div>
+        {confirmLedger && (
+          <h1>Please confirm the operation on your device...</h1>
+        )}
+        {errorTransactionHash && (
+          <div className="transactionError">
+            <div className="label">Transaction Failed:</div>
+            <a href={errorTransactionHash}>View Transaction</a>
+          </div>
+        )}
+        {error && (
+          <div className="transactionError">
+            <div className="label">Transaction Failed:</div>
+            <p>{error.message}</p>
+          </div>
+        )}
         <button
           onClick={onSubmit}
           disabled={loading}
@@ -136,12 +150,6 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
         >
           Cancel
         </button>
-        {errorTransactionHash && (
-          <div className="transactionError">
-            <div className="label">Transaction Failed:</div>
-            <a href={errorTransactionHash}>View Transaction</a>
-          </div>
-        )}
       </div>
     </div>
   );

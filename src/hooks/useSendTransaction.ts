@@ -26,11 +26,15 @@ export const useSendTransaction = (
   token = NEAR_TOKEN
 ): UsePolywrapInvokeState & {
   execute: (args: SendTxArgs) => Promise<UsePolywrapInvokeState>;
+  confirmLedger: boolean;
 } => {
-  const [state, setState] = useState<UsePolywrapInvokeState>({
+  const [state, setState] = useState<
+    UsePolywrapInvokeState & { confirmLedger: boolean }
+  >({
     data: undefined,
     error: undefined,
     loading: false,
+    confirmLedger: false,
   });
   const { serialize } = useBorsh();
   const invoke = useInvoke();
@@ -100,89 +104,96 @@ export const useSendTransaction = (
           functionCallExecute
         );
       }
-      const newState = { ...result, loading: false };
+      const newState = { ...state, ...result, loading: false };
       setState(newState);
       return newState;
     } else {
-      const { data: accessKeys } = await getAccessKeys({
-        accountId: currentAccount?.accountId,
-      });
+      try {
+        const { data: accessKeys } = await getAccessKeys({
+          accountId: currentAccount?.accountId,
+        });
 
-      if (accessKeys?.length) {
-        const ledgerPublicKeyString = currentAccount?.publicKey;
+        if (accessKeys?.length) {
+          const ledgerPublicKeyString = currentAccount?.publicKey;
 
-        const keyPair = accessKeys.find(
-          (key) => key.publicKey === ledgerPublicKeyString
-        );
+          const keyPair = accessKeys.find(
+            (key) => key.publicKey === ledgerPublicKeyString
+          );
 
-        if (keyPair) {
-          const accessKey = keyPair.accessKey;
-          const newNonce = BigNumber.from(accessKey.nonce).add("1").toString();
+          if (keyPair) {
+            const accessKey = keyPair.accessKey;
+            const newNonce = BigNumber.from(accessKey.nonce)
+              .add("1")
+              .toString();
 
-          const { data: transaction, error: createTransactionError } =
-            await invoke({
-              method: "createTransaction",
-              args: {
-                publicKey: toPublicKey(currentAccount?.publicKey!),
-                nonce: newNonce,
-                signerId: currentAccount!.accountId,
-                receiverId: receiverId,
-                actions: [{ deposit: formatNearAmount(amount) }],
-              },
-            });
-
-          if (createTransactionError) {
-            error = createTransactionError;
-          }
-
-          if (transaction) {
-            const { data: txBytes, error: serializeError } = await serialize(
-              transaction
-            );
-
-            if (serializeError) {
-              error = serializeError;
-            }
-
-            if (txBytes) {
-              //@ts-ignore
-              const signature = await sign(txBytes);
-
-              const sendTxResult = await invoke({
-                method: "sendTransaction",
+            const { data: transaction, error: createTransactionError } =
+              await invoke({
+                method: "createTransaction",
                 args: {
-                  signedTx: {
-                    transaction: transaction,
-                    signature: {
-                      keyType: 0,
-                      data: signature,
-                    },
-                  },
+                  publicKey: toPublicKey(currentAccount?.publicKey!),
+                  nonce: newNonce,
+                  signerId: currentAccount!.accountId,
+                  receiverId: receiverId,
+                  actions: [{ deposit: formatNearAmount(amount) }],
                 },
               });
-              const { error: sendTxError } = sendTxResult;
-              if (sendTxError) {
-                error = sendTxError;
-              }
-              const newState = {
-                ...sendTxResult,
-                loading: false,
-              };
-              setState(newState);
-              return newState;
-            }
-          }
-          const newState = {
-            ...state,
-            loading: false,
-            //@ts-ignore
-            error: error,
-          };
-          setState(newState);
-          return newState;
-        }
-      }
 
+            if (createTransactionError) {
+              error = createTransactionError;
+            }
+
+            if (transaction) {
+              const { data: txBytes, error: serializeError } = await serialize(
+                transaction
+              );
+
+              if (serializeError) {
+                error = serializeError;
+              }
+
+              if (txBytes) {
+                setState((state) => ({ ...state, confirmLedger: true }));
+                const signature: Buffer = await sign(txBytes);
+                setState((state) => ({ ...state, confirmLedger: false }));
+
+                const sendTxResult = await invoke({
+                  method: "sendTransaction",
+                  args: {
+                    signedTx: {
+                      transaction: transaction,
+                      signature: {
+                        keyType: 0,
+                        data: signature,
+                      },
+                    },
+                  },
+                });
+                const { error: sendTxError } = sendTxResult;
+                if (sendTxError) {
+                  error = sendTxError;
+                }
+                const newState = {
+                  ...state,
+                  ...sendTxResult,
+                  loading: false,
+                };
+                setState(newState);
+                return newState;
+              }
+            }
+            const newState = {
+              ...state,
+              loading: false,
+              //@ts-ignore
+              error: error,
+            };
+            setState(newState);
+            return newState;
+          }
+        }
+      } catch (e) {
+        error = e as Error;
+      }
       const newState = {
         ...state,
         loading: false,
