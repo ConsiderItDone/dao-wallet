@@ -53,6 +53,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
       state.accounts.find((acc, index) => index === state.selectedAccountIndex),
     [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
   );
+  console.log("CUrrent account", currentAccount);
 
   const addAccount = useCallback(async (newAccount: AccountWithPrivateKey) => {
     await appLocalStorage.addAccount(newAccount);
@@ -115,14 +116,14 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
   }, []);
 
   const initAccounts = useCallback(async (): Promise<
-    AccountWithPrivateKey[]
+    [AccountWithPrivateKey[], number | undefined]
   > => {
     const accounts =
       (await appLocalStorage.getAccounts()) as AccountWithPrivateKey[];
 
     if (!accounts || !accounts.length) {
       console.info("[HeaderGetWalletsList]: user has no accounts");
-      return [];
+      return [[], undefined];
     }
 
     let lastSelectedAccountIndex =
@@ -136,12 +137,18 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         lastSelectedAccountIndex
       );
     }
-    return accounts;
+    return [accounts, lastSelectedAccountIndex];
   }, []);
 
   const init = useCallback(async (network: Network = "testnet") => {
-    const accounts = await initAccounts();
-    setState((state) => ({ ...state, network, accounts, loading: false }));
+    const [accounts, lastAccountIdex] = await initAccounts();
+    setState((state) => ({
+      ...state,
+      network,
+      selectedAccountIndex: lastAccountIdex,
+      accounts,
+      loading: false,
+    }));
   }, []); //eslint-disable-line
 
   useEffect(() => {
