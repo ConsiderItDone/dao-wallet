@@ -1,10 +1,7 @@
 import "./index.css";
 import React from "react";
 import { Token } from "../../services/chrome/localStorage";
-import { goTo } from "react-chrome-extension-router";
-import { ImportTokensPage } from "../importTokensPage";
 import iconsObj from "../../assets/icons";
-import { useAuth } from "../../hooks";
 
 export interface TokenAmountData {
   token: Token;
@@ -27,12 +24,6 @@ const formatUsdTokenAmount = (amount: number) => {
 };
 
 export const TokenList = ({ tokens }: Props) => {
-  const { currentAccount: account } = useAuth();
-
-  const onAddToken = () => {
-    goTo(ImportTokensPage);
-  };
-
   return (
     <div className="tokenListContainer">
       {tokens?.length ? (
@@ -72,15 +63,6 @@ export const TokenList = ({ tokens }: Props) => {
       ) : (
         <div className="noTokens">You don't have tokens</div>
       )}
-      <div className="addTokenContainer">
-        <button
-          className="addTokenButton"
-          onClick={onAddToken}
-          disabled={!account}
-        >
-          Add Token
-        </button>
-      </div>
     </div>
   );
 };
