@@ -1,4 +1,3 @@
-import base58 from "bs58";
 import { goTo } from "react-chrome-extension-router";
 import { useNavigate } from "react-router-dom";
 import { useLedger } from "../../hooks/useLedger";
@@ -20,7 +19,7 @@ type ConnectLedgerState = "connect" | "confirm" | "";
 const LedgerConnect = () => {
   const { connect } = useLedger();
   const navigate = useNavigate();
-  const { addAccount } = useAuth();
+  const { addAccount, accounts } = useAuth();
   const [path, setPath] = useState(1);
   const [{ step, error }, setState] = useState({
     error: "",
@@ -52,20 +51,31 @@ const LedgerConnect = () => {
       const publicKeyString = toPublicKey(pkData, true) as string;
       const ids = await getAccountIds(publicKeyString);
 
+      const existingAccount = accounts.find(
+        (acc) => acc.publicKey === publicKeyString
+      );
+
+      if (existingAccount) {
+        //Account already in wallet
+        onAfterConnect();
+        return;
+      }
+
       const newAccount = {
         accountId: implicitAccountId,
         tokens: [],
-        publicKey: `ed25519:${base58.encode(pkData)}`,
-        encryptedPrivateKey: "", // + pkString,
+        publicKey: publicKeyString,
+        encryptedPrivateKey: "",
         isLedger: true,
       };
 
       if (!ids.length) {
+        //Account not funded
         console.log("Account Not Funded");
         goTo(AccountNeedsFundingPage, {
           account: newAccount,
         });
-        //Account not funded
+
         return;
       }
       await addAccount(newAccount);
