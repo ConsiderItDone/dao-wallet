@@ -6,12 +6,9 @@ import { getNearConnectionConfig } from "./near";
 import { Network } from "../types";
 import { PublicKey } from "near-api-js/lib/utils/key_pair";
 import { KeyStores } from "@cidt/near-plugin-js";
-import { INDEXER_SERVICE_URL } from "../consts/near";
 
 const ACCOUNT_ID_REGEX =
   /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
-
-const CUSTOM_REQUEST_HEADERS = {};
 
 export function isLegitAccountId(accountId: string) {
   return ACCOUNT_ID_REGEX.test(accountId);
@@ -59,12 +56,4 @@ export async function accountExists(
   } catch (error) {
     return false;
   }
-}
-
-export async function getAccountIds(publicKey: string): Promise<string[]> {
-  return fetch(`${INDEXER_SERVICE_URL}/publicKey/${publicKey}/accounts`, {
-    headers: {
-      ...CUSTOM_REQUEST_HEADERS,
-    },
-  }).then((res) => res.json());
 }

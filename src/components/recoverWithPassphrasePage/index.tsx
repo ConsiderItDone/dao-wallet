@@ -6,8 +6,7 @@ import { SessionStorage } from "../../services/chrome/sessionStorage";
 import HomePage from "../homePage";
 import { encryptPrivateKeyWithPassword } from "../../utils/encryption";
 import BalancePage from "../balancePage";
-import { useAuth } from "../../hooks";
-import { getAccountIds } from "../../utils/account";
+import { useAuth, useFetchJson } from "../../hooks";
 import { ClipLoader } from "react-spinners";
 // @ts-ignore
 import { parseSeedPhrase } from "near-seed-phrase";
@@ -27,6 +26,8 @@ export const RecoverWithPassphrasePage = () => {
     useState<boolean>(false);
 
   const [isImportingAccount, setIsImportingAccount] = useState<boolean>(false);
+
+  const getAccountIds = useFetchJson("accountsAtPublicKey");
 
   useEffect(() => {
     const validatePassphrase = (passphrase: string) => {
@@ -81,8 +82,11 @@ export const RecoverWithPassphrasePage = () => {
         privateKey
       );
 
-      const accountIds: string[] = await getAccountIds(publicKey);
-      if (accountIds?.length === 0) {
+      const accountIds = await getAccountIds<string[]>({
+        publicKeyString: publicKey,
+      });
+
+      if (!accountIds || accountIds?.length === 0) {
         setPassphraseError("Couldn't find account with such passphrase");
         return;
       }

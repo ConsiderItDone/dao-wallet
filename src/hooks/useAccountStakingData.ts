@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {
+  AccountStakingDepositData,
   fetchAccountStakedBalance,
   fetchAccountUnstakedBalance,
   fetchIsAccountUnstakedBalanceAvailable,
   fetchTotalStakedAmount,
-  getAccountStakingDeposits,
 } from "../utils/staking";
-import { useQuery } from "./useQuery";
+import { useFetchJson, useQuery } from "./useQuery";
 import { VIEW_FUNCTION_METHOD_NAME } from "../consts/wrapper";
 import { parseNearTokenAmount } from "../utils/near";
 
@@ -21,6 +21,7 @@ export const useAccountStakingData = (
 } => {
   const [viewFunctionExecute] = useQuery(VIEW_FUNCTION_METHOD_NAME);
 
+  const getAccountStakingDeposits = useFetchJson("getStakingDeposits");
   const [totalStaked, setTotalStaked] = useState<number | null | undefined>(
     undefined
   );
@@ -40,7 +41,11 @@ export const useAccountStakingData = (
       if (!accountId) return;
 
       try {
-        const stakingDeposits = await getAccountStakingDeposits(accountId);
+        const stakingDeposits =
+          (await getAccountStakingDeposits<AccountStakingDepositData[]>({
+            accountId,
+          })) || [];
+
         let totalStaked = 0;
         let totalPending = 0;
         let totalAvailable = 0;

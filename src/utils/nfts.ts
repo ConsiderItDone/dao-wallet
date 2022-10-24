@@ -1,8 +1,4 @@
-import {
-  INDEXER_SERVICE_URL,
-  NFT_TRANSFER_GAS,
-  TOKEN_TRANSFER_DEPOSIT,
-} from "../consts/near";
+import { NFT_TRANSFER_GAS, TOKEN_TRANSFER_DEPOSIT } from "../consts/near";
 import { InvokeResult } from "@polywrap/core-js";
 import { fetchWithViewFunction } from "./polywrap";
 
@@ -11,18 +7,10 @@ const NFT_TOKENS_FOR_ACCOUNT_FROM_COLLECTION_METHOD_NAME =
   "nft_tokens_for_owner";
 const NFT_TRANSFER_METHOD_NAME = "nft_transfer";
 
-interface AccountLikelyNftContractsList {
+export interface AccountLikelyNftContractsList {
   lastBlockTimestamp: string;
   // Contains contract names of NFTs
   list: string[];
-}
-
-export async function listLikelyNftsContracts(
-  accountId: string
-): Promise<AccountLikelyNftContractsList> {
-  return fetch(
-    `${INDEXER_SERVICE_URL}/account/${accountId}/likelyNFTsFromBlock`
-  ).then((res) => res.json());
 }
 
 interface NftCollectionMetadata {

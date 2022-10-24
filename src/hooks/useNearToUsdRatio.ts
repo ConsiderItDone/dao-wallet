@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
-import { getNearToUSDRatio } from "../services/coingecko/api";
+import { useEffect } from "react";
+import { useQuery } from "./useQuery";
 
 export const useNearToUsdRatio = () => {
-  const [nearToUsdRatio, setNearToUsdRatio] = useState<number | undefined>(
-    undefined
-  );
+  const [getNearToUSDRatio, { data: nearToUsdRatio }] = useQuery<{
+    usd: string;
+    last_updated_at: string;
+  }>("nearToUsdRatio");
 
   useEffect(() => {
-    getNearToUSDRatio()
-      .then((ratio) => {
-        setNearToUsdRatio(ratio);
-      })
-      .catch((error) => {
-        console.error("[GetNearToUSDRatio]:", error);
-        setNearToUsdRatio(undefined);
-      });
-  }, []);
+    getNearToUSDRatio();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return nearToUsdRatio;
+  return nearToUsdRatio ? Number(nearToUsdRatio?.usd) : undefined;
 };

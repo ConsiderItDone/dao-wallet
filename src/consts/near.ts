@@ -11,7 +11,6 @@ export const NEAR_TOKEN: Token = {
 };
 
 //TODO Change to get configs from plugin
-export const INDEXER_SERVICE_URL = "https://testnet-api.kitwallet.app";
 export const ACCOUNT_HELPER_URL = "https://near-contract-helper.onrender.com";
 export const EXPLORER_URL = "https://explorer.testnet.near.org";
 
