@@ -126,6 +126,7 @@ footer {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
 }
 .header .interationBtn:hover {
   opacity: 0.6;

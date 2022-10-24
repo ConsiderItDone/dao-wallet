@@ -36,12 +36,14 @@ export const useAccountNearBalance = (
         const data = balanceData?.data;
         if (data) {
           setAccountNearBalance({
-            available:
+            available: Math.max(
               parseNearTokenAmount(data?.available) -
-              NEAR_RESERVED_FOR_TRANSACTION_FEES,
-            staked: parseNearTokenAmount(data?.staked),
-            stateStaked: parseNearTokenAmount(data?.stateStaked),
-            total: parseNearTokenAmount(data?.total),
+                NEAR_RESERVED_FOR_TRANSACTION_FEES,
+              0
+            ),
+            staked: Math.max(parseNearTokenAmount(data?.staked), 0),
+            stateStaked: Math.max(parseNearTokenAmount(data?.stateStaked), 0),
+            total: Math.max(parseNearTokenAmount(data?.total), 0),
           });
         } else {
           console.error(

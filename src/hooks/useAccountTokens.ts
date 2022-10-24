@@ -28,7 +28,7 @@ export const useAccountTokens = (
   >(undefined);
 
   useEffect(() => {
-    if (accountNearAmount) {
+    if (accountNearAmount !== null && accountNearAmount !== undefined) {
       setNearToken({
         token: NEAR_TOKEN,
         amount: accountNearAmount,

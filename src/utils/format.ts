@@ -1,10 +1,14 @@
 import { NEAR_TOKEN } from "../consts/near";
+import fromExponential from "from-exponential";
 
 export const formatFungibleTokenAmount = (
   amount: number | string,
   tokenDecimals: number
 ): string => {
-  const value = amount.toString();
+  let value = amount.toString();
+  if (value.includes("e")) {
+    value = fromExponential(amount);
+  }
 
   const [int, decimals] = value.includes(".")
     ? value.split(".")

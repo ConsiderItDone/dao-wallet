@@ -83,7 +83,7 @@ export const RecoverWithPassphrasePage = () => {
 
       const accountIds: string[] = await getAccountIds(publicKey);
       if (accountIds?.length === 0) {
-        setPassphraseError("Couldn't find account with specified passphrase");
+        setPassphraseError("Couldn't find account with such passphrase");
         return;
       }
       const importedAccountId = accountIds[0];

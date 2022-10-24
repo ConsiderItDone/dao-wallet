@@ -11,6 +11,7 @@ import { SessionStorage } from "../../services/chrome/sessionStorage";
 import ChooseMethod from "../chooseMethod";
 import { useAuth } from "../../hooks";
 import BalancePage from "../balancePage";
+import HomePage from "../homePage";
 
 const formatWalletName = (str: string) => {
   if (str?.length <= 8) {
@@ -46,6 +47,11 @@ const Header = () => {
       await sessionStorage.setIsExtensionUnlocked(false);
     }
     goBack();
+  };
+
+  const handleLock = async () => {
+    await sessionStorage.setIsExtensionUnlocked(false);
+    goTo(HomePage);
   };
 
   return (
@@ -116,7 +122,7 @@ const Header = () => {
           <span className="title">Omni Near Wallet</span>
         </div>
         <div className="item">
-          <button>
+          <button onClick={handleLock}>
             <LockIcon className="lockIcon" />
           </button>
           <button onClick={() => goTo(Settings)}>

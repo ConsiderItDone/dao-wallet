@@ -2,6 +2,7 @@ import "./index.css";
 import React from "react";
 import { Token } from "../../services/chrome/localStorage";
 import iconsObj from "../../assets/icons";
+import { toFixedBottom } from "../../utils/common";
 
 export interface TokenAmountData {
   token: Token;
@@ -14,13 +15,13 @@ interface Props {
 }
 
 const formatTokenAmount = (amount: number) => {
-  if (!amount) return amount;
-  return Number(amount.toFixed(5));
+  if (!amount) return 0;
+  return Number(toFixedBottom(amount, 5));
 };
 
 const formatUsdTokenAmount = (amount: number) => {
-  if (!amount) return amount;
-  return amount.toFixed(2);
+  if (!amount) return 0;
+  return toFixedBottom(amount, 2);
 };
 
 export const TokenList = ({ tokens }: Props) => {
@@ -41,16 +42,16 @@ export const TokenList = ({ tokens }: Props) => {
                 <div className="amount">
                   {tokenAmountData?.amount
                     ? formatTokenAmount(tokenAmountData?.amount)
-                    : "-"}{" "}
+                    : "0"}{" "}
                   {tokenAmountData?.token?.symbol}
                 </div>
-                {tokenAmountData?.amount && tokenAmountData?.usdRatio && (
+                {tokenAmountData?.amount && tokenAmountData?.usdRatio ? (
                   <div className="usdAmount">
                     {`$${formatUsdTokenAmount(
                       tokenAmountData?.amount * tokenAmountData?.usdRatio
                     )} USD`}
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
             <div className="rightPartWrapper">

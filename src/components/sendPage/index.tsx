@@ -19,6 +19,7 @@ import { Loading } from "../animations/loading";
 import { accountExists } from "../../utils/account";
 import { AccountBalance } from "../balancePage";
 import { ClipLoader } from "react-spinners";
+import { toFixedBottom } from "../../utils/common";
 
 interface SelectedTokenOption {
   label: React.ReactElement;
@@ -40,15 +41,16 @@ const selectInputStyles = {
 
 const formatTokenAmount = (amount: number | undefined) => {
   if (!amount) return 0;
-  return amount >= 0.001 ? Number(amount.toFixed(4)) : amount;
+  return amount >= 0.001 ? Number(toFixedBottom(amount, 4)) : amount;
 };
 
 const formatUsdAmount = (amount: number | undefined) => {
   if (!amount) return 0;
+  if (amount < 0) return "";
   if (amount < 0.0001) return "< 0.0001";
-  if (amount >= 0.01) return Number(amount.toFixed(2));
+  if (amount >= 0.01) return Number(toFixedBottom(amount, 2));
 
-  return Number(amount.toFixed(4));
+  return Number(toFixedBottom(amount, 4));
 };
 
 // TODO: choose proper max amount for sending tokens
@@ -146,6 +148,16 @@ const SendPage = () => {
     setIsValidatingAmount(true);
 
     try {
+      if (!value) {
+        setAmountError(undefined);
+        return;
+      }
+
+      if (value < 0) {
+        setAmountError("Amount can't be negative");
+        return;
+      }
+
       if (value > tokenData?.amount!) {
         setAmountError("Amount is bigger than your balance");
         return;
@@ -275,7 +287,7 @@ const SendPage = () => {
                         </>
                       )}
                     </Field>
-                    {usdValue && (
+                    {usdValue && usdValue > 0 && (
                       <span className="usdValue">
                         ≈ ${formatUsdAmount(usdValue)} USD
                       </span>

@@ -11,6 +11,14 @@ import { Token } from "../../services/chrome/localStorage";
 import { EXPLORER_URL, NEAR_TOKEN } from "../../consts/near";
 import { useState } from "react";
 
+const formatErrorMessage = (message: string | undefined): string => {
+  if (!message) return "No error message";
+
+  if (message.toLowerCase().includes("wasm")) return "WASM error";
+
+  return message;
+};
+
 interface Props {
   receiver: string;
   token: Token;
@@ -125,7 +133,7 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
         {error && (
           <div className="transactionError">
             <div className="label">Transaction Failed:</div>
-            <p>{error.message}</p>
+            <p>{formatErrorMessage(error?.message)}</p>
           </div>
         )}
         <button
@@ -135,7 +143,11 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
           type="button"
         >
           {!loading ? (
-            "Confirm & Send"
+            error || errorTransactionHash ? (
+              "Retry"
+            ) : (
+              "Confirm & Send"
+            )
           ) : (
             <div className="clipLoaderContainer">
               <ClipLoader color="#9896F0" size={16} />

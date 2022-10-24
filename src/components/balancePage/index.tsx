@@ -19,13 +19,14 @@ import { Loading } from "../animations/loading";
 import { useAccountTokens } from "../../hooks/useAccountTokens";
 import { useNearToUsdRatio } from "../../hooks/useNearToUsdRatio";
 import { useAccountNearBalance } from "../../hooks/useAccountNearBalance";
+import { toFixedBottom } from "../../utils/common";
 
 const formatTokenAmount = (
   amount: number | null | undefined,
   fractionDigits: number = 5
 ) => {
   if (!amount) return 0;
-  return Number(amount.toFixed(fractionDigits));
+  return Number(toFixedBottom(amount, fractionDigits));
 };
 
 const formatUSDAmount = (
@@ -33,7 +34,7 @@ const formatUSDAmount = (
   fractionDigits: number = 2
 ) => {
   if (!amount) return 0;
-  return Number(amount.toFixed(fractionDigits));
+  return Number(toFixedBottom(amount, fractionDigits));
 };
 
 const wrapValueElementWithSkeletonLoading = (

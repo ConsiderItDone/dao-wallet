@@ -13,11 +13,12 @@ import {
 import { VIEW_FUNCTION_METHOD_NAME } from "../../consts/wrapper";
 import { ClipLoader } from "react-spinners";
 import defaultTokenIcon from "../../images/defaultTokenIcon.svg";
+import { toFixedBottom } from "../../utils/common";
 
 const formatBalance = (balance: number) => {
   if (!balance) return balance;
 
-  if (balance > 1) return Number(balance.toFixed(2));
+  if (balance > 1) return Number(toFixedBottom(balance, 2));
 
   return balance;
 };
