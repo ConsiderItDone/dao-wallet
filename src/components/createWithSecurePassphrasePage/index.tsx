@@ -54,6 +54,8 @@ const CreateWithSecurePassphrasePage = () => {
   const [isMnemonicPhraseStep, setIsMnemonicPhraseStep] =
     useState<boolean>(true);
   const [showCopiedMessage, setShowCopiedMessage] = useState<boolean>(false);
+  const [hasUserCopiedPassphrase, setHasUserCopiedPassphrase] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const initAccountCreation = () => {
@@ -188,6 +190,7 @@ const CreateWithSecurePassphrasePage = () => {
   };
 
   const onSeedPhraseCopy = () => {
+    setHasUserCopiedPassphrase(true);
     setShowCopiedMessage(true);
     setTimeout(() => {
       setShowCopiedMessage(false);
@@ -217,17 +220,18 @@ const CreateWithSecurePassphrasePage = () => {
               ))}
             </div>
             <div className="buttonsContainer">
-              <button
-                onClick={proceedToAccountIDStep}
-                className="createAccountButton nextStepButton"
-              >
-                Next Step
-              </button>
               <CopyToClipboard text={seedPhrase} onCopy={onSeedPhraseCopy}>
                 <button className="createAccountButton copyButton">
                   {showCopiedMessage ? "Copied!" : "Copy"}
                 </button>
               </CopyToClipboard>
+              <button
+                onClick={proceedToAccountIDStep}
+                className="createAccountButton nextStepButton"
+                disabled={!hasUserCopiedPassphrase}
+              >
+                Next
+              </button>
             </div>
             <button
               className="cancel cancelFirstStep"
