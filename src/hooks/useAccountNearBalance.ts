@@ -49,6 +49,13 @@ export const useAccountNearBalance = (
           console.error(
             "[GetAccountNearBalance]: received empty account balance data"
           );
+          //TODO handle not funded account status
+          setAccountNearBalance({
+            available: 0,
+            staked: 0,
+            stateStaked: 0,
+            total: 0,
+          });
         }
       } catch (error) {
         console.error("[GetAccountNearBalance]:", error);
