@@ -1,7 +1,6 @@
 import React from "react";
 import { ReactComponent as CopyIcon } from "../../images/copyIcon.svg";
 import "./index.css";
-import { shortenWalletAddress } from "../../utils/wallet";
 import { Loading } from "../animations/loading";
 
 interface BalanceCardProps {
@@ -31,7 +30,7 @@ const BalanceCard = ({
       ) : (
         <>
           <div className="token">
-            {shortenWalletAddress(walletAddress, 4, 4)}{" "}
+            {walletAddress}{" "}
             <CopyIcon style={{ cursor: "pointer" }} className="copyIcon" />
           </div>
           <div className="title">{title}</div>

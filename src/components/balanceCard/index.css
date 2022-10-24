@@ -13,7 +13,9 @@
 .balanceContainer .token{
      text-align: center;
      margin-bottom: 21px;
-  }
+     padding: 0 20px;
+     overflow-wrap: anywhere;
+}
 .balanceContainer .title {
     font-family: var(--font_semi_bold);
     font-style: normal;
