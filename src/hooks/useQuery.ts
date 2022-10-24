@@ -2,9 +2,7 @@ import { usePolywrapClient, usePolywrapInvoke } from "@polywrap/react";
 import { UsePolywrapInvoke } from "@polywrap/react/build/invoke";
 import { InvokeResult } from "@polywrap/core-js";
 
-const ipfsUri =
-  "wrap://ipfs/QmNct7Wvafucj1zdkrtWXhJx2brv7xttrbRCBZDnFVV7Us" ||
-  "wrap://ipfs/QmNXT72i7n8MWScrw6B3YYMH7RYrJ5gPLtoYiBdDx2jeVw"; // "wrap://ipfs/QmW6rsaFCx9mNDdqzKfGjmKv5bqtUknrd9a8RGiKisk5Xh";
+const ipfsUri = "wrap://ipfs/QmasRYJf2utdeU9pvC2si3G69zrEut8ZpeoQnggaF41JdU" ||  "wrap://ipfs/QmNct7Wvafucj1zdkrtWXhJx2brv7xttrbRCBZDnFVV7Us"
 
 export const apiUri = ipfsUri;
 
