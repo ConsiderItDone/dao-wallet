@@ -103,10 +103,11 @@ input {
   cursor: pointer;
   margin: 24px auto 0;
 }
+.btn:hover {
+  opacity: 0.8;
+}
 .btn:disabled {
   background: #202020aa;
   cursor: not-allowed;
-}
-.btn:hover {
-  opacity: 0.8;
+  opacity: 1;
 }
