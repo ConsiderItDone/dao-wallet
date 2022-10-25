@@ -47,10 +47,27 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     }
   }
 
-  async getAccounts(): Promise<LocalStorageAccount[] | undefined> {
+  async getAccounts(): Promise<AccountWithPrivateKey[] | undefined> {
     try {
       const storageObject = await this.get();
-      return storageObject?.accounts;
+      const accounts = await storageObject?.accounts;
+
+      if (!accounts) return undefined;
+
+      const password = await sessionStorage.getPassword();
+      if (!password) {
+        return undefined;
+      }
+
+      return Promise.all(
+        accounts.map(async (account) => ({
+          ...account,
+          privateKey: await this._decryptAccountPrivateKey(
+            password,
+            account.encryptedPrivateKey!
+          ),
+        }))
+      );
     } catch (error) {
       console.error("[GetAccounts]:", error);
       return undefined;
@@ -64,7 +81,13 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       if (isEmpty(accounts)) {
         accounts = [];
       }
-      accounts.push(account);
+      accounts.push({
+        accountId: account.accountId,
+        publicKey: account.publicKey,
+        tokens: account.tokens,
+        encryptedPrivateKey: account.encryptedPrivateKey,
+        isLedger: account.isLedger,
+      });
       const result = await this.set({ [ACCOUNTS_KEY]: accounts });
       if (isInDevelopmentMode) {
         window.dispatchEvent(LOCAL_STORAGE_CHANGED_EVENT);
@@ -107,16 +130,10 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       if (!password) {
         return null;
       }
-      let decryptedPrivateKey = "";
-      try {
-        //TODO: handle if no private key (Ledger)
-        decryptedPrivateKey = await decryptPrivateKeyWithPassword(
-          password,
-          currentAccount.encryptedPrivateKey!
-        );
-      } catch (error) {
-        console.log("[DecryptedPrivateKet]:", error);
-      }
+      const decryptedPrivateKey = await this._decryptAccountPrivateKey(
+        password,
+        currentAccount.encryptedPrivateKey!
+      );
       return { ...currentAccount, privateKey: decryptedPrivateKey };
     } catch (error) {
       console.error("[GetCurrentAccount]:", error);
@@ -188,6 +205,19 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       console.error("[CurrentUserHasToken]:", error);
       return false;
     }
+  }
+
+  private async _decryptAccountPrivateKey(
+    password: string,
+    encryptedPrivateKey: string
+  ): Promise<string | undefined> {
+    try {
+      //TODO: handle if no private key (Ledger)
+      return await decryptPrivateKeyWithPassword(password, encryptedPrivateKey);
+    } catch (error) {
+      console.error("[DecryptPrivateKey]:", error);
+    }
+    return undefined;
   }
 }
 

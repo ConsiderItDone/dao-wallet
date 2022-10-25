@@ -41,6 +41,7 @@ const CreateWithSecurePassphrasePage = () => {
   >(undefined);
 
   const [seedPhrase, setSeedPhrase] = useState<string>("");
+  const [publicKey, setPublicKey] = useState<string>("");
   const [privateKey, setPrivateKey] = useState<string>("");
 
   const [executeAccountBalanceQuery] = useQuery<AccountBalance>(
@@ -59,8 +60,9 @@ const CreateWithSecurePassphrasePage = () => {
 
   useEffect(() => {
     const initAccountCreation = () => {
-      const { seedPhrase, secretKey } = generateNewSeedPhrase();
+      const { seedPhrase, secretKey, publicKey } = generateNewSeedPhrase();
       setSeedPhrase(seedPhrase);
+      setPublicKey(publicKey);
       setPrivateKey(secretKey);
     };
 
@@ -138,6 +140,7 @@ const CreateWithSecurePassphrasePage = () => {
       await createNewAccount(accountId, privateKey, network);
       await addAccount({
         accountId,
+        publicKey,
         privateKey,
         encryptedPrivateKey,
         tokens: [],
