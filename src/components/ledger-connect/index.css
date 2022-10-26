@@ -134,7 +134,6 @@
   background: white;
   padding: 4px 12px 4px 16px;
   border-radius: 8px;
-  min-width: 55px;
   font-size: 12px;
   line-height: 16px;
   background: rgba(0, 0, 0, 0.08);
@@ -142,8 +141,11 @@
   backdrop-filter: blur(6px);
 }
 
+.custom-path .path-value {
+  min-width: 3ch;
+}
+
 .custom-path .buttons-wrapper {
-  margin-left: 10px;
   padding: 2px 0;
 }
 

@@ -162,7 +162,7 @@ const LedgerConnect = () => {
                   <div className="default-paths">44 / 397 / 0 / 0</div>
                   <span>&ndash;</span>
                   <div className="custom-path">
-                    {path}
+                    <span className="path-value">{path}</span>
                     <div className="buttons-wrapper">
                       <div
                         className="arrow-btn increment"
