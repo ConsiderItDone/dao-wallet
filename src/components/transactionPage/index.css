@@ -11,7 +11,6 @@
   padding-top: 32px;
   background-size: cover;
   height: calc(100% - 90px);
-  border-radius: 0 0 20px 20px;
 }
 .transactionPageContainer .body .icon{
   margin: 0 auto 23px;
