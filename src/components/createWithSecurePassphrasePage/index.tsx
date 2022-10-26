@@ -273,7 +273,7 @@ const CreateWithSecurePassphrasePage = () => {
               className="createAccountButton"
             >
               {isValidatingAccountId || isCreatingAccount ? (
-                <ClipLoader color="#fff" size={14} />
+                <ClipLoader color="#9896F0" size={14} />
               ) : (
                 "Create Account"
               )}
