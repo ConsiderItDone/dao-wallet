@@ -19,4 +19,6 @@ export interface IconsMapper extends Record<string, unknown> {
   arrowUp: string;
   successBigIcon: string;
   defaultTokenIcon: string;
+  unlockIcon: string;
+  errorIcon: string;
 }

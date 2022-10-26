@@ -19,6 +19,8 @@ import verticalDots from "../images/verticalDots.svg";
 import arrowUp from "../images/arrowUp.svg";
 import successBigIcon from "../images/successBigIcon.svg";
 import defaultTokenIcon from "../images/defaultTokenIcon.svg";
+import unlockIcon from "../images/unlockIcon.png";
+import errorIcon from "../images/errorIcon.png";
 
 const iconsObj: IconsMapper = {
   transactionIcon,
@@ -41,6 +43,8 @@ const iconsObj: IconsMapper = {
   arrowUp,
   successBigIcon,
   defaultTokenIcon,
+  unlockIcon,
+  errorIcon,
 };
 
 export default iconsObj;
