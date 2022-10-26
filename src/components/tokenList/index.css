@@ -102,9 +102,9 @@
 }
 
 .tokenListContainer .addTokenContainer .addTokenButton:hover {
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
 .tokenListContainer .addTokenContainer .addTokenButton:disabled {
-    opacity: 0.6;
+    opacity: 0.45;
 }
