@@ -94,6 +94,15 @@ const LedgerConnect = () => {
     });
   };
 
+  const handleRetry = () => {
+    setState((state) => ({
+      ...state,
+      error: "",
+      step: "",
+      loading: false,
+    }));
+  };
+
   const increment = () => {
     setPath(path + 1);
   };
@@ -108,54 +117,94 @@ const LedgerConnect = () => {
     <div className="unlockWalletPageContainer">
       <Header />
       <div className="body">
-        <div className="title">Unlock your Wallet</div>
-        <div className="secondaryTitle">
-          Unlock your device & open NEAR App <br /> to connect Ledger
+        <div className="title">
+          {error ? (
+            "Connection Error"
+          ) : step === "" ? (
+            "Authorize Wallet"
+          ) : (
+            <>
+              Connect to your <br /> Ledger device
+            </>
+          )}
         </div>
-        <div className="icon" />
-        {step === "confirm" ? (
-          <h1>Please confirm the operation on your device...</h1>
-        ) : step === "connect" ? (
-          <h1>Connect to your Ledger device.</h1>
-        ) : (
+        <div className="secondaryTitle">
+          {error ? (
+            error
+          ) : step === "" ? (
+            <>
+              Unlock your device & open NEAR App <br /> to connect Ledger
+            </>
+          ) : step === "connect" ? (
+            <>
+              Make sure your Ledger is connected securely, and <br /> that the
+              NEAR app is open on your device.
+            </>
+          ) : (
+            <>Please confirm the operation on your device...</>
+          )}
+        </div>
+        <div className={`iconWrapper ${error ? "errorIconWrapper" : ""}`}>
+          <img
+            src={error ? iconsObj.errorIcon : iconsObj.unlockIcon}
+            alt=""
+            className="icon"
+          />
+        </div>
+        {step === "" ? (
           <>
-            <div className="ledger-dropdown-content">
-              <div className="desc">
-                Specify an HD path to import its linked accounts.
-              </div>
-              <div className="path-wrapper">
-                <div className="default-paths">44 / 397 / 0 / 0</div>
-                <span>&ndash;</span>
-                <div className="custom-path">
-                  {path}
-                  <div className="buttons-wrapper">
-                    <div
-                      className="arrow-btn increment"
-                      role="button"
-                      onClick={increment}
-                    >
-                      <Icon src={iconsObj.arrow} />
-                    </div>
-                    <div
-                      className="arrow-btn decrement"
-                      role="button"
-                      onClick={decrement}
-                    >
-                      <Icon src={iconsObj.arrow} />
+            {!error ? (
+              <div className="ledger-dropdown-content">
+                <div className="desc">
+                  Specify an HD path to import <br /> its linked accounts.
+                </div>
+                <div className="path-wrapper">
+                  <div className="default-paths">44 / 397 / 0 / 0</div>
+                  <span>&ndash;</span>
+                  <div className="custom-path">
+                    {path}
+                    <div className="buttons-wrapper">
+                      <div
+                        className="arrow-btn increment"
+                        role="button"
+                        onClick={increment}
+                      >
+                        <Icon src={iconsObj.arrow} />
+                      </div>
+                      <div
+                        className="arrow-btn decrement"
+                        role="button"
+                        onClick={decrement}
+                      >
+                        <Icon src={iconsObj.arrow} />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="error-wrapper">{error}</div>
-            <button type="button" className="connect" onClick={handleOnConnect}>
-              Connect Ledger
-            </button>
-            <button type="button" className="cancel" onClick={() => goBack()}>
+            ) : null}
+            {error ? (
+              <button type="button" className="btn retry" onClick={handleRetry}>
+                Retry
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn connect"
+                onClick={handleOnConnect}
+              >
+                Authorize
+              </button>
+            )}
+            <button
+              type="button"
+              className="btn cancel"
+              onClick={() => goBack()}
+            >
               Cancel
             </button>
           </>
-        )}
+        ) : null}
       </div>
     </div>
   );

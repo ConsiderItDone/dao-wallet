@@ -1,17 +1,17 @@
 .unlockWalletPageContainer {
   width: 100%;
   min-height: 100%;
-  height: 100%;
-}
-
-.unlockWalletPageContainer .body {
+  background-color: var(--white_col);
   background-image: url(../../images/bgInfo.svg);
   background-size: cover;
   background-position: center;
-  padding: 32px 60px 0 60px;
+  font-family: var(--font_manrope);
+}
+
+.unlockWalletPageContainer .body {
+  padding: 32px 60px 50px 60px;
   height: 100%;
   text-align: center;
-  border-radius: 0 0 20px 20px;
 }
 
 .unlockWalletPageContainer .body>.title {
@@ -32,19 +32,26 @@
   line-height: 19px;
   text-align: center;
   color: #202020;
-  margin-top: 12px;
+  margin: 12px auto 0;
+  max-width: 320px;
 }
 
-.unlockWalletPageContainer .body .icon {
+.unlockWalletPageContainer .body .iconWrapper {
   width: 68px;
   height: 68px;
-  margin: 60px auto 0 auto;
-  background-image: url(../../images/unlockIcon.png);
-  background-position: center;
-  background-size: contain;
+  margin: 28px auto 0 auto;
 }
 
-.unlockWalletPageContainer .body .connect {
+.unlockWalletPageContainer .body .iconWrapper .icon {
+  width: 100%;
+  height: 100%;
+}
+
+.unlockWalletPageContainer .body .errorIconWrapper {
+  margin: 38px auto 0 auto;
+}
+
+.unlockWalletPageContainer .body .connect, .unlockWalletPageContainer .body .retry {
   font-family: var(--font_bold);
   font-style: normal;
   font-weight: 700;
@@ -53,10 +60,16 @@
   color: #FFFFFF;
   background: #202020;
   border-radius: 88px;
-  width: 175px;
-  height: 48px;
-  margin: 60px auto 0 auto;
+  padding: 15px 24px;
   cursor: pointer;
+}
+
+.unlockWalletPageContainer .body .connect {
+  margin: 40px auto 0 auto;
+}
+
+.unlockWalletPageContainer .body .retry {
+  margin: 57px auto 0 auto;
 }
 
 .unlockWalletPageContainer .body .cancel {
@@ -65,11 +78,14 @@
   font-weight: 700;
   font-size: 16px;
   line-height: 18px;
-  color: #20202050;
   display: block;
-  margin: 0 auto;
+  margin: 12px auto 0;
   cursor: pointer;
-  margin-top: 12px;
+  opacity: 0.5;
+}
+
+.unlockWalletPageContainer .body .btn:hover {
+  opacity: 0.8;
 }
 
 .ledger-dropdown-content {
@@ -84,55 +100,66 @@
 
 .ledger-dropdown-content .desc {
   margin-top: 10px;
-  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  text-align: center;
 }
 
 
 .path-wrapper {
   display: flex;
+  justify-content: center;
   align-items: center;
-  margin: 30px 0 10px 0;
+  margin: 16px 0 10px 0;
 }
 
 .path-wrapper>span {
-  color: #e0e0e0;
   font-weight: 600;
-  margin: 0 10px;
+  font-size: 12px;
+  line-height: 16px;
+  margin: 0 16px;
 }
 
 .default-paths {
-  background-color: #F0F0F1;
-  padding: 12.5px 14px;
-  border-radius: 4px;
   font-weight: 600;
-  color: #909090;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 .custom-path {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #F0F0F1;
   background: white;
-  padding: 3px 3px 3px 12px;
-  border-radius: 4px;
+  padding: 4px 12px 4px 16px;
+  border-radius: 8px;
   min-width: 55px;
-  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  background: rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 .custom-path .buttons-wrapper {
   margin-left: 10px;
+  padding: 2px 0;
 }
 
 .custom-path .arrow-btn {
-  border: 1px solid #F0F0F1;
-  border-radius: 2px;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
+  margin: -4px 0;
+}
+
+.custom-path .arrow-btn:hover {
+  opacity: 0.8;
 }
 
 .arrow-btn.increment {
