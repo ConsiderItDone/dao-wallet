@@ -1,14 +1,21 @@
 import React from "react";
-import { goBack } from "react-chrome-extension-router";
+import { goBack, goTo } from "react-chrome-extension-router";
 import { ReactComponent as CopyIcon } from "../../images/copyIcon.svg";
 import FooterSettings from "../footerSettings";
 import iconsObj from "../../assets/icons";
 import Icon from "../icon";
 import Header from "../header";
-import { items } from "./mock";
 import "./index.css";
+import { SelectNetworkPage } from "../selectNetworkPage";
+import { useAuth } from "../../hooks";
 
 const Settings = () => {
+  const { currentAccount } = useAuth();
+
+  const handleChangeNetwork = () => {
+    goTo(SelectNetworkPage);
+  };
+
   return (
     <div className="settings">
       <Header />
@@ -19,15 +26,14 @@ const Settings = () => {
         <div className="titleSettings">Settings</div>
         <div className="wallet">Wallet ID</div>
         <div className="text">
-          0xa3417B...2acF5 <CopyIcon className="copyIcon" />
+          {currentAccount?.accountId} <CopyIcon className="copyIcon" />
         </div>
-        {items.map((el) => {
-          return (
-            <button key={el?.id} className="menuItembtn">
-              <div>{el?.title} </div>
-            </button>
-          );
-        })}
+        <button className="menuItembtn" onClick={handleChangeNetwork}>
+          <div>Change Network</div>
+        </button>
+        <button className="menuItembtn">
+          <div>Export Private Key</div>
+        </button>
       </div>
       <FooterSettings />
     </div>

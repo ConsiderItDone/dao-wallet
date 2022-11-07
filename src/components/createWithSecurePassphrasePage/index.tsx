@@ -15,20 +15,20 @@ import { useAuth, useQuery } from "../../hooks";
 import { accountExists } from "../../utils/account";
 import { ClipLoader } from "react-spinners";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Network } from "../../types";
+import { NetworkID } from "../../types";
 import { ACCOUNT_BALANCE_METHOD_NAME } from "../../hooks/useAccountNearBalance";
 
 const ACCOUNT_ID_PATTERN = /[^a-zA-Z0-9_-]/;
 
 const getAccountIdWithTopLevelDomain = (
   accountId: string,
-  networkId: Network
+  networkId: NetworkID
 ): string => accountId + "." + networkId;
 
 const CreateWithSecurePassphrasePage = () => {
   const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
 
-  const { network, addAccount } = useAuth();
+  const { currentNetwork, addAccount } = useAuth();
 
   // Account ID input doesn't include top level domain (e.g. "username")
   const [accountIdInput, setAccountIdInput] = useState<string>("");
@@ -137,7 +137,14 @@ const CreateWithSecurePassphrasePage = () => {
         privateKey
       );
 
-      await createNewAccount(accountId, privateKey, network);
+      if (!currentNetwork) {
+        console.error(
+          "[HandleCreateWithSecurePassphrase]: failed to get current network"
+        );
+        return;
+      }
+
+      await createNewAccount(accountId, privateKey, currentNetwork);
       await addAccount({
         accountId,
         publicKey,
@@ -187,7 +194,9 @@ const CreateWithSecurePassphrasePage = () => {
 
     setAccountIdInput(value);
     setAccountId(
-      value?.length > 0 ? getAccountIdWithTopLevelDomain(value, network) : value
+      value?.length > 0
+        ? getAccountIdWithTopLevelDomain(value, currentNetwork?.networkId!)
+        : value
     );
     updateSuffix(value);
   };

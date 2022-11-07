@@ -65,6 +65,10 @@
 .settings .settingsContainer .menuItembtn:last-child{
     margin-bottom: 0;
 }
+.settings .settingsContainer .menuItembtn:hover {
+  opacity: 0.8;
+}
+
 .settings .settingsContainer .copyIcon > path {
   stroke:   #202020
 }

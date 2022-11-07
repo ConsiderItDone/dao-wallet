@@ -4,16 +4,22 @@ import { keyStores, KeyPair } from "near-api-js";
 import { AuthState } from "../provider/AuthProvider";
 import { getNearConnectionConfig } from "./near";
 import { InvokeResult } from "@polywrap/core-js";
+import { DEFAULT_NETWORK, DEFAULT_NETWORK_ID } from "../consts/networks";
 
 export interface AuthConfig extends AuthState {}
 
 export function getPolywrapConfig(
   authConfig: AuthConfig
 ): Partial<PolywrapClientConfig> {
-  const { selectedAccountIndex, network: networkId, accounts } = authConfig;
+  const { selectedAccountIndex, accounts, selectedNetworkIndex, networks } =
+    authConfig;
 
   const selectedAccount = accounts.find(
     (acc, index) => index === selectedAccountIndex
+  );
+
+  const selectedNetwork = networks.find(
+    (network, index) => index === selectedNetworkIndex
   );
 
   const keyStore = new keyStores.InMemoryKeyStore();
@@ -24,7 +30,11 @@ export function getPolywrapConfig(
   for (const account of accounts) {
     if (account?.privateKey) {
       const keyPair = KeyPair.fromString(account.privateKey);
-      keyStore.setKey(networkId, account.accountId, keyPair);
+      keyStore.setKey(
+        selectedNetwork?.networkId || DEFAULT_NETWORK_ID,
+        account.accountId,
+        keyPair
+      );
     }
   }
 
@@ -33,7 +43,11 @@ export function getPolywrapConfig(
       {
         uri: "wrap://ens/nearPlugin.polywrap.eth",
         plugin: nearPlugin(
-          getNearConnectionConfig(networkId, keyStore, selectedAccount)
+          getNearConnectionConfig(
+            selectedNetwork || DEFAULT_NETWORK,
+            keyStore,
+            selectedAccount
+          )
         ),
       },
     ],

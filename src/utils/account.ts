@@ -29,12 +29,12 @@ export function getPublicKeyByPrivateKey(privateKey: string): PublicKey {
 export async function createNewAccount(
   accountId: string,
   privateKey: string,
-  networkId: Network,
+  network: Network,
   keyStore?: KeyStores.KeyStore
 ): Promise<void> {
   const nearConnection = await connect(
     getNearConnectionConfig(
-      networkId,
+      network,
       keyStore || new keyStores.BrowserLocalStorageKeyStore()
     )
   );
