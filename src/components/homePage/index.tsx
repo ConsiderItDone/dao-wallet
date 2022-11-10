@@ -20,8 +20,6 @@ const HomePage = () => {
 
   const [isUnlocking, setIsUnlocking] = useState<boolean>(false);
   const [shouldInitialize, setShouldInitialize] = useState<boolean>(true);
-  const [shouldCreateAccount, setShouldCreateAccount] =
-    useState<boolean>(false);
 
   const [storageHashedPassword, setStorageHashedPassword] = useState<
     string | null
@@ -68,24 +66,6 @@ const HomePage = () => {
         }
         setStorageHashedPassword(storageHashedPassword);
 
-        const accounts = await localStorage.getAccounts();
-        if (!accounts || accounts?.length < 1) {
-          setShouldCreateAccount(true);
-          return;
-        }
-
-        let lastSelectedAccountIndex =
-          await localStorage.getLastSelectedAccountIndex();
-        if (
-          lastSelectedAccountIndex === undefined ||
-          lastSelectedAccountIndex === null
-        ) {
-          lastSelectedAccountIndex = 0;
-          await localStorage.setLastSelectedAccountIndex(
-            lastSelectedAccountIndex
-          );
-        }
-
         const isUnlocked = await sessionStorage.isExtensionUnlocked();
         if (isUnlocked) {
           handleNextPage(requestedInjectedApiMethod);
@@ -124,6 +104,10 @@ const HomePage = () => {
       if (isPasswordCorrect(inputPassword, storageHashedPassword)) {
         await sessionStorage.setPassword(inputPassword);
         await sessionStorage.setIsExtensionUnlocked(true);
+
+        const accounts = await localStorage.getAccounts();
+        const shouldCreateAccount = !accounts || accounts?.length < 1;
+
         if (shouldCreateAccount) {
           goTo(ChooseMethod);
         } else {
@@ -168,7 +152,12 @@ const HomePage = () => {
             onClick={handleUnlock}
             type="button"
             className="btn"
-            disabled={isUnlocking || !inputPassword || shouldInitialize}
+            disabled={
+              isUnlocking ||
+              !inputPassword ||
+              shouldInitialize ||
+              !storageHashedPassword
+            }
           >
             {isUnlocking ? <ClipLoader color="#fff" size={14} /> : "Unlock"}
           </button>
