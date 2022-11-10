@@ -123,7 +123,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
   async getLastSelectedAccountIndex(): Promise<number | undefined> {
     try {
       const storageObject = await this.get();
-      return storageObject?.lastSelectedAccountIndex;
+      return storageObject?.lastSelectedAccountIndex || 0;
     } catch (error) {
       console.error("[GetLastSelectedAccountIndex]:", error);
       return undefined;
@@ -236,7 +236,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
   async getLastSelectedNetworkIndex(): Promise<number | undefined> {
     try {
       const storageObject = await this.get();
-      return storageObject?.lastSelectedNetworkIndex;
+      return storageObject?.lastSelectedNetworkIndex || 0;
     } catch (error) {
       console.error("[GetLastSelectedNetworkIndex]:", error);
       return undefined;
@@ -396,13 +396,6 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         method: INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
         response: accountIds,
       };
-      //
-      // console.log("[SetWebsiteConnectedAccounts] postMessage data:", {
-      //   window,
-      //   message,
-      //   websiteAddress,
-      // });
-      //
       await chrome.runtime.sendMessage({
         data: message,
         origin: websiteAddress,

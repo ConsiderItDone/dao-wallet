@@ -160,17 +160,8 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
       return [[], undefined];
     }
 
-    let lastSelectedAccountIndex =
+    const lastSelectedAccountIndex =
       await appLocalStorage.getLastSelectedAccountIndex();
-    if (
-      lastSelectedAccountIndex === null ||
-      lastSelectedAccountIndex === undefined
-    ) {
-      lastSelectedAccountIndex = 0;
-      await appLocalStorage.setLastSelectedAccountIndex(
-        lastSelectedAccountIndex
-      );
-    }
     return [accounts, lastSelectedAccountIndex];
   }, []);
 
@@ -184,17 +175,8 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
       return [[], undefined];
     }
 
-    let lastSelectedNetworkIndex =
+    const lastSelectedNetworkIndex =
       await appLocalStorage.getLastSelectedNetworkIndex();
-    if (
-      lastSelectedNetworkIndex === null ||
-      lastSelectedNetworkIndex === undefined
-    ) {
-      lastSelectedNetworkIndex = 0;
-      await appLocalStorage.setLastSelectedNetworkIndex(
-        lastSelectedNetworkIndex
-      );
-    }
     return [networks, lastSelectedNetworkIndex];
   }, []);
 
