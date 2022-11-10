@@ -260,13 +260,13 @@ const CreateWithSecurePassphrasePage = () => {
               <div className="accountIdInputWrapper">
                 <input
                   className="accountIdInput"
-                  placeholder="yourname.testnet"
+                  placeholder={`yourname.${currentNetwork?.networkId}`}
                   onChange={onAccountIdChange}
                   value={accountIdInput}
                   disabled={isCreatingAccount}
                 />
                 <span className="accountIdInputSuffix" ref={inputSuffix}>
-                  .testnet
+                  {currentNetwork?.networkId}
                 </span>
               </div>
               {!!accountId && accountIdError && (
