@@ -10,6 +10,14 @@ import { goBack, goTo } from "react-chrome-extension-router";
 import { makeNftTransfer } from "../../utils/nfts";
 import { NftTransferSuccessPage } from "../nftTransferSuccessPage";
 import { ACCOUNT_BALANCE_METHOD_NAME } from "../../hooks/useAccountNearBalance";
+import { shortenWalletAddress } from "../../utils/wallet";
+
+function formatAccountId(accountId: string | undefined) {
+  if (!accountId) return accountId;
+  return accountId?.length >= 16
+    ? shortenWalletAddress(accountId, 4, 4)
+    : accountId;
+}
 
 interface Props {
   nft: NFT;
@@ -164,11 +172,13 @@ export const TransferNftPage = ({ nft }: Props) => {
             <div className="transferDetailsContainer">
               <div className="transferDetail">
                 <div className="label">From</div>
-                <div className="value">{nft?.owner}</div>
+                <div className="value">{formatAccountId(nft?.owner)}</div>
               </div>
               <div className="transferDetail">
                 <div className="label">To</div>
-                <div className="value">{recipientAccountId}</div>
+                <div className="value">
+                  {formatAccountId(recipientAccountId)}
+                </div>
               </div>
             </div>
             <button
