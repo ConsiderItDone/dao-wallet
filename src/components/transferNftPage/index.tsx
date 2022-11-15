@@ -3,14 +3,18 @@ import "./index.css";
 import { NFT } from "../../types";
 import Header from "../header";
 import { accountExists } from "../../utils/account";
-import { useQuery } from "../../hooks";
+import { useAuth, useQuery } from "../../hooks";
 import { AccountBalance } from "../balancePage";
 import { ClipLoader } from "react-spinners";
 import { goBack, goTo } from "react-chrome-extension-router";
 import { makeNftTransfer } from "../../utils/nfts";
 import { NftTransferSuccessPage } from "../nftTransferSuccessPage";
-import { ACCOUNT_BALANCE_METHOD_NAME } from "../../hooks/useAccountNearBalance";
+import {
+  ACCOUNT_BALANCE_METHOD_NAME,
+  useAccountNearBalance,
+} from "../../hooks/useAccountNearBalance";
 import { shortenWalletAddress } from "../../utils/wallet";
+import { NEAR_RESERVED_FOR_TRANSACTION_FEES } from "../../consts/near";
 
 function formatAccountId(accountId: string | undefined) {
   if (!accountId) return accountId;
@@ -40,6 +44,13 @@ export const TransferNftPage = ({ nft }: Props) => {
   );
   const [functionCallExecute] = useQuery("functionCall");
 
+  const { currentAccount: account, currentNetwork } = useAuth();
+
+  const { accountNearBalance, isLoadingAccountBalance } = useAccountNearBalance(
+    account?.accountId,
+    currentNetwork?.networkId
+  );
+
   useEffect(() => {
     const validateRecipientAccountId = async (
       accountId: string | null | undefined
@@ -66,6 +77,13 @@ export const TransferNftPage = ({ nft }: Props) => {
           return;
         }
 
+        if (accountNearBalance?.total! < NEAR_RESERVED_FOR_TRANSACTION_FEES) {
+          setRecipientAccountIdError(
+            `You need to have at least ${NEAR_RESERVED_FOR_TRANSACTION_FEES} NEAR in total to perform transactions`
+          );
+          return;
+        }
+
         setRecipientAccountIdError(null);
       } catch (error) {
         console.error("[ValidateRecipientAccountId]:", error);
@@ -77,7 +95,7 @@ export const TransferNftPage = ({ nft }: Props) => {
 
     validateRecipientAccountId(recipientAccountId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipientAccountId, nft?.owner]);
+  }, [recipientAccountId, nft?.owner, accountNearBalance?.total]);
 
   const onRecipientAccountIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event?.target?.value;
@@ -150,11 +168,12 @@ export const TransferNftPage = ({ nft }: Props) => {
                 !recipientAccountId ||
                 recipientAccountIdError === undefined ||
                 !!recipientAccountIdError ||
-                isValidatingRecipientAccountId
+                isValidatingRecipientAccountId ||
+                isLoadingAccountBalance
               }
               className="button nextStepButton"
             >
-              {isValidatingRecipientAccountId ? (
+              {isValidatingRecipientAccountId || isLoadingAccountBalance ? (
                 <ClipLoader color="#fff" size={14} />
               ) : (
                 "Next Step"
