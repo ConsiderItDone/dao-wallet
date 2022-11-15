@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import { goBack, goTo } from "react-chrome-extension-router";
-import { ReactComponent as CopyIcon } from "../../images/copyIcon.svg";
 import FooterSettings from "../footerSettings";
 import iconsObj from "../../assets/icons";
 import Icon from "../icon";
@@ -8,9 +7,18 @@ import Header from "../header";
 import "./index.css";
 import { SelectNetworkPage } from "../selectNetworkPage";
 import { useAuth } from "../../hooks";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const Settings = () => {
   const { currentAccount } = useAuth();
+  const [showCopiedIcon, setShowCopiedIcon] = useState<boolean>(false);
+
+  const onAddressCopy = () => {
+    setShowCopiedIcon(true);
+    setTimeout(() => {
+      setShowCopiedIcon(false);
+    }, 1000);
+  };
 
   const handleChangeNetwork = () => {
     goTo(SelectNetworkPage);
@@ -26,7 +34,19 @@ const Settings = () => {
         <div className="titleSettings">Settings</div>
         <div className="wallet">Wallet ID</div>
         <div className="text">
-          {currentAccount?.accountId} <CopyIcon className="copyIcon" />
+          {currentAccount?.accountId}
+          <CopyToClipboard
+            text={currentAccount?.accountId || ""}
+            onCopy={onAddressCopy}
+          >
+            <div className="addressCopyIconWrapper">
+              <img
+                src={showCopiedIcon ? iconsObj.success : iconsObj.copyIcon}
+                className="addressCopyIcon"
+                alt=""
+              />
+            </div>
+          </CopyToClipboard>
         </div>
         <button className="menuItembtn" onClick={handleChangeNetwork}>
           <div>Change Network</div>

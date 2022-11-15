@@ -51,6 +51,22 @@
   margin-bottom: 40px;
   display: flex;
   align-items: center;
+  overflow-wrap: anywhere;
+  padding: 0 20px;
+  text-align: center;
+}
+.settings .settingsContainer .text .addressCopyIconWrapper {
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+.settings .settingsContainer .text .addressCopyIconWrapper:hover {
+  opacity: 0.8;
+}
+.settings .settingsContainer .text .addressCopyIconWrapper .addressCopyIcon {
+  width: 100%;
+  height: 100%;
 }
 
 .settings .settingsContainer .menuItembtn{
