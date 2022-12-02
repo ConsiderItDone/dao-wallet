@@ -3,14 +3,12 @@ import { goTo } from "react-chrome-extension-router";
 import "./index.css";
 import { InputField } from "../form/inputField";
 import { ClipLoader } from "react-spinners";
-import { SessionStorage } from "../../services/chrome/sessionStorage";
 import { LocalStorage } from "../../services/chrome/localStorage";
 import { hashPassword } from "../../utils/encryption";
 import { HomePage } from "../index";
 
 const CreatePasswordPage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
-  const [sessionStorage] = useState<SessionStorage>(new SessionStorage());
 
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -82,7 +80,6 @@ const CreatePasswordPage = () => {
     try {
       const hashedPassword = hashPassword(password);
       await localStorage.setHashedPassword(hashedPassword);
-      await sessionStorage.setIsExtensionUnlocked(true);
       goTo(HomePage);
     } catch (error) {
       console.error("[HandleCreatePassword]:", error);

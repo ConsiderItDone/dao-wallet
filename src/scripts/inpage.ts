@@ -1,5 +1,5 @@
-import { InjectedAPI } from "./injectedAPI";
-import { InjectedWallet } from "./injectedAPI.types";
+import { InjectedAPI } from "./injectedAPI/injectedAPI";
+import { InjectedWallet } from "./injectedAPI/injectedAPI.types";
 
 declare global {
   interface Window {
@@ -12,5 +12,5 @@ if (window) {
     window.near = {};
   }
 
-  window.near.omniWallet = new InjectedAPI();
+  window.near.daoWallet = new InjectedAPI();
 }

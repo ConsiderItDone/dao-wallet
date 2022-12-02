@@ -11,8 +11,18 @@ import CreatePasswordPage from "../createPasswordPage";
 import { isPasswordCorrect } from "../../utils/encryption";
 import { ClipLoader } from "react-spinners";
 import { InputField } from "../form/inputField";
-import { INJECTED_API_METHOD_QUERY_PARAM_KEY } from "../../scripts/scripts.consts";
+import {
+  INJECTED_API_METHOD_QUERY_PARAM_KEY,
+  INJECTED_API_NETWORK_QUERY_PARAM_KEY,
+  INJECTED_API_QUERY_METHOD_CHANGE_NETWORK,
+  INJECTED_API_QUERY_METHOD_CONNECT,
+  INJECTED_API_QUERY_METHOD_SIGN_TRANSACTION,
+  INJECTED_API_TRANSACTION_UUID_QUERY_PARAM_KEY,
+  INJECTED_API_WEBSITE_QUERY_PARAM_KEY,
+} from "../../scripts/scripts.consts";
 import { ConnectAccountsPage } from "../connectAccountsPage";
+import { ConfirmNetworkChangePage } from "../confirmNetworkChangePage";
+import { ApproveSignTransactionPage } from "../approveSignTransactionPage";
 
 const HomePage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -40,19 +50,37 @@ const HomePage = () => {
     setRequestedInjectedApiMethod(requestedInjectedApiMethod || null);
   }, []);
 
-  const handleNextPage = (
+  const handleNextPage = async (
     requestedInjectedApiMethod: string | null | undefined
   ) => {
-    switch (requestedInjectedApiMethod) {
-      case "connect":
-        const website = new URLSearchParams(window.location.search).get(
-          "website"
-        );
-        goTo(ConnectAccountsPage, { website });
-        return;
-      default:
-        goTo(BalancePage);
-        return;
+    const hasAccount = await localStorage.hasAccount();
+
+    if (!hasAccount) {
+      goTo(ChooseMethod);
+    } else {
+      const website = new URLSearchParams(window.location.search).get(
+        INJECTED_API_WEBSITE_QUERY_PARAM_KEY
+      );
+      switch (requestedInjectedApiMethod) {
+        case INJECTED_API_QUERY_METHOD_CONNECT:
+          goTo(ConnectAccountsPage, { website });
+          return;
+        case INJECTED_API_QUERY_METHOD_CHANGE_NETWORK:
+          const networkId = new URLSearchParams(window.location.search).get(
+            INJECTED_API_NETWORK_QUERY_PARAM_KEY
+          );
+          goTo(ConfirmNetworkChangePage, { website, networkId });
+          return;
+        case INJECTED_API_QUERY_METHOD_SIGN_TRANSACTION:
+          const transactionUuid = new URLSearchParams(
+            window.location.search
+          ).get(INJECTED_API_TRANSACTION_UUID_QUERY_PARAM_KEY);
+          goTo(ApproveSignTransactionPage, { website, transactionUuid });
+          return;
+        default:
+          goTo(BalancePage);
+          return;
+      }
     }
   };
 
@@ -66,9 +94,9 @@ const HomePage = () => {
         }
         setStorageHashedPassword(storageHashedPassword);
 
-        const isUnlocked = await sessionStorage.isExtensionUnlocked();
-        if (isUnlocked) {
-          handleNextPage(requestedInjectedApiMethod);
+        const sessionStoragePassword = await sessionStorage.getPassword();
+        if (sessionStoragePassword) {
+          await handleNextPage(requestedInjectedApiMethod);
         }
       } catch (error) {
         console.error("Failed to initialize:", error);
@@ -82,6 +110,7 @@ const HomePage = () => {
         console.error("[HomePageInitialize]:", error);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     localStorage,
     sessionStorage,
@@ -103,16 +132,7 @@ const HomePage = () => {
     try {
       if (isPasswordCorrect(inputPassword, storageHashedPassword)) {
         await sessionStorage.setPassword(inputPassword);
-        await sessionStorage.setIsExtensionUnlocked(true);
-
-        const accounts = await localStorage.getAccounts();
-        const shouldCreateAccount = !accounts || accounts?.length < 1;
-
-        if (shouldCreateAccount) {
-          goTo(ChooseMethod);
-        } else {
-          handleNextPage(requestedInjectedApiMethod);
-        }
+        handleNextPage(requestedInjectedApiMethod);
       } else {
         setInputPasswordError("Wrong password");
       }

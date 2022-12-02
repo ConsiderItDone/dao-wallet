@@ -44,11 +44,10 @@ export const TransferNftPage = ({ nft }: Props) => {
   );
   const [functionCallExecute] = useQuery("functionCall");
 
-  const { currentAccount: account, currentNetwork } = useAuth();
+  const { currentAccount: account } = useAuth();
 
   const { accountNearBalance, isLoadingAccountBalance } = useAccountNearBalance(
-    account?.accountId,
-    currentNetwork?.networkId
+    account?.accountId
   );
 
   useEffect(() => {

@@ -1,18 +1,25 @@
+import { equals } from "ramda";
 import {
   INJECTED_API_CONNECT_METHOD,
+  INJECTED_API_DISCONNECT_METHOD,
   INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
   INJECTED_API_GET_NETWORK_METHOD,
   INJECTED_API_INITIALIZED_EVENT_NAME,
+  INJECTED_API_SHOULD_UPDATE_CONNECTED_ACCOUNTS_METHOD,
+  INJECTED_API_SHOULD_UPDATE_NETWORK_METHOD,
+  INJECTED_API_SIGN_TRANSACTION_METHOD,
+  INJECTED_API_SIGN_TRANSACTIONS_METHOD,
+  SUPPORTED_NETWORKS,
   UNINITIALIZED_NETWORK,
   WALLET_CONTENTSCRIPT_MESSAGE_TARGET,
   WALLET_INJECTED_API_MESSAGE_TARGET,
-} from "./scripts.consts";
+} from "../scripts.consts";
 import {
   ConnectedAccount,
   InjectedApiEvents,
   GetConnectedAccountsResponse,
   EventCallback,
-} from "./scripts.types";
+} from "../scripts.types";
 import {
   InjectedAPIAccount,
   InjectedAPIConnectParams,
@@ -30,7 +37,7 @@ import { v4 as uuidv4 } from "uuid";
 import { InjectedAPIMessage } from "./injectedAPI.custom.types";
 
 export class InjectedAPI implements InjectedWallet {
-  public readonly id: string = "omniWallet";
+  public readonly id: string = "daoWallet";
 
   public initialized: boolean = false;
 
@@ -42,6 +49,8 @@ export class InjectedAPI implements InjectedWallet {
 
   public accounts: InjectedAPIAccount[] = [];
 
+  private accountsWithPlainPK: ConnectedAccount[] = [];
+
   private eventCallbacks: Map<string, EventCallback[]> = new Map<
     string,
     EventCallback[]
@@ -50,39 +59,42 @@ export class InjectedAPI implements InjectedWallet {
   constructor() {
     this.setupEventListeners();
     this.getNetwork()
-      .then(() => {
-        return this.getConnectedAccounts();
-      })
+      .then(() => this.getConnectedAccounts())
       .then(() => {
         this.initialized = true;
         window.dispatchEvent(new Event(INJECTED_API_INITIALIZED_EVENT_NAME));
       })
       .catch((error) => {
-        console.error(
-          "Omni Near Wallet injected API initialization failed:",
-          error
-        );
+        console.error("DAO Wallet injected API initialization failed:", error);
       });
   }
 
   public async supportsNetwork(networkId: string): Promise<boolean> {
-    return ["testnet", "mainnet"].indexOf(networkId) > -1;
+    return !!networkId && SUPPORTED_NETWORKS.indexOf(networkId) > -1;
   }
 
-  // TODO: add changing network
   public async connect(
     params: InjectedAPIConnectParams
   ): Promise<Array<InjectedAPIAccount>> {
+    const isNetworkSupported = await this.supportsNetwork(params?.networkId);
+    if (params?.networkId) {
+      if (params?.networkId === this.network.networkId) {
+        return this.accounts;
+      } else if (!isNetworkSupported) {
+        throw new Error(`Network ${params?.networkId} is not supported`);
+      }
+    }
     const response = await this.sendMessage<GetConnectedAccountsResponse>(
       INJECTED_API_CONNECT_METHOD,
-      null,
+      params,
       true
     );
     return this.handleConnectedAccountsChange(response);
   }
 
   public async disconnect(): Promise<void> {
-    this.handleConnectedAccountsChange([]);
+    await this.sendMessage(INJECTED_API_DISCONNECT_METHOD, null, true);
+    await this.handleConnectedAccountsChange([]);
   }
 
   public async signIn(params: InjectedAPISignInParams): Promise<void> {}
@@ -120,15 +132,23 @@ export class InjectedAPI implements InjectedWallet {
   public async signTransaction(
     params: InjectedAPISignTransactionParams
   ): Promise<transactions.SignedTransaction> {
-    // TODO: send message to content script to open sign transaction popup
-    return transactions.SignedTransaction.decode(Buffer.from([1, 2]));
+    const response = await this.sendMessage<transactions.SignedTransaction>(
+      INJECTED_API_SIGN_TRANSACTION_METHOD,
+      params,
+      true
+    );
+
+    return response!;
   }
 
   public async signTransactions(
     params: InjectedAPISignTransactionsParams
   ): Promise<Array<transactions.SignedTransaction>> {
-    // TODO: send message to content script to open sign transactions popup
-    return [transactions.SignedTransaction.decode(Buffer.from([1, 2]))];
+    const response = await this.sendMessage<
+      Array<transactions.SignedTransaction>
+    >(INJECTED_API_SIGN_TRANSACTIONS_METHOD, params, true);
+
+    return response!;
   }
 
   // Adds event listeners for getting messages from content script and background script
@@ -145,10 +165,18 @@ export class InjectedAPI implements InjectedWallet {
 
       const method = message?.method;
       const response = await message.response;
-      // TODO: get message with current network
       switch (method) {
         case INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD:
           this.handleConnectedAccountsChange(response);
+          break;
+        case INJECTED_API_GET_NETWORK_METHOD:
+          this.handleNetworkChange(response);
+          break;
+        case INJECTED_API_SHOULD_UPDATE_NETWORK_METHOD:
+          this.getNetwork();
+          break;
+        case INJECTED_API_SHOULD_UPDATE_CONNECTED_ACCOUNTS_METHOD:
+          this.getConnectedAccounts();
           break;
         default:
           break;
@@ -161,15 +189,21 @@ export class InjectedAPI implements InjectedWallet {
   ) {
     let accounts = await accountsPromise;
     if (Array.isArray(accounts)) {
-      const accountsWithPublicKey =
-        accounts.map((account) => ({
-          ...account,
-          publicKey: utils.PublicKey.from(account.publicKey),
-        })) || [];
+      if (!equals(this.accountsWithPlainPK, accounts)) {
+        this.accountsWithPlainPK = accounts;
 
-      this.accounts = accountsWithPublicKey;
-      this.executeEventCallbacks("accountsChanged", accountsWithPublicKey);
-      return accountsWithPublicKey;
+        const accountsWithPublicKey =
+          accounts.map((account) => ({
+            ...account,
+            publicKey: utils.PublicKey.from(account.publicKey),
+          })) || [];
+
+        this.accounts = accountsWithPublicKey;
+        this.executeEventCallbacks("accountsChanged", {
+          accounts: accountsWithPublicKey,
+        });
+      }
+      return this.accounts;
     }
     return [];
   }
@@ -177,16 +211,33 @@ export class InjectedAPI implements InjectedWallet {
   private async handleNetworkChange(
     network: InjectedAPINetwork
   ): Promise<InjectedAPINetwork> {
-    this.executeEventCallbacks("networkChanged", network);
-    return network;
+    if (!equals(this.network, network)) {
+      this.network = network;
+      this.executeEventCallbacks("networkChanged", { network });
+    }
+    return this.network;
   }
 
   private async getNetwork() {
-    this.sendMessage<InjectedAPINetwork>(INJECTED_API_GET_NETWORK_METHOD);
+    const network = await this.sendMessage<InjectedAPINetwork>(
+      INJECTED_API_GET_NETWORK_METHOD,
+      null,
+      true
+    );
+    if (network) {
+      await this.handleNetworkChange(network);
+    }
   }
 
   private async getConnectedAccounts() {
-    this.sendMessage(INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD);
+    const connectedAccounts = await this.sendMessage<ConnectedAccount[]>(
+      INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
+      null,
+      true
+    );
+    if (connectedAccounts) {
+      await this.handleConnectedAccountsChange(connectedAccounts);
+    }
   }
 
   private async sendMessage<T>(
@@ -204,7 +255,7 @@ export class InjectedAPI implements InjectedWallet {
 
     let response: Promise<T> | undefined;
     if (shouldWaitForAnswer) {
-      response = new Promise((resolve) => {
+      response = new Promise((resolve, reject) => {
         const listener = async (event: MessageEvent<any>) => {
           const message: InjectedAPIMessage = event?.data;
           const messageTo: string = message?.target;
@@ -214,6 +265,9 @@ export class InjectedAPI implements InjectedWallet {
             message?.id === messageId
           ) {
             window.removeEventListener("message", listener);
+            if (message?.response?.error) {
+              reject(message?.response?.error);
+            }
             resolve(message?.response as T);
           }
         };

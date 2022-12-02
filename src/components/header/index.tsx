@@ -57,13 +57,13 @@ const Header = () => {
   const handleGoBack = async () => {
     const componentStack = getComponentStack();
     if (componentStack?.length <= 1) {
-      await sessionStorage.setIsExtensionUnlocked(false);
+      await sessionStorage.setPassword(undefined);
     }
     goBack();
   };
 
   const handleLock = async () => {
-    await sessionStorage.setIsExtensionUnlocked(false);
+    await sessionStorage.setPassword(undefined);
     goTo(HomePage);
   };
 

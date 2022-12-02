@@ -20,6 +20,10 @@ import {
 import { Network } from "../types";
 import { getPolywrapConfig } from "../utils/polywrap";
 import { IS_IN_DEVELOPMENT_MODE } from "../consts/app";
+import {
+  SESSION_PASSWORD_KEY,
+  SESSION_STORAGE_PASSWORD_CHANGED_EVENT_KEY,
+} from "../services/chrome/sessionStorage";
 
 const appLocalStorage = new LocalStorage();
 
@@ -41,34 +45,44 @@ export interface AuthState {
   loading: Boolean;
 }
 
+const DEFAULT_STATE: AuthState = {
+  selectedAccountIndex: undefined,
+  accounts: [],
+  selectedNetworkIndex: undefined,
+  networks: [],
+  loading: true,
+};
+
 export const AuthContext = createContext<AuthProviderValue>(
   {} as AuthProviderValue
 );
 
 const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
-  const [state, setState] = useState<AuthState>({
-    selectedAccountIndex: undefined,
-    accounts: [],
-    selectedNetworkIndex: undefined,
-    networks: [],
-    loading: true,
-  });
-
-  const currentAccount = useMemo(
-    () =>
-      state.accounts.find((acc, index) => index === state.selectedAccountIndex),
-    [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
-  );
-  console.log("Current account", currentAccount);
+  const [state, setState] = useState<AuthState>(DEFAULT_STATE);
+  const [shouldReInitAccounts, setShouldReInitAccounts] =
+    useState<boolean>(false);
 
   const currentNetwork = useMemo(
     () =>
-      state.networks.find(
-        (network, index) => index === state.selectedNetworkIndex
-      ),
+      state.selectedNetworkIndex !== undefined
+        ? state.networks.find(
+            (network, index) => index === state.selectedNetworkIndex
+          )
+        : undefined,
     [state.networks.length, state.selectedNetworkIndex] //eslint-disable-line
   );
   console.log("Current network", currentNetwork);
+
+  const currentAccount = useMemo(
+    () =>
+      state.selectedAccountIndex !== undefined
+        ? state.accounts.find(
+            (acc, index) => index === state.selectedAccountIndex
+          )
+        : undefined,
+    [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
+  );
+  console.log("Current account", currentAccount);
 
   const addAccount = useCallback(async (newAccount: AccountWithPrivateKey) => {
     await appLocalStorage.addAccount(newAccount);
@@ -91,10 +105,10 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
       const accountIndex = accounts?.findIndex(
         (acc) => acc.accountId === indexOrId
       );
-      if (accountIndex && accountIndex >= 0) {
+      if (accountIndex !== undefined && accountIndex >= 0) {
         await appLocalStorage.setLastSelectedAccountIndex(accountIndex);
+        setState((state) => ({ ...state, selectedAccountIndex: accountIndex }));
       }
-      setState((state) => ({ ...state, selectedAccountIndex: accountIndex }));
     }
     if (typeof indexOrId === "number") {
       await appLocalStorage.setLastSelectedAccountIndex(indexOrId);
@@ -133,10 +147,10 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
       const networkIndex = networks?.findIndex(
         (network) => network.networkId === indexOrId
       );
-      if (networkIndex && networkIndex >= 0) {
+      if (networkIndex !== undefined && networkIndex >= 0) {
         await appLocalStorage.setLastSelectedNetworkIndex(networkIndex);
+        setState((state) => ({ ...state, selectedNetworkIndex: networkIndex }));
       }
-      setState((state) => ({ ...state, selectedNetworkIndex: networkIndex }));
       return true;
     }
 
@@ -181,8 +195,8 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
   }, []);
 
   const init = useCallback(async () => {
-    const [accounts, lastAccountIndex] = await initAccounts();
     const [networks, lastSelectedNetworkIndex] = await initNetworks();
+    const [accounts, lastAccountIndex] = await initAccounts();
     setState((state) => ({
       ...state,
       selectedAccountIndex: lastAccountIndex,
@@ -193,32 +207,69 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     }));
   }, []); //eslint-disable-line
 
-  useEffect(() => {
-    const updateAccount = async () => {
-      console.log("updateAccount called");
-      const currentAccount = await appLocalStorage.getCurrentAccount();
-      if (currentAccount) {
-        selectAccount(currentAccount.accountId);
-      }
-    };
-
-    const updateNetwork = async () => {
-      console.log("updateNetwork called");
-      const currentNetwork = await appLocalStorage.getCurrentNetwork();
-      if (currentNetwork) {
-        changeNetwork(currentNetwork.networkId);
-      }
-    };
-
-    init();
-    updateAccount();
-    updateNetwork();
-    const clearEventListeners = setEventListeners(updateAccount, updateNetwork);
-
-    return clearEventListeners;
+  const reinitAccounts = useCallback(async () => {
+    const [accounts, lastAccountIndex] = await initAccounts();
+    setState((state) => ({
+      ...state,
+      selectedAccountIndex: lastAccountIndex,
+      accounts,
+    }));
   }, []); //eslint-disable-line
 
-  return (
+  const updateAccount = useCallback(async () => {
+    console.log("updateAccount called");
+    const currentAccount = await appLocalStorage.getCurrentAccount();
+    if (currentAccount) {
+      await selectAccount(currentAccount.accountId);
+    }
+  }, [selectAccount]);
+
+  const updateNetwork = useCallback(async () => {
+    console.log("updateNetwork called");
+    const currentNetwork = await appLocalStorage.getCurrentNetwork();
+    if (currentNetwork) {
+      await changeNetwork(currentNetwork.networkId);
+    }
+  }, [changeNetwork]);
+
+  useEffect(() => {
+    return setEventListeners(updateAccount, updateNetwork, () => {
+      setShouldReInitAccounts(true);
+    });
+  }, [updateAccount, updateNetwork]);
+
+  useEffect(() => {
+    const initIndex = async () => {
+      const selectedAccountIndex =
+        await appLocalStorage.getLastSelectedAccountIndex();
+      const selectedNetworkIndex =
+        await appLocalStorage.getLastSelectedNetworkIndex();
+      setState((state) => ({
+        ...state,
+        selectedAccountIndex,
+        selectedNetworkIndex,
+      }));
+    };
+
+    initIndex();
+  }, []);
+
+  useEffect(() => {
+    if (state.selectedNetworkIndex !== undefined) {
+      init();
+    } else {
+      setState(DEFAULT_STATE);
+    }
+  }, [state.selectedNetworkIndex, init, shouldReInitAccounts]);
+
+  useEffect(() => {
+    if (shouldReInitAccounts) {
+      reinitAccounts();
+      setShouldReInitAccounts(false);
+    }
+  }, [reinitAccounts, shouldReInitAccounts]);
+
+  return currentNetwork ? (
     <AuthContext.Provider
       value={{
         ...state,
@@ -230,18 +281,21 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         currentNetwork,
       }}
     >
-      <PolywrapProvider {...getPolywrapConfig(state)}>
+      <PolywrapProvider
+        {...getPolywrapConfig(state, currentAccount, currentNetwork)}
+      >
         {props.children}
       </PolywrapProvider>
     </AuthContext.Provider>
-  );
+  ) : null;
 };
 
 export default AuthProvider;
 
 const setEventListeners = (
   updateAccount: () => void,
-  updateNetwork: () => void
+  updateNetwork: () => void,
+  reinitAccounts: () => void
 ) => {
   if (chrome?.storage?.onChanged) {
     const onChange = (changes: object, areaName: string) => {
@@ -260,6 +314,13 @@ const setEventListeners = (
       if (shouldUpdateNetwork) {
         updateNetwork();
       }
+
+      const shouldReinitAccounts =
+        areaName === "session" && SESSION_PASSWORD_KEY in changes;
+
+      if (shouldReinitAccounts) {
+        reinitAccounts();
+      }
     };
 
     chrome.storage.onChanged.addListener(onChange);
@@ -277,6 +338,11 @@ const setEventListeners = (
       updateNetwork
     );
 
+    window.addEventListener(
+      SESSION_STORAGE_PASSWORD_CHANGED_EVENT_KEY,
+      reinitAccounts
+    );
+
     return () => {
       window.removeEventListener(
         LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT_KEY,
@@ -286,6 +352,11 @@ const setEventListeners = (
       window.removeEventListener(
         LOCAL_STORAGE_NETWORK_CHANGED_EVENT_KEY,
         updateNetwork
+      );
+
+      window.removeEventListener(
+        SESSION_STORAGE_PASSWORD_CHANGED_EVENT_KEY,
+        reinitAccounts
       );
     };
   }

@@ -1,4 +1,4 @@
-import { Network, NetworkID } from "../types";
+import { Network } from "../types";
 
 export const TESTNET: Network = {
   networkId: "testnet",
@@ -11,15 +11,3 @@ export const MAINNET: Network = {
 };
 
 export const DEFAULT_NETWORKS: Network[] = [TESTNET, MAINNET];
-export const DEFAULT_NETWORKS_IDS: NetworkID[] = DEFAULT_NETWORKS.map(
-  (network) => network.networkId
-);
-
-export const DEFAULT_NETWORK_ID: NetworkID =
-  DEFAULT_NETWORKS_IDS.find(
-    (id) => process.env.REACT_APP_DEFAULT_NETWORK_ID === id
-  ) || "testnet";
-export const DEFAULT_NETWORK: Network =
-  DEFAULT_NETWORKS.find(
-    (network) => network.networkId === DEFAULT_NETWORK_ID
-  ) || TESTNET;
