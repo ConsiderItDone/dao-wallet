@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.css";
 import Header from "../header";
 import { useAuth } from "../../hooks";
 import { goBack, goTo } from "react-chrome-extension-router";
 import iconsObj from "../../assets/icons";
 import BalancePage from "../balancePage";
+import { Loading } from "../animations/loading";
 
 export const SelectNetworkPage = () => {
   const { networks, selectedNetworkIndex, changeNetwork } = useAuth();
+
+  const [isChangingNetwork, setIsChangingNetwork] = useState<boolean>(false);
+
+  const handleChangeNetwork = async (networkId: string) => {
+    setIsChangingNetwork(true);
+    await changeNetwork(networkId);
+    setTimeout(() => {
+      goTo(BalancePage);
+    }, 1500);
+  };
 
   const onBack = () => {
     goBack();
@@ -17,35 +28,46 @@ export const SelectNetworkPage = () => {
     <div className="selectNetworkPageContainer">
       <Header />
       <div className="body">
-        <div className="title">Choose Network</div>
-        <div className="networksContainer">
-          {networks.map((network, index) => (
-            <button
-              key={index}
-              className={`network ${
-                index === selectedNetworkIndex ? "chosenNetwork" : ""
-              }`}
-              onClick={
-                index !== selectedNetworkIndex
-                  ? async () => {
-                      await changeNetwork(network.networkId);
-                      goTo(BalancePage);
-                    }
-                  : () => {}
-              }
-            >
-              {network.networkId}
-              {index === selectedNetworkIndex ? (
-                <div className="successIconWrapper">
-                  <img src={iconsObj.success} alt="" className="successIcon" />
-                </div>
-              ) : null}
+        {isChangingNetwork ? (
+          <div className="clipLoaderContainer">
+            <Loading />
+          </div>
+        ) : (
+          <>
+            <div className="title">Choose Network</div>
+            <div className="networksContainer">
+              {networks.map((network, index) => (
+                <button
+                  key={index}
+                  className={`network ${
+                    index === selectedNetworkIndex ? "chosenNetwork" : ""
+                  }`}
+                  onClick={
+                    index !== selectedNetworkIndex
+                      ? () => {
+                          handleChangeNetwork(network.networkId);
+                        }
+                      : () => {}
+                  }
+                >
+                  {network.networkId}
+                  {index === selectedNetworkIndex ? (
+                    <div className="successIconWrapper">
+                      <img
+                        src={iconsObj.success}
+                        alt=""
+                        className="successIcon"
+                      />
+                    </div>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+            <button className="backBtn" onClick={onBack}>
+              Back
             </button>
-          ))}
-        </div>
-        <button className="backBtn" onClick={onBack}>
-          Back
-        </button>
+          </>
+        )}
       </div>
     </div>
   );
