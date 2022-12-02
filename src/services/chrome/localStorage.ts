@@ -4,16 +4,11 @@ import { BrowserStorageWrapper } from "./browserStorageWrapper";
 import { SessionStorage } from "./sessionStorage";
 import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
 import { IS_IN_DEVELOPMENT_MODE } from "../../consts/app";
-import {
-  INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
-  WALLET_INJECTED_API_MESSAGE_TARGET,
-} from "../../scripts/scripts.consts";
-import { InjectedAPIMessage } from "../../scripts/injectedAPI.custom.types";
 import { Network } from "../../types";
 import { DEFAULT_NETWORKS } from "../../consts/networks";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
-export const WEBSITES_DATA_KEY = "websitesData";
+export const LOCAL_STORAGE_WEBSITES_DATA_KEY = "websitesData";
 
 export const ACCOUNTS_KEY = "accounts";
 export const LAST_SELECTED_ACCOUNT_INDEX_KEY = "lastSelectedAccountIndex";
@@ -92,6 +87,16 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     } catch (error) {
       console.error("[GetAccounts]:", error);
       return undefined;
+    }
+  }
+
+  async hasAccount(): Promise<boolean> {
+    try {
+      const storageObject = await this.get();
+      return !!storageObject?.accounts && storageObject.accounts.length > 0;
+    } catch (error) {
+      console.error("[HasAccount]:", error);
+      return false;
     }
   }
 
@@ -343,7 +348,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
   public async getWebsiteConnectedAccounts(
     websiteAddress: string
-  ): Promise<{ accountId: string; publicKey: string }[]> {
+  ): Promise<LocalStorageWebsiteConnectedAccount[]> {
     try {
       const storageObject = await this.get();
       const accounts = storageObject?.accounts;
@@ -389,17 +394,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         websitesData = {};
       }
       websitesData[websiteAddress.toLowerCase()] = accountIds || [];
-      await this.set({ [WEBSITES_DATA_KEY]: websitesData });
-
-      const message: InjectedAPIMessage = {
-        target: WALLET_INJECTED_API_MESSAGE_TARGET,
-        method: INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
-        response: accountIds,
-      };
-      await chrome.runtime.sendMessage({
-        data: message,
-        origin: websiteAddress,
-      });
+      await this.set({ [LOCAL_STORAGE_WEBSITES_DATA_KEY]: websitesData });
 
       return accountIds;
     } catch (error) {
@@ -473,4 +468,9 @@ export interface Token {
   symbol: string;
   icon: string;
   decimals: number;
+}
+
+export interface LocalStorageWebsiteConnectedAccount {
+  accountId: string;
+  publicKey: string;
 }
