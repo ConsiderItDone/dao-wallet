@@ -41,9 +41,11 @@ const BalanceCard = ({
       ) : (
         <>
           <div className="token">
-            {walletAddress?.length >= 32
-              ? shortenWalletAddress(walletAddress, 6, 6)
-              : walletAddress}
+            <div className="address">
+              {walletAddress?.length >= 32
+                ? shortenWalletAddress(walletAddress, 6, 6)
+                : walletAddress}
+            </div>
             <CopyToClipboard text={walletAddress} onCopy={onAddressCopy}>
               <div className="addressCopyIconWrapper">
                 <img
