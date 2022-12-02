@@ -63,6 +63,9 @@
 .connectAccountsPageContainer .body .accountsContainer .account .accountId {
     font-size: 14px;
     line-height: 19px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
 }
 
 .connectAccountsPageContainer .body .accountsContainer .account .isChosenIcon {
