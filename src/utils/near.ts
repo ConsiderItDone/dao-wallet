@@ -7,7 +7,6 @@ import { ethers } from "ethers";
 import { NEAR_TOKEN } from "../consts/near";
 import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import base58 from "bs58";
-import { DEFAULT_NETWORK_ID, DEFAULT_NETWORKS_IDS } from "../consts/networks";
 
 function getIndexerServiceUrl(networkId: NetworkID): string {
   switch (networkId) {
@@ -21,16 +20,10 @@ function getIndexerServiceUrl(networkId: NetworkID): string {
 }
 
 function getWalletUrl(networkId: NetworkID): string {
-  if (DEFAULT_NETWORKS_IDS.indexOf(networkId) === -1) {
-    networkId = DEFAULT_NETWORK_ID;
-  }
   return `https://wallet.${networkId}.near.org`;
 }
 
 function getHelperUrl(networkId: NetworkID): string {
-  if (DEFAULT_NETWORKS_IDS.indexOf(networkId) === -1) {
-    networkId = DEFAULT_NETWORK_ID;
-  }
   return `https://helper.${networkId}.near.org`;
 }
 
@@ -40,15 +33,22 @@ export function getNearConnectionConfig(
   selectedAccount?: AccountWithPrivateKey
 ): NearPluginConfig {
   const networkId = network.networkId;
+  const walletUrl = getWalletUrl(networkId);
+  const helperUrl = getHelperUrl(networkId);
+  const indexerServiceUrl = getIndexerServiceUrl(networkId);
+  if (!keyStore) {
+    keyStore = new keyStores.InMemoryKeyStore();
+  }
+  const masterAccount = selectedAccount?.accountId || undefined;
   return {
     headers: {},
     networkId: networkId,
     nodeUrl: network.nodeUrl,
-    walletUrl: getWalletUrl(networkId),
-    helperUrl: getHelperUrl(networkId),
-    indexerServiceUrl: getIndexerServiceUrl(networkId),
-    keyStore: keyStore || new keyStores.InMemoryKeyStore(),
-    masterAccount: selectedAccount?.accountId || undefined,
+    walletUrl,
+    helperUrl,
+    indexerServiceUrl,
+    keyStore,
+    masterAccount,
   };
 }
 
