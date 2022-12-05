@@ -65,6 +65,10 @@
     margin: 0 auto;
 }
 
+.approveSignTransactionPageContainer .body .data .transactionWrapper .transactionActions .action {
+    line-break: anywhere;
+}
+
 .approveSignTransactionPageContainer .body .networkId {
     width: fit-content;
     max-width: 400px;
