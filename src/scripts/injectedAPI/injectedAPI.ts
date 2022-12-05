@@ -29,6 +29,7 @@ import {
   InjectedAPISignOutParams,
   InjectedAPISignTransactionParams,
   InjectedAPISignTransactionsParams,
+  InjectedAPITransactionOptions,
   InjectedAPIUnsubscribe,
   InjectedWallet,
 } from "./injectedAPI.types";
@@ -132,23 +133,41 @@ export class InjectedAPI implements InjectedWallet {
   public async signTransaction(
     params: InjectedAPISignTransactionParams
   ): Promise<transactions.SignedTransaction> {
-    const response = await this.sendMessage<transactions.SignedTransaction>(
+    this.formatSignTransactionsBeforeSend([params.transaction]);
+
+    const response: any = await this.sendMessage(
       INJECTED_API_SIGN_TRANSACTION_METHOD,
       params,
       true
     );
 
-    return response!;
+    return {
+      transaction: response?.transaction!,
+      signature: response?.signature!,
+      encode(): Uint8Array {
+        return response.encodeResult;
+      },
+    };
   }
 
   public async signTransactions(
     params: InjectedAPISignTransactionsParams
   ): Promise<Array<transactions.SignedTransaction>> {
-    const response = await this.sendMessage<
-      Array<transactions.SignedTransaction>
-    >(INJECTED_API_SIGN_TRANSACTIONS_METHOD, params, true);
+    this.formatSignTransactionsBeforeSend(params.transactions);
 
-    return response!;
+    const response: any = await this.sendMessage(
+      INJECTED_API_SIGN_TRANSACTIONS_METHOD,
+      params,
+      true
+    );
+
+    return response.map((signedTransaction: any) => ({
+      transaction: signedTransaction?.transaction!,
+      signature: signedTransaction?.signature!,
+      encode(): Uint8Array {
+        return signedTransaction.encodeResult;
+      },
+    }));
   }
 
   // Adds event listeners for getting messages from content script and background script
@@ -240,6 +259,39 @@ export class InjectedAPI implements InjectedWallet {
     }
   }
 
+  private formatSignTransactionsBeforeSend(
+    transactions: Array<InjectedAPITransactionOptions>
+  ) {
+    for (const transaction of transactions) {
+      for (let i = 0; i < transaction?.actions?.length; i++) {
+        const action = transaction.actions[i];
+        switch (action.enum) {
+          case "deleteKey": {
+            // @ts-ignore
+            transaction.actions[i].deleteKey.publicKey =
+              transaction.actions[i].deleteKey.publicKey.toString();
+            break;
+          }
+          case "addKey": {
+            // @ts-ignore
+            transaction.actions[i].addKey.publicKey =
+              transaction.actions[i].addKey.publicKey.toString();
+            break;
+          }
+          case "stake": {
+            // @ts-ignore
+            transaction.actions[i].stake.publicKey =
+              transaction.actions[i].stake.publicKey.toString();
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    }
+  }
+
   private async sendMessage<T>(
     method: string,
     params: any = null,
@@ -266,7 +318,7 @@ export class InjectedAPI implements InjectedWallet {
           ) {
             window.removeEventListener("message", listener);
             if (message?.response?.error) {
-              reject(message?.response?.error);
+              reject(new Error(message?.response?.error));
             }
             resolve(message?.response as T);
           }
