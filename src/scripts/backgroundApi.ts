@@ -51,8 +51,14 @@ export async function handleGetConnectedAccounts(
 export async function handleConnect(
   origin: string,
   params: InjectedAPIConnectParams,
-  sendResponse: (response: Array<LocalStorageWebsiteConnectedAccount>) => void
+  sendResponse: (data: any) => void
 ): Promise<void> {
+  const userHasAccounts = await appLocalStorage.hasAccount();
+  if (!userHasAccounts) {
+    sendResponse({ error: "User has no accounts in extension" });
+    return;
+  }
+
   const shouldOpenChangeNetworkPopup =
     params?.networkId && SUPPORTED_NETWORKS.indexOf(params.networkId) > -1;
   const popup: chrome.windows.Window | null = shouldOpenChangeNetworkPopup
@@ -163,7 +169,7 @@ export async function handleSignTransactions(
       {
         network: currentNetwork,
         accounts: selectedAccounts,
-        transactionsOptions: transactions.transactionsOptions,
+        transactionsOptions: transactionsOptions,
       };
     sendResponse({
       method: isHandleSingleTransaction
