@@ -7,7 +7,6 @@ import {
 import { ClipLoader } from "react-spinners";
 import { Loading } from "../animations/loading";
 import { shortenWalletAddress } from "../../utils/wallet";
-import { parseNearTokenAmount } from "../../utils/near";
 
 function formatAccountId(accountId: string | undefined) {
   if (!accountId) return accountId;
@@ -17,6 +16,79 @@ function formatAccountId(accountId: string | undefined) {
 }
 
 const appSessionStorage = new SessionStorage();
+
+export const formatTransactionAction = (action: any) => {
+  switch (action.enum) {
+    case "createAccount": {
+      return {
+        type: "CreateAccount",
+        params: action.createAccount,
+      };
+    }
+    case "deployContract": {
+      return {
+        type: "DeployContract",
+        params: {
+          ...action.deployContract,
+        },
+      };
+    }
+    case "functionCall": {
+      return {
+        type: "FunctionCall",
+        params: {
+          ...action.functionCall,
+          args: action.functionCall.args?.toString(),
+        },
+      };
+    }
+    case "transfer": {
+      return {
+        type: "Transfer",
+        params: action.transfer,
+      };
+    }
+    case "stake": {
+      return {
+        type: "Stake",
+        params: {
+          ...action.stake,
+          publicKey: action.stake.publicKey?.toString(),
+        },
+      };
+    }
+    case "addKey": {
+      return {
+        type: "AddKey",
+        params: {
+          ...action.addKey,
+          publicKey: action.addKey.publicKey?.toString(),
+        },
+      };
+    }
+    case "deleteKey": {
+      return {
+        type: "DeleteKey",
+        params: {
+          ...action.deleteKey,
+          publicKey: action.deleteKey.publicKey?.toString(),
+        },
+      };
+    }
+    case "deleteAccount": {
+      return {
+        type: "DeleteAccount",
+        params: action.deleteAccount,
+      };
+    }
+    default: {
+      return {
+        type: action.enum,
+        params: (action as any)[action.enum],
+      };
+    }
+  }
+};
 
 interface Props {
   website: string;
@@ -80,17 +152,7 @@ export const ApproveSignTransactionPage = ({
                 <div className="transactionActions">
                   {transaction.actions?.map((action) => (
                     <div className="action">
-                      <div>Enum: {action?.enum}</div>
-                      <div>
-                        Method name: {(action as any)[action?.enum]?.methodName}
-                      </div>
-                      <div>
-                        Gas:{" "}
-                        {parseNearTokenAmount(
-                          (action as any)[action?.enum]?.gas
-                        )}{" "}
-                        NEAR
-                      </div>
+                      {JSON.stringify(formatTransactionAction(action))}
                     </div>
                   ))}
                 </div>
