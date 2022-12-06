@@ -1,10 +1,14 @@
 import { ExtensionStorage } from "./extensionStorage";
 import { BrowserStorageWrapper } from "./browserStorageWrapper";
 import { IS_IN_DEVELOPMENT_MODE } from "../../consts/app";
-import { InjectedAPITransactionOptions } from "../../scripts/injectedAPI/injectedAPI.types";
+import {
+  InjectedAPISignInParamsDTO,
+  InjectedAPISignOutParamsDTO,
+  InjectedAPITransactionOptions,
+} from "../../scripts/injectedAPI/injectedAPI.types";
 
 export const SESSION_PASSWORD_KEY = "password";
-export const SESSION_TRANSACTIONS_KEY = "transactions";
+export const SESSION_TRANSACTIONS_DATA_KEY = "transactionsData";
 
 export const SESSION_STORAGE_PASSWORD_CHANGED_EVENT_KEY =
   "near#sessionStorageNetwork";
@@ -45,47 +49,49 @@ export class SessionStorage extends ExtensionStorage<SessionStorageData> {
     }
   }
 
-  async addTransactions(
-    transactions: SessionStorageTransactions,
-    transactionsUuid: string
+  async addTransactionsData(
+    transactionsData: SessionStorageTransactionsData,
+    transactionsDataUuid: string
   ) {
     try {
       const storageObject = await this.get();
-      const storageTransactions = storageObject?.transactions || {};
-      storageTransactions[transactionsUuid] = transactions;
+      const storageTransactionsData = storageObject?.transactionsData || {};
+      storageTransactionsData[transactionsDataUuid] = transactionsData;
       return await this.set({
-        [SESSION_TRANSACTIONS_KEY]: storageTransactions,
+        [SESSION_TRANSACTIONS_DATA_KEY]: storageTransactionsData,
       });
     } catch (error) {
       console.error("[AddTransactions]:", error);
     }
   }
 
-  async getTransaction(
-    transactionsUuid: string
-  ): Promise<SessionStorageTransactions | undefined> {
+  async getTransactionsData(
+    transactionsDataUuid: string
+  ): Promise<SessionStorageTransactionsData | undefined> {
     try {
       const storageObject = await this.get();
-      const storageTransactions = storageObject?.transactions || {};
-      return storageTransactions[transactionsUuid] || undefined;
+      const storageTransactionsData = storageObject?.transactionsData || {};
+      return storageTransactionsData[transactionsDataUuid] || undefined;
     } catch (error) {
       console.error("[GetTransaction]:", error);
       return undefined;
     }
   }
 
-  async updateTransactionsStatus(
-    transactionsUuid: string,
-    areApproved: boolean
-  ): Promise<SessionStorageTransactions | undefined> {
+  async updateTransactionsDataStatus(
+    transactionsDataUuid: string,
+    isApproved: boolean
+  ): Promise<SessionStorageTransactionsData | undefined> {
     try {
       const storageObject = await this.get();
-      const storageTransactions = storageObject?.transactions || {};
-      const transactions = storageTransactions[transactionsUuid];
-      if (transactions) {
-        storageTransactions[transactionsUuid].areApproved = areApproved;
-        await this.set({ [SESSION_TRANSACTIONS_KEY]: storageTransactions });
-        return transactions;
+      const storageTransactionsData = storageObject?.transactionsData || {};
+      const transactionsData = storageTransactionsData[transactionsDataUuid];
+      if (transactionsData) {
+        storageTransactionsData[transactionsDataUuid].isApproved = isApproved;
+        await this.set({
+          [SESSION_TRANSACTIONS_DATA_KEY]: storageTransactionsData,
+        });
+        return transactionsData;
       }
       return undefined;
     } catch (error) {
@@ -105,12 +111,19 @@ interface SessionStorageData {
   password: string | undefined;
 
   /**
-   * Map from uuid string to array of transactions.
+   * Map from uuid string to transactions data.
    */
-  transactions: Record<string, SessionStorageTransactions> | undefined;
+  transactionsData: Record<string, SessionStorageTransactionsData> | undefined;
 }
 
-export interface SessionStorageTransactions {
-  areApproved: boolean | undefined;
-  transactionsOptions: InjectedAPITransactionOptions[];
+export interface SessionStorageTransactionsData {
+  dataType: TransactionsDataType;
+  data: TransactionsData;
+  isApproved: boolean | undefined;
 }
+
+export type TransactionsDataType = "signTransactions" | "signIn" | "signOut";
+export type TransactionsData =
+  | InjectedAPITransactionOptions[]
+  | InjectedAPISignInParamsDTO
+  | InjectedAPISignOutParamsDTO;

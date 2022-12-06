@@ -1,5 +1,7 @@
 import { equals } from "ramda";
 import {
+  CONTENT_SCRIPT_SIGN_IN_METHOD,
+  CONTENT_SCRIPT_SIGN_OUT_METHOD,
   CONTENT_SCRIPT_SIGN_TRANSACTION_METHOD,
   CONTENT_SCRIPT_SIGN_TRANSACTIONS_METHOD,
   INJECTED_API_SHOULD_UPDATE_CONNECTED_ACCOUNTS_METHOD,
@@ -10,6 +12,8 @@ import {
 import { InjectedAPIMessage } from "./injectedAPI/injectedAPI.custom.types";
 import {
   ChromeRuntimeMessage,
+  ContentScriptSignInData,
+  ContentScriptSignOutData,
   ContentScriptSignTransactionsData,
 } from "./scripts.types";
 import {
@@ -18,9 +22,12 @@ import {
 } from "../services/chrome/localStorage";
 import { SESSION_PASSWORD_KEY } from "../services/chrome/sessionStorage";
 import {
-  handleContentscriptSignTransaction,
-  handleContentscriptSignTransactions,
-  HandleSignResult,
+  handleContentScriptSignIn,
+  handleContentScriptSignOut,
+  handleContentScriptSignTransaction,
+  handleContentScriptSignTransactions,
+  HandleSignInOutResult,
+  HandleSignTransactionsResult,
 } from "./contentscriptApi";
 
 function injectInpageScript() {
@@ -66,7 +73,7 @@ function addInpageMessageListener() {
             case CONTENT_SCRIPT_SIGN_TRANSACTION_METHOD: {
               const methodData =
                 response?.methodData as ContentScriptSignTransactionsData;
-              response = await handleContentscriptSignTransaction(
+              response = await handleContentScriptSignTransaction(
                 methodData?.accounts,
                 methodData?.network,
                 methodData?.transactionsOptions
@@ -79,8 +86,8 @@ function addInpageMessageListener() {
             case CONTENT_SCRIPT_SIGN_TRANSACTIONS_METHOD: {
               const methodData =
                 response?.methodData as ContentScriptSignTransactionsData;
-              const signResult: HandleSignResult =
-                await handleContentscriptSignTransactions(
+              const signResult: HandleSignTransactionsResult =
+                await handleContentScriptSignTransactions(
                   methodData?.accounts,
                   methodData?.network,
                   methodData.transactionsOptions
@@ -89,6 +96,38 @@ function addInpageMessageListener() {
                 response = { error: signResult.error };
               } else {
                 response = signResult.signedTransactions;
+              }
+              break;
+            }
+            case CONTENT_SCRIPT_SIGN_IN_METHOD: {
+              const methodData =
+                response?.methodData as ContentScriptSignInData;
+              const signInResult: HandleSignInOutResult =
+                await handleContentScriptSignIn(
+                  methodData?.accounts,
+                  methodData?.network,
+                  methodData?.params
+                );
+              if (signInResult.error) {
+                response = { error: signInResult.error };
+              } else {
+                response = { success: true };
+              }
+              break;
+            }
+            case CONTENT_SCRIPT_SIGN_OUT_METHOD: {
+              const methodData =
+                response?.methodData as ContentScriptSignOutData;
+              const signOutResult: HandleSignInOutResult =
+                await handleContentScriptSignOut(
+                  methodData?.accounts,
+                  methodData?.network,
+                  methodData?.params
+                );
+              if (signOutResult.error) {
+                response = { error: signOutResult.error };
+              } else {
+                response = { success: true };
               }
               break;
             }

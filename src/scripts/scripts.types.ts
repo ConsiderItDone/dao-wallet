@@ -1,7 +1,11 @@
 import { InjectedAPIMessage } from "./injectedAPI/injectedAPI.custom.types";
 import { Network } from "../types";
 import { AccountWithPrivateKey } from "../services/chrome/localStorage";
-import { InjectedAPITransactionOptions } from "./injectedAPI/injectedAPI.types";
+import {
+  InjectedAPISignInParamsDTO,
+  InjectedAPISignOutParamsDTO,
+  InjectedAPITransactionOptions,
+} from "./injectedAPI/injectedAPI.types";
 
 export type ACCOUNTS_CHANGED_EVENT = "accountsChanged";
 export type NETWORK_CHANGED_EVENT = "networkChanged";
@@ -28,4 +32,16 @@ export interface ContentScriptSignTransactionsData {
   network: Network;
   accounts: AccountWithPrivateKey[];
   transactionsOptions: InjectedAPITransactionOptions[];
+}
+
+export interface ContentScriptSignInData {
+  network: Network;
+  accounts: AccountWithPrivateKey[];
+  params: InjectedAPISignInParamsDTO;
+}
+
+export interface ContentScriptSignOutData {
+  network: Network;
+  accounts: AccountWithPrivateKey[];
+  params: InjectedAPISignOutParamsDTO;
 }

@@ -7,6 +7,8 @@ import {
   INJECTED_API_INITIALIZED_EVENT_NAME,
   INJECTED_API_SHOULD_UPDATE_CONNECTED_ACCOUNTS_METHOD,
   INJECTED_API_SHOULD_UPDATE_NETWORK_METHOD,
+  INJECTED_API_SIGN_IN_METHOD,
+  INJECTED_API_SIGN_OUT_METHOD,
   INJECTED_API_SIGN_TRANSACTION_METHOD,
   INJECTED_API_SIGN_TRANSACTIONS_METHOD,
   SUPPORTED_NETWORKS,
@@ -26,7 +28,9 @@ import {
   InjectedAPIEvents,
   InjectedAPINetwork,
   InjectedAPISignInParams,
+  InjectedAPISignInParamsDTO,
   InjectedAPISignOutParams,
+  InjectedAPISignOutParamsDTO,
   InjectedAPISignTransactionParams,
   InjectedAPISignTransactionsParams,
   InjectedAPITransactionOptions,
@@ -98,9 +102,34 @@ export class InjectedAPI implements InjectedWallet {
     await this.handleConnectedAccountsChange([]);
   }
 
-  public async signIn(params: InjectedAPISignInParams): Promise<void> {}
+  public async signIn(params: InjectedAPISignInParams): Promise<void> {
+    const transformedParams: InjectedAPISignInParamsDTO = {
+      permission: params?.permission,
+      accounts: params.accounts.map((account) => ({
+        accountId: account.accountId,
+        publicKey: account.publicKey?.toString()!,
+      })),
+    };
+    await this.sendMessage(
+      INJECTED_API_SIGN_IN_METHOD,
+      transformedParams,
+      true
+    );
+  }
 
-  public async signOut(params: InjectedAPISignOutParams): Promise<void> {}
+  public async signOut(params: InjectedAPISignOutParams): Promise<void> {
+    const transformedParams: InjectedAPISignOutParamsDTO = {
+      accounts: params.accounts.map((account) => ({
+        accountId: account.accountId,
+        publicKey: account.publicKey?.toString()!,
+      })),
+    };
+    await this.sendMessage(
+      INJECTED_API_SIGN_OUT_METHOD,
+      transformedParams,
+      true
+    );
+  }
 
   public on<EventName extends keyof InjectedAPIEvents>(
     event: EventName,

@@ -69,6 +69,14 @@
     line-break: anywhere;
 }
 
+.approveSignTransactionPageContainer .body .data .signInData {
+    line-break: anywhere;
+}
+
+.approveSignTransactionPageContainer .body .data .signOutData {
+    line-break: anywhere;
+}
+
 .approveSignTransactionPageContainer .body .networkId {
     width: fit-content;
     max-width: 400px;

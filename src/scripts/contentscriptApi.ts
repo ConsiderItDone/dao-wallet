@@ -8,7 +8,11 @@ import {
 } from "near-api-js";
 import { AccountWithPrivateKey } from "../services/chrome/localStorage";
 import { Network } from "../types";
-import { InjectedAPITransactionOptions } from "./injectedAPI/injectedAPI.types";
+import {
+  InjectedAPISignInParamsDTO,
+  InjectedAPISignOutParamsDTO,
+  InjectedAPITransactionOptions,
+} from "./injectedAPI/injectedAPI.types";
 import { AccessKeyView } from "near-api-js/lib/providers/provider";
 
 interface SignedTransaction {
@@ -16,17 +20,21 @@ interface SignedTransaction {
   signature: any;
 }
 
-export interface HandleSignResult {
+export interface HandleSignTransactionsResult {
   signedTransactions: SignedTransaction[];
   error: string | null;
 }
 
-export async function handleContentscriptSignTransaction(
+export interface HandleSignInOutResult {
+  error: string | null;
+}
+
+export async function handleContentScriptSignTransaction(
   accounts: AccountWithPrivateKey[],
   network: Network,
   transactionInArray: InjectedAPITransactionOptions[]
 ): Promise<SignedTransaction | { error: string }> {
-  const signResult = await handleContentscriptSignTransactions(
+  const signResult = await handleContentScriptSignTransactions(
     accounts,
     network,
     transactionInArray
@@ -37,11 +45,11 @@ export async function handleContentscriptSignTransaction(
   return { error: signResult.error };
 }
 
-export async function handleContentscriptSignTransactions(
+export async function handleContentScriptSignTransactions(
   accounts: AccountWithPrivateKey[],
   network: Network,
   transactionsOptions: InjectedAPITransactionOptions[]
-): Promise<HandleSignResult> {
+): Promise<HandleSignTransactionsResult> {
   try {
     const accountToNonce = new Map<string, number>();
     const accountToBlock = new Map<string, any>();
@@ -74,8 +82,7 @@ export async function handleContentscriptSignTransactions(
         accountToNonce.set(accountId, accessKey.nonce);
         accountToBlock.set(accountId, providerBlock);
       }
-      // @ts-ignore
-      const nonce = accountToNonce.get(accountId) + 1;
+      const nonce = accountToNonce.get(accountId)! + 1;
       accountToNonce.set(accountId, nonce);
       const block = accountToBlock.get(accountId);
 
@@ -117,6 +124,122 @@ export async function handleContentscriptSignTransactions(
   }
 }
 
+async function handleContentScriptSignInOrOut(
+  accountsFromStorage: AccountWithPrivateKey[],
+  network: Network,
+  params: InjectedAPISignInParamsDTO | InjectedAPISignOutParamsDTO,
+  type: "signIn" | "signOut"
+): Promise<HandleSignInOutResult> {
+  try {
+    const accountToNonce = new Map<string, number>();
+    const accountToBlock = new Map<string, any>();
+
+    const keyStore = new keyStores.InMemoryKeyStore();
+    for (const account of accountsFromStorage) {
+      const keyPair = KeyPair.fromString(account.privateKey!);
+      await keyStore.setKey(network.networkId, account.accountId, keyPair);
+    }
+
+    const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
+
+    const permission =
+      type === "signIn"
+        ? (params as InjectedAPISignInParamsDTO).permission
+        : null;
+    for (let i = 0; i < params.accounts.length; i += 1) {
+      const currentAccountWithNewPK = params.accounts[i];
+      const currentAccountFromStorage = accountsFromStorage.find(
+        (account) => account.accountId === currentAccountWithNewPK.accountId
+      );
+      if (!currentAccountFromStorage) {
+        continue;
+      }
+
+      const accountId = currentAccountFromStorage.accountId;
+
+      if (!accountToNonce.has(accountId)) {
+        const [providerBlock, accessKey] = await Promise.all([
+          provider.block({ finality: "final" }),
+          provider.query<AccessKeyView>({
+            request_type: "view_access_key",
+            finality: "final",
+            account_id: accountId,
+            public_key: currentAccountFromStorage.publicKey,
+          }),
+        ]);
+        accountToNonce.set(accountId, accessKey.nonce);
+        accountToBlock.set(accountId, providerBlock);
+      }
+      const nonce = accountToNonce.get(accountId)! + 1;
+      accountToNonce.set(accountId, nonce);
+
+      const block = accountToBlock.get(accountId);
+
+      const signer = new InMemorySigner(keyStore);
+
+      const keyPair = await keyStore.getKey(network.networkId, accountId);
+
+      const actions =
+        type === "signIn"
+          ? [
+              transactions.addKey(
+                utils.PublicKey.from(currentAccountWithNewPK.publicKey),
+                transactions.functionCallAccessKey(
+                  permission!.receiverId,
+                  permission!.methodNames,
+                  permission!.allowance
+                )
+              ),
+            ]
+          : [
+              transactions.deleteKey(
+                utils.PublicKey.from(currentAccountWithNewPK.publicKey)
+              ),
+            ];
+
+      const transaction = transactions.createTransaction(
+        accountId,
+        keyPair.getPublicKey(),
+        accountId,
+        nonce,
+        actions,
+        utils.serialize.base_decode(block.header.hash)
+      );
+
+      const [, signedTx] = await transactions.signTransaction(
+        transaction,
+        signer,
+        transaction.signerId,
+        network.networkId
+      );
+
+      await provider.sendTransaction(signedTx);
+    }
+
+    return { error: null };
+  } catch (error: any) {
+    return {
+      error: error?.message || `Failed to ${type}`,
+    };
+  }
+}
+
+export async function handleContentScriptSignIn(
+  accounts: AccountWithPrivateKey[],
+  network: Network,
+  params: InjectedAPISignInParamsDTO
+): Promise<HandleSignInOutResult> {
+  return handleContentScriptSignInOrOut(accounts, network, params, "signIn");
+}
+
+export async function handleContentScriptSignOut(
+  accounts: AccountWithPrivateKey[],
+  network: Network,
+  params: InjectedAPISignOutParamsDTO
+): Promise<HandleSignInOutResult> {
+  return handleContentScriptSignInOrOut(accounts, network, params, "signOut");
+}
+
 function formatActions(actions: any[]) {
   for (let i = 0; i < actions?.length; i++) {
     const action = actions[i];
@@ -152,15 +275,21 @@ function formatActions(actions: any[]) {
         break;
       }
       case "addKey": {
-        // TODO: test with full access key
-        actions[i] = transactions.addKey(
-          utils.PublicKey.from(action.addKey.publicKey),
-          transactions.functionCallAccessKey(
-            action.addKey.accessKey.permission.functionCall.receiverId,
-            action.addKey.accessKey.permission.functionCall.methodNames,
-            action.addKey.accessKey.permission.functionCall.allowance
-          )
-        );
+        if (action.addKey.accessKey.permission.enum === "fullAccess") {
+          actions[i] = transactions.addKey(
+            utils.PublicKey.from(action.addKey.publicKey),
+            transactions.fullAccessKey()
+          );
+        } else {
+          actions[i] = transactions.addKey(
+            utils.PublicKey.from(action.addKey.publicKey),
+            transactions.functionCallAccessKey(
+              action.addKey.accessKey.permission.functionCall.receiverId,
+              action.addKey.accessKey.permission.functionCall.methodNames,
+              action.addKey.accessKey.permission.functionCall.allowance
+            )
+          );
+        }
         break;
       }
       case "deleteKey": {

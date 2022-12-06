@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import "./index.css";
 import {
   SessionStorage,
-  SessionStorageTransactions,
+  TransactionsDataType,
 } from "../../services/chrome/sessionStorage";
 import { ClipLoader } from "react-spinners";
 import { Loading } from "../animations/loading";
 import { shortenWalletAddress } from "../../utils/wallet";
+import {
+  InjectedAPISignInParamsDTO,
+  InjectedAPISignOutParamsDTO,
+  InjectedAPITransactionOptions,
+} from "../../scripts/injectedAPI/injectedAPI.types";
 
 function formatAccountId(accountId: string | undefined) {
   if (!accountId) return accountId;
@@ -93,38 +98,68 @@ export const formatTransactionAction = (action: any) => {
 interface Props {
   website: string;
   transactionUuid: string;
+  operationType: TransactionsDataType;
 }
 
-export const ApproveSignTransactionPage = ({
+export const ApproveOperationPage = ({
   website,
   transactionUuid,
+  operationType,
 }: Props) => {
   const [transactions, setTransactions] = useState<
-    SessionStorageTransactions | undefined
+    InjectedAPITransactionOptions[] | undefined
   >(undefined);
+  const [signInData, setSignInData] = useState<
+    InjectedAPISignInParamsDTO | undefined
+  >(undefined);
+  const [signOutData, setSignOutData] = useState<
+    InjectedAPISignOutParamsDTO | undefined
+  >(undefined);
+
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
 
   const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const getTransactionsFromSessionStorage = async (
+    const getOperationDataFromSessionStorage = async (
       transactionUuid: string
     ) => {
-      const transaction = await appSessionStorage.getTransaction(
+      setTransactions(undefined);
+      setSignInData(undefined);
+      setSignOutData(undefined);
+      setError(undefined);
+
+      const operationData = await appSessionStorage.getTransactionsData(
         transactionUuid
       );
-      setTransactions(transaction);
-      if (!transaction) {
+      if (!operationData) {
         setError("Failed to find transaction");
+      }
+
+      switch (operationType) {
+        case "signTransactions":
+          setTransactions(
+            operationData?.data as InjectedAPITransactionOptions[]
+          );
+          break;
+        case "signIn":
+          setSignInData(operationData?.data as InjectedAPISignInParamsDTO);
+          break;
+        case "signOut":
+          setSignOutData(operationData?.data as InjectedAPISignOutParamsDTO);
+          break;
+        default:
+          setError("Failed to find operation data");
+          break;
       }
     };
 
-    getTransactionsFromSessionStorage(transactionUuid);
-  }, [transactionUuid]);
+    getOperationDataFromSessionStorage(transactionUuid);
+  }, [transactionUuid, operationType]);
 
   const onConfirm = async () => {
     setIsConfirming(true);
-    await appSessionStorage.updateTransactionsStatus(transactionUuid, true);
+    await appSessionStorage.updateTransactionsDataStatus(transactionUuid, true);
     setTimeout(() => window.close(), 1000);
   };
 
@@ -137,17 +172,22 @@ export const ApproveSignTransactionPage = ({
       <div className="body">
         <div className="originWebsite">{website}</div>
         <div className="subtitle">
-          Requested to sign transaction
-          {transactions?.transactionsOptions &&
-          transactions?.transactionsOptions?.length > 1
-            ? "s"
-            : ""}
+          {operationType === "signIn" ? (
+            <>Requested to sign in</>
+          ) : operationType === "signOut" ? (
+            <>Requested to sign out</>
+          ) : (
+            <>
+              Requested to sign transaction
+              {transactions && transactions.length > 1 ? "s" : ""}
+            </>
+          )}
         </div>
         <div className="data">
           {error ? (
             <div className="error">{error}</div>
-          ) : transactions?.transactionsOptions ? (
-            transactions.transactionsOptions.map((transaction) => (
+          ) : transactions ? (
+            transactions.map((transaction) => (
               <div className="transactionWrapper">
                 <div className="transactionActions">
                   {transaction.actions?.map((action) => (
@@ -164,6 +204,31 @@ export const ApproveSignTransactionPage = ({
                 </div>
               </div>
             ))
+          ) : signInData ? (
+            <div className="signInData">
+              <div className="permission">
+                {JSON.stringify(signInData.permission)}
+              </div>
+              <div className="accountsWrapper">
+                {signInData.accounts?.map((account, index) => (
+                  <div className="account" key={index}>
+                    <div className="accountId">{account.accountId}</div>
+                    <div className="publicKey">{account.publicKey}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : signOutData ? (
+            <div className="signOutData">
+              <div className="accountsWrapper">
+                {signOutData.accounts?.map((account, index) => (
+                  <div className="account" key={index}>
+                    <div className="accountId">{account.accountId}</div>
+                    <div className="publicKey">{account.publicKey}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : (
             <div className="clipLoaderContainer">
               <Loading />

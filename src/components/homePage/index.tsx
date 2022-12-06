@@ -16,13 +16,14 @@ import {
   INJECTED_API_NETWORK_QUERY_PARAM_KEY,
   INJECTED_API_QUERY_METHOD_CHANGE_NETWORK,
   INJECTED_API_QUERY_METHOD_CONNECT,
-  INJECTED_API_QUERY_METHOD_SIGN_TRANSACTION,
+  INJECTED_API_QUERY_METHOD_APPROVE_OPERATION,
   INJECTED_API_TRANSACTION_UUID_QUERY_PARAM_KEY,
   INJECTED_API_WEBSITE_QUERY_PARAM_KEY,
+  INJECTED_API_OPERATION_TYPE_QUERY_PARAM_KEY,
 } from "../../scripts/scripts.consts";
 import { ConnectAccountsPage } from "../connectAccountsPage";
 import { ConfirmNetworkChangePage } from "../confirmNetworkChangePage";
-import { ApproveSignTransactionPage } from "../approveSignTransactionPage";
+import { ApproveOperationPage } from "../approveOperationPage";
 
 const HomePage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -71,11 +72,18 @@ const HomePage = () => {
           );
           goTo(ConfirmNetworkChangePage, { website, networkId });
           return;
-        case INJECTED_API_QUERY_METHOD_SIGN_TRANSACTION:
+        case INJECTED_API_QUERY_METHOD_APPROVE_OPERATION:
           const transactionUuid = new URLSearchParams(
             window.location.search
           ).get(INJECTED_API_TRANSACTION_UUID_QUERY_PARAM_KEY);
-          goTo(ApproveSignTransactionPage, { website, transactionUuid });
+          const operationType = new URLSearchParams(window.location.search).get(
+            INJECTED_API_OPERATION_TYPE_QUERY_PARAM_KEY
+          );
+          goTo(ApproveOperationPage, {
+            website,
+            transactionUuid,
+            operationType,
+          });
           return;
         default:
           goTo(BalancePage);

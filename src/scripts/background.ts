@@ -3,6 +3,8 @@ import {
   INJECTED_API_DISCONNECT_METHOD,
   INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
   INJECTED_API_GET_NETWORK_METHOD,
+  INJECTED_API_SIGN_IN_METHOD,
+  INJECTED_API_SIGN_OUT_METHOD,
   INJECTED_API_SIGN_TRANSACTION_METHOD,
   INJECTED_API_SIGN_TRANSACTIONS_METHOD,
 } from "./scripts.consts";
@@ -14,6 +16,8 @@ import {
   handleDisconnect,
   handleGetConnectedAccounts,
   handleGetNetwork,
+  handleSignIn,
+  handleSignOut,
   handleSignTransaction,
   handleSignTransactions,
 } from "./backgroundApi";
@@ -57,6 +61,12 @@ if (chrome?.runtime) {
           (params as InjectedAPISignTransactionsParams).transactions,
           sendResponse
         );
+        return true;
+      case INJECTED_API_SIGN_IN_METHOD:
+        handleSignIn(origin, params, sendResponse);
+        return true;
+      case INJECTED_API_SIGN_OUT_METHOD:
+        handleSignOut(origin, params, sendResponse);
         return true;
       default:
         sendResponse();

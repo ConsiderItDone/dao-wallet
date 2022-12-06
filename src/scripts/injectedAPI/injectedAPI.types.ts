@@ -47,8 +47,17 @@ export interface InjectedAPISignInParams {
   accounts: Array<InjectedAPIAccount>;
 }
 
+export interface InjectedAPISignInParamsDTO {
+  permission: transactions.FunctionCallPermission;
+  accounts: Array<{ accountId: string; publicKey: string }>;
+}
+
 export interface InjectedAPISignOutParams {
   accounts: Array<InjectedAPIAccount>;
+}
+
+export interface InjectedAPISignOutParamsDTO {
+  accounts: Array<{ accountId: string; publicKey: string }>;
 }
 
 export interface InjectedAPITransactionOptions {
