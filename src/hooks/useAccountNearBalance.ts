@@ -12,6 +12,7 @@ export const useAccountNearBalance = (
 ): {
   accountNearBalance: AccountBalance | undefined;
   isLoadingAccountBalance: boolean | undefined;
+  isAccountNotFunded: boolean | undefined;
 } => {
   const { currentNetwork } = useAuth();
 
@@ -21,10 +22,14 @@ export const useAccountNearBalance = (
   const [accountNearBalance, setAccountNearBalance] = useState<
     AccountBalance | undefined
   >(undefined);
+  const [isAccountNotFunded, setIsAccountNotFunded] = useState<
+    boolean | undefined
+  >(undefined);
 
   useEffect(() => {
     const getAccountNearBalance = async (accountId: string | undefined) => {
       setAccountNearBalance(undefined);
+      setIsAccountNotFunded(undefined);
       if (!accountId || !currentNetwork?.networkId) {
         return;
       }
@@ -38,6 +43,7 @@ export const useAccountNearBalance = (
         }
         const data = balanceData?.data;
         if (data) {
+          setIsAccountNotFunded(false);
           setAccountNearBalance({
             available: Math.max(
               parseNearTokenAmount(data?.available) -
@@ -52,7 +58,7 @@ export const useAccountNearBalance = (
           console.info(
             "[GetAccountNearBalance]: received empty account balance data. Maybe account is not funded yet"
           );
-          //TODO handle not funded account status
+          setIsAccountNotFunded(true);
           setAccountNearBalance({
             available: 0,
             staked: 0,
@@ -69,5 +75,5 @@ export const useAccountNearBalance = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountId, currentNetwork?.networkId]);
 
-  return { accountNearBalance, isLoadingAccountBalance };
+  return { accountNearBalance, isLoadingAccountBalance, isAccountNotFunded };
 };
