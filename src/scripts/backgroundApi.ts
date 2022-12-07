@@ -68,9 +68,16 @@ export async function handleConnect(
 
   const shouldOpenChangeNetworkPopup =
     params?.networkId && SUPPORTED_NETWORKS.indexOf(params.networkId) > -1;
-  const popup: chrome.windows.Window | null = shouldOpenChangeNetworkPopup
-    ? await openChangeNetworkPopup(origin, params.networkId)
-    : await openConnectAccountsPopup(origin);
+
+  let popup: chrome.windows.Window | null;
+  try {
+    popup = shouldOpenChangeNetworkPopup
+      ? await openChangeNetworkPopup(origin, params.networkId)
+      : await openConnectAccountsPopup(origin);
+  } catch (error: any) {
+    sendResponse({ error: error?.message || "Failed to open new tab" });
+    return;
+  }
 
   await waitUntilPopupClosed(popup);
 
