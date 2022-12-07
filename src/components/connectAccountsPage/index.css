@@ -1,0 +1,111 @@
+.connectAccountsPageContainer {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--white_col);
+    background-image: url(../../images/bgInfo.svg);
+    background-size: cover;
+    background-position: center;
+    font-family: var(--font_manrope);
+}
+
+.connectAccountsPageContainer .body {
+    padding: 32px 60px 50px 60px;
+    height: 100%;
+    text-align: center;
+}
+
+.connectAccountsPageContainer .body>.title {
+    font-family: var(--font_extra_bold);
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 110%;
+    text-align: center;
+    color: #202020;
+}
+
+.connectAccountsPageContainer .secondaryTitle {
+    font-family: var(--font_regular);
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #202020;
+    margin: 30px auto 0;
+    max-width: 320px;
+}
+
+.connectAccountsPageContainer .body .accountsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 40px;
+}
+
+.connectAccountsPageContainer .body .accountsContainer .account {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #20202055;
+    border-radius: 10px;
+    padding: 10px 15px;
+    background-color: white;
+    transition: background-color 300ms ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.connectAccountsPageContainer .body .accountsContainer .chosenAccount {
+    background-color: #E0DFFA;
+}
+
+.connectAccountsPageContainer .body .accountsContainer .account .accountId {
+    font-size: 14px;
+    line-height: 19px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+}
+
+.connectAccountsPageContainer .body .accountsContainer .account .isChosenIcon {
+    width: 19px;
+    height: 19px;
+    margin-left: 10px;
+}
+
+.connectAccountsPageContainer .body .confirm {
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    color: #FFFFFF;
+    background: #202020;
+    border-radius: 88px;
+    padding: 15px 24px;
+    cursor: pointer;
+    margin: 40px auto 0 auto;
+    min-width: 112px;
+}
+
+.connectAccountsPageContainer .body .cancel {
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    display: block;
+    margin: 12px auto 0;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.connectAccountsPageContainer .body .connectAccountsBtn:hover {
+    opacity: 0.8;
+}
+
+.connectAccountsPageContainer .body .connectAccountsBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}

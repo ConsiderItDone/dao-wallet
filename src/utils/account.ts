@@ -6,6 +6,7 @@ import { getNearConnectionConfig } from "./near";
 import { Network } from "../types";
 import { PublicKey } from "near-api-js/lib/utils/key_pair";
 import { KeyStores } from "@cidt/near-plugin-js";
+import { utils as nearApiUtils } from "near-api-js/lib/common-index";
 
 const ACCOUNT_ID_REGEX =
   /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
@@ -29,12 +30,12 @@ export function getPublicKeyByPrivateKey(privateKey: string): PublicKey {
 export async function createNewAccount(
   accountId: string,
   privateKey: string,
-  networkId: Network,
+  network: Network,
   keyStore?: KeyStores.KeyStore
 ): Promise<void> {
   const nearConnection = await connect(
     getNearConnectionConfig(
-      networkId,
+      network,
       keyStore || new keyStores.BrowserLocalStorageKeyStore()
     )
   );
@@ -56,4 +57,11 @@ export async function accountExists(
   } catch (error) {
     return false;
   }
+}
+
+export function getImplicitAccountId(publicKey: string): string {
+  return nearApiUtils.PublicKey.fromString(
+    publicKey.replace("ed25519:", "")
+    // @ts-ignore
+  ).data.toString("hex");
 }

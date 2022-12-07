@@ -11,6 +11,19 @@ import CreatePasswordPage from "../createPasswordPage";
 import { isPasswordCorrect } from "../../utils/encryption";
 import { ClipLoader } from "react-spinners";
 import { InputField } from "../form/inputField";
+import {
+  INJECTED_API_METHOD_QUERY_PARAM_KEY,
+  INJECTED_API_NETWORK_QUERY_PARAM_KEY,
+  INJECTED_API_QUERY_METHOD_CHANGE_NETWORK,
+  INJECTED_API_QUERY_METHOD_CONNECT,
+  INJECTED_API_QUERY_METHOD_APPROVE_OPERATION,
+  INJECTED_API_TRANSACTION_UUID_QUERY_PARAM_KEY,
+  INJECTED_API_WEBSITE_QUERY_PARAM_KEY,
+  INJECTED_API_OPERATION_TYPE_QUERY_PARAM_KEY,
+} from "../../scripts/scripts.consts";
+import { ConnectAccountsPage } from "../connectAccountsPage";
+import { ConfirmNetworkChangePage } from "../confirmNetworkChangePage";
+import { ApproveOperationPage } from "../approveOperationPage";
 
 const HomePage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -18,8 +31,6 @@ const HomePage = () => {
 
   const [isUnlocking, setIsUnlocking] = useState<boolean>(false);
   const [shouldInitialize, setShouldInitialize] = useState<boolean>(true);
-  const [shouldCreateAccount, setShouldCreateAccount] =
-    useState<boolean>(false);
 
   const [storageHashedPassword, setStorageHashedPassword] = useState<
     string | null
@@ -28,6 +39,58 @@ const HomePage = () => {
   const [inputPasswordError, setInputPasswordError] = useState<string | null>(
     null
   );
+
+  const [requestedInjectedApiMethod, setRequestedInjectedApiMethod] = useState<
+    string | null | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const requestedInjectedApiMethod = new URLSearchParams(
+      window.location.search
+    ).get(INJECTED_API_METHOD_QUERY_PARAM_KEY);
+    setRequestedInjectedApiMethod(requestedInjectedApiMethod || null);
+  }, []);
+
+  const handleNextPage = async (
+    requestedInjectedApiMethod: string | null | undefined
+  ) => {
+    const hasAccount = await localStorage.hasAccount();
+
+    if (!hasAccount) {
+      goTo(ChooseMethod);
+    } else {
+      const website = new URLSearchParams(window.location.search).get(
+        INJECTED_API_WEBSITE_QUERY_PARAM_KEY
+      );
+      switch (requestedInjectedApiMethod) {
+        case INJECTED_API_QUERY_METHOD_CONNECT:
+          goTo(ConnectAccountsPage, { website });
+          return;
+        case INJECTED_API_QUERY_METHOD_CHANGE_NETWORK:
+          const networkId = new URLSearchParams(window.location.search).get(
+            INJECTED_API_NETWORK_QUERY_PARAM_KEY
+          );
+          goTo(ConfirmNetworkChangePage, { website, networkId });
+          return;
+        case INJECTED_API_QUERY_METHOD_APPROVE_OPERATION:
+          const transactionUuid = new URLSearchParams(
+            window.location.search
+          ).get(INJECTED_API_TRANSACTION_UUID_QUERY_PARAM_KEY);
+          const operationType = new URLSearchParams(window.location.search).get(
+            INJECTED_API_OPERATION_TYPE_QUERY_PARAM_KEY
+          );
+          goTo(ApproveOperationPage, {
+            website,
+            transactionUuid,
+            operationType,
+          });
+          return;
+        default:
+          goTo(BalancePage);
+          return;
+      }
+    }
+  };
 
   useEffect(() => {
     const initialize = async () => {
@@ -39,27 +102,9 @@ const HomePage = () => {
         }
         setStorageHashedPassword(storageHashedPassword);
 
-        const accounts = await localStorage.getAccounts();
-        if (!accounts || accounts?.length < 1) {
-          setShouldCreateAccount(true);
-          return;
-        }
-
-        let lastSelectedAccountIndex =
-          await localStorage.getLastSelectedAccountIndex();
-        if (
-          lastSelectedAccountIndex === undefined ||
-          lastSelectedAccountIndex === null
-        ) {
-          lastSelectedAccountIndex = 0;
-          await localStorage.setLastSelectedAccountIndex(
-            lastSelectedAccountIndex
-          );
-        }
-
-        const isUnlocked = await sessionStorage.isExtensionUnlocked();
-        if (isUnlocked) {
-          goTo(BalancePage);
+        const sessionStoragePassword = await sessionStorage.getPassword();
+        if (sessionStoragePassword) {
+          await handleNextPage(requestedInjectedApiMethod);
         }
       } catch (error) {
         console.error("Failed to initialize:", error);
@@ -68,19 +113,25 @@ const HomePage = () => {
       }
     };
 
-    if (shouldInitialize) {
+    if (shouldInitialize && requestedInjectedApiMethod !== undefined) {
       initialize().catch((error) => {
         console.error("[HomePageInitialize]:", error);
       });
     }
-  }, [localStorage, sessionStorage, shouldInitialize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    localStorage,
+    sessionStorage,
+    shouldInitialize,
+    requestedInjectedApiMethod,
+  ]);
 
   const onPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputPassword(e?.target?.value);
   };
 
   const handleUnlock = async () => {
-    if (isUnlocking || !storageHashedPassword) {
+    if (shouldInitialize || isUnlocking || !storageHashedPassword) {
       return;
     }
 
@@ -89,12 +140,7 @@ const HomePage = () => {
     try {
       if (isPasswordCorrect(inputPassword, storageHashedPassword)) {
         await sessionStorage.setPassword(inputPassword);
-        await sessionStorage.setIsExtensionUnlocked(true);
-        if (shouldCreateAccount) {
-          goTo(ChooseMethod);
-        } else {
-          goTo(BalancePage);
-        }
+        handleNextPage(requestedInjectedApiMethod);
       } else {
         setInputPasswordError("Wrong password");
       }
@@ -134,7 +180,12 @@ const HomePage = () => {
             onClick={handleUnlock}
             type="button"
             className="btn"
-            disabled={isUnlocking || !inputPassword}
+            disabled={
+              isUnlocking ||
+              !inputPassword ||
+              shouldInitialize ||
+              !storageHashedPassword
+            }
           >
             {isUnlocking ? <ClipLoader color="#fff" size={14} /> : "Unlock"}
           </button>

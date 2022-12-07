@@ -1,6 +1,6 @@
 import { KeyStores, NearPluginConfig } from "@cidt/near-plugin-js";
 import { AccountWithPrivateKey } from "../services/chrome/localStorage";
-import { Network } from "../types";
+import { Network, NetworkID } from "../types";
 import { keyStores } from "near-api-js";
 import { bignumberToNumber } from "./bignumber";
 import { ethers } from "ethers";
@@ -8,7 +8,7 @@ import { NEAR_TOKEN } from "../consts/near";
 import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import base58 from "bs58";
 
-function getIndexerServiceUrl(networkId: Network) {
+function getIndexerServiceUrl(networkId: NetworkID): string {
   switch (networkId) {
     case "testnet":
       return "https://testnet-api.kitwallet.app";
@@ -19,20 +19,36 @@ function getIndexerServiceUrl(networkId: Network) {
   }
 }
 
+function getWalletUrl(networkId: NetworkID): string {
+  return `https://wallet.${networkId}.near.org`;
+}
+
+function getHelperUrl(networkId: NetworkID): string {
+  return `https://helper.${networkId}.near.org`;
+}
+
 export function getNearConnectionConfig(
-  networkId: Network,
+  network: Network,
   keyStore?: KeyStores.KeyStore,
   selectedAccount?: AccountWithPrivateKey
 ): NearPluginConfig {
+  const networkId = network.networkId;
+  const walletUrl = getWalletUrl(networkId);
+  const helperUrl = getHelperUrl(networkId);
+  const indexerServiceUrl = getIndexerServiceUrl(networkId);
+  if (!keyStore) {
+    keyStore = new keyStores.InMemoryKeyStore();
+  }
+  const masterAccount = selectedAccount?.accountId || undefined;
   return {
     headers: {},
     networkId: networkId,
-    nodeUrl: `https://rpc.${networkId}.near.org`,
-    walletUrl: `https://wallet.${networkId}.near.org`,
-    helperUrl: `https://helper.${networkId}.near.org`,
-    indexerServiceUrl: getIndexerServiceUrl(networkId),
-    keyStore: keyStore || new keyStores.InMemoryKeyStore(),
-    masterAccount: selectedAccount?.accountId || undefined,
+    nodeUrl: network.nodeUrl,
+    walletUrl,
+    helperUrl,
+    indexerServiceUrl,
+    keyStore,
+    masterAccount,
   };
 }
 

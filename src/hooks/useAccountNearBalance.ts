@@ -3,6 +3,7 @@ import { AccountBalance } from "../components/balancePage";
 import { useEffect, useState } from "react";
 import { parseNearTokenAmount } from "../utils/near";
 import { NEAR_RESERVED_FOR_TRANSACTION_FEES } from "../consts/near";
+import { useAuth } from "./useAuth";
 
 export const ACCOUNT_BALANCE_METHOD_NAME = "getAccountBalance";
 
@@ -12,6 +13,8 @@ export const useAccountNearBalance = (
   accountNearBalance: AccountBalance | undefined;
   isLoadingAccountBalance: boolean | undefined;
 } => {
+  const { currentNetwork } = useAuth();
+
   const [accountBalanceQueryExecute, { loading: isLoadingAccountBalance }] =
     useQuery<AccountBalance>(ACCOUNT_BALANCE_METHOD_NAME);
 
@@ -22,7 +25,7 @@ export const useAccountNearBalance = (
   useEffect(() => {
     const getAccountNearBalance = async (accountId: string | undefined) => {
       setAccountNearBalance(undefined);
-      if (!accountId) {
+      if (!accountId || !currentNetwork?.networkId) {
         return;
       }
 
@@ -31,7 +34,7 @@ export const useAccountNearBalance = (
           accountId: accountId,
         });
         if (balanceData?.error) {
-          console.error("[GetAccountNearBalanceData]:", balanceData.error);
+          console.info("[GetAccountNearBalanceData]:", balanceData.error);
         }
         const data = balanceData?.data;
         if (data) {
@@ -46,8 +49,8 @@ export const useAccountNearBalance = (
             total: Math.max(parseNearTokenAmount(data?.total), 0),
           });
         } else {
-          console.error(
-            "[GetAccountNearBalance]: received empty account balance data"
+          console.info(
+            "[GetAccountNearBalance]: received empty account balance data. Maybe account is not funded yet"
           );
           //TODO handle not funded account status
           setAccountNearBalance({
@@ -64,7 +67,7 @@ export const useAccountNearBalance = (
 
     getAccountNearBalance(accountId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountId]);
+  }, [accountId, currentNetwork?.networkId]);
 
   return { accountNearBalance, isLoadingAccountBalance };
 };

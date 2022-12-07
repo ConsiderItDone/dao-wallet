@@ -7,7 +7,12 @@ export interface AccountData {
   isLedger?: boolean;
 }
 
-export type Network = "mainnet" | "testnet" | "betanet";
+export type NetworkID = "mainnet" | "testnet" | "betanet";
+
+export interface Network {
+  networkId: NetworkID;
+  nodeUrl: string;
+}
 
 export interface NFT {
   title: string;
