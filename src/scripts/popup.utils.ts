@@ -19,6 +19,8 @@ import { v4 as uuidv4 } from "uuid";
 const POPUP_HEIGHT = 640;
 const POPUP_WIDTH = 440;
 
+const MAX_POPUPS_AMOUNT = 10;
+
 const appLocalStorage = new LocalStorage();
 const appSessionStorage = new SessionStorage();
 
@@ -26,6 +28,11 @@ const appSessionStorage = new SessionStorage();
 export async function openPopup(
   query: string = ""
 ): Promise<chrome.windows.Window> {
+  const allWindows = await chrome.windows.getAll();
+  if (allWindows?.length > MAX_POPUPS_AMOUNT) {
+    throw new Error("Max popups amount exceeded");
+  }
+
   let top = 0;
   let left = 0;
 
@@ -49,6 +56,7 @@ export async function openPopup(
     width: POPUP_WIDTH,
     top,
     left,
+    focused: true,
   });
 }
 
@@ -61,40 +69,48 @@ export async function approveOperationWithWallet(
   error: string | null;
   transactionsDataUuid: string;
 }> {
-  const transactionsDataUuid = uuidv4();
-  await appSessionStorage.addTransactionsData(
-    {
-      isApproved: undefined,
-      data,
-      dataType,
-    },
-    transactionsDataUuid
-  );
+  try {
+    const transactionsDataUuid = uuidv4();
+    await appSessionStorage.addTransactionsData(
+      {
+        isApproved: undefined,
+        data,
+        dataType,
+      },
+      transactionsDataUuid
+    );
 
-  const popup = await openApproveOperationPopup(
-    origin,
-    transactionsDataUuid,
-    dataType
-  );
+    const popup = await openApproveOperationPopup(
+      origin,
+      transactionsDataUuid,
+      dataType
+    );
 
-  await waitUntilPopupClosed(popup);
+    await waitUntilPopupClosed(popup);
 
-  const transactionsData = await appSessionStorage.getTransactionsData(
-    transactionsDataUuid
-  );
+    const transactionsData = await appSessionStorage.getTransactionsData(
+      transactionsDataUuid
+    );
 
-  let error;
-  if (!transactionsData) {
-    error = "Internal error: couldn't find signed transaction";
-  } else {
-    error = null;
+    let error;
+    if (!transactionsData) {
+      error = "Internal error: couldn't find signed transaction";
+    } else {
+      error = null;
+    }
+
+    return {
+      isApproved: !error && !!transactionsData?.isApproved,
+      error,
+      transactionsDataUuid,
+    };
+  } catch (error: any) {
+    return {
+      isApproved: false,
+      error: error?.message || "Failed to open approve popup",
+      transactionsDataUuid: "",
+    };
   }
-
-  return {
-    isApproved: !error && !!transactionsData?.isApproved,
-    error,
-    transactionsDataUuid,
-  };
 }
 
 export async function waitUntilPopupClosed(

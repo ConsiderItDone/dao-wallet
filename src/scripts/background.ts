@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import {
   INJECTED_API_CONNECT_METHOD,
   INJECTED_API_DISCONNECT_METHOD,
@@ -22,7 +23,8 @@ import {
   handleSignTransactions,
 } from "./backgroundApi";
 
-if (chrome?.runtime) {
+// Only add listeners in background service worker (it doesn't have window object)
+if (chrome?.runtime && !self?.window) {
   // Catch messages from content script
   chrome.runtime.onMessage.addListener(function (
     message: ChromeRuntimeMessage,
