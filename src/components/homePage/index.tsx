@@ -157,7 +157,7 @@ const HomePage = () => {
         <div className="title">Loading...</div>
       ) : (
         <>
-          <div className="title">Omni Near Wallet</div>
+          <div className="title">DAO Wallet</div>
           <div className="iconContainer">
             <div className="bg">
               <Icon className="omniLogo" src={iconsObj.omniLogo} />

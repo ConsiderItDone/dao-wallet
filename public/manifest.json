@@ -1,6 +1,6 @@
 {
-  "name": "NEAR Wallet",
-  "description": "NEAR Wallet",
+  "name": "DAO Wallet",
+  "description": "DAO Wallet",
   "version": "1.0",
   "manifest_version": 3,
   "action": {

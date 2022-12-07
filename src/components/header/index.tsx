@@ -130,7 +130,7 @@ const Header = () => {
           className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
         >
           <OmniLogo className="nearIconTitle" />
-          <span className="title">Omni Near Wallet</span>
+          <span className="title">DAO Wallet</span>
         </div>
         <div className="item">
           <button onClick={handleLock}>
