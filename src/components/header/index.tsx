@@ -50,20 +50,20 @@ const Header = () => {
 
   const handleWalletChange = async (walletIndex: number) => {
     setDropdownVisible(!dropdownVisible);
-    selectAccount(walletIndex);
+    await selectAccount(walletIndex);
     goTo(BalancePage);
   };
 
   const handleGoBack = async () => {
     const componentStack = getComponentStack();
     if (componentStack?.length <= 1) {
-      await sessionStorage.setPassword(undefined);
+      await sessionStorage.setPassword("");
     }
     goBack();
   };
 
   const handleLock = async () => {
-    await sessionStorage.setPassword(undefined);
+    await sessionStorage.setPassword("");
     goTo(HomePage);
   };
 
