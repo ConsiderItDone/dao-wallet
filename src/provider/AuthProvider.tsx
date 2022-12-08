@@ -24,6 +24,7 @@ import {
   SESSION_PASSWORD_KEY,
   SESSION_STORAGE_PASSWORD_CHANGED_EVENT_KEY,
 } from "../services/chrome/sessionStorage";
+import { getExplorerUrl } from "../utils/near";
 
 const appLocalStorage = new LocalStorage();
 
@@ -35,6 +36,7 @@ interface AuthProviderValue extends AuthState {
   selectAccount: (index: number) => Promise<void>;
   changeNetwork: (indexOrId: string | number) => Promise<Boolean>;
   currentNetwork: Network | undefined;
+  explorerUrl: string;
 }
 
 export interface AuthState {
@@ -73,6 +75,11 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
   );
   console.log("Current network", currentNetwork);
 
+  const explorerUrl = useMemo(
+    () => getExplorerUrl(currentNetwork?.networkId!),
+    [currentNetwork]
+  );
+
   const currentAccount = useMemo(
     () =>
       state.selectedAccountIndex !== undefined
@@ -80,7 +87,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
             (acc, index) => index === state.selectedAccountIndex
           )
         : undefined,
-    [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
+    [state.accounts, state.selectedAccountIndex] //eslint-disable-line
   );
   console.log("Current account", currentAccount);
 
@@ -260,7 +267,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     } else {
       setState(DEFAULT_STATE);
     }
-  }, [state.selectedNetworkIndex, init, shouldReInitAccounts]);
+  }, [state.selectedNetworkIndex, init]);
 
   useEffect(() => {
     if (shouldReInitAccounts) {
@@ -279,6 +286,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         addPublicKey,
         changeNetwork,
         currentNetwork,
+        explorerUrl,
       }}
     >
       <PolywrapProvider
@@ -316,7 +324,8 @@ const setEventListeners = (
       }
 
       const shouldReinitAccounts =
-        areaName === "session" && SESSION_PASSWORD_KEY in changes;
+        shouldUpdateNetwork ||
+        (areaName === "session" && SESSION_PASSWORD_KEY in changes);
 
       if (shouldReinitAccounts) {
         reinitAccounts();
