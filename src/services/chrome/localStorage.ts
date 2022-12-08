@@ -6,6 +6,7 @@ import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
 import { IS_IN_DEVELOPMENT_MODE } from "../../consts/app";
 import { Network } from "../../types";
 import { DEFAULT_NETWORKS } from "../../consts/networks";
+import { getImplicitAccountId } from "../../utils/account";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 export const LOCAL_STORAGE_WEBSITES_DATA_KEY = "websitesData";
@@ -75,6 +76,8 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         return undefined;
       }
 
+      const currentNetwork = await this.getCurrentNetwork();
+
       return Promise.all(
         accounts.map(async (account) => ({
           ...account,
@@ -82,6 +85,12 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
             password,
             account.encryptedPrivateKey!
           ),
+          accountId:
+            currentNetwork?.networkId &&
+            !account.accountId.endsWith(currentNetwork.networkId) &&
+            account.publicKey
+              ? getImplicitAccountId(account.publicKey)
+              : account.accountId,
         }))
       );
     } catch (error) {
@@ -90,7 +99,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     }
   }
 
-  async hasAccount(): Promise<boolean> {
+  async hasAnyAccount(): Promise<boolean> {
     try {
       const storageObject = await this.get();
       return !!storageObject?.accounts && storageObject.accounts.length > 0;
@@ -350,11 +359,11 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     websiteAddress: string
   ): Promise<LocalStorageWebsiteConnectedAccount[]> {
     try {
-      const storageObject = await this.get();
-      const accounts = storageObject?.accounts;
+      const accounts = await this.getAccounts();
 
       if (!accounts) return [];
 
+      const storageObject = await this.get();
       const websitesData = storageObject?.websitesData;
       if (!websitesData) {
         return [];
@@ -364,11 +373,14 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
       return connectedAccountIds.map((accountId) => {
         const correspondingAccount = accounts.find(
-          (account) => account.accountId === accountId
+          (account) =>
+            account.accountId === accountId ||
+            (account.publicKey &&
+              getImplicitAccountId(account.publicKey) === accountId)
         );
         const publicKey = correspondingAccount?.publicKey || " ";
         return {
-          accountId,
+          accountId: correspondingAccount?.accountId || accountId,
           publicKey: publicKey,
         };
       });
