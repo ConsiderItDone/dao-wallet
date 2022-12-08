@@ -42,8 +42,17 @@ export const useAccountNearBalance = (
           console.info("[GetAccountNearBalanceData]:", balanceData.error);
         }
         const data = balanceData?.data;
-        if (data) {
+
+        if (
+          balanceData?.error?.message?.includes("Result field is empty") &&
+          !data
+        ) {
+          setIsAccountNotFunded(true);
+        } else {
           setIsAccountNotFunded(false);
+        }
+
+        if (data) {
           setAccountNearBalance({
             available: Math.max(
               parseNearTokenAmount(data?.available) -
@@ -58,7 +67,6 @@ export const useAccountNearBalance = (
           console.info(
             "[GetAccountNearBalance]: received empty account balance data. Maybe account is not funded yet"
           );
-          setIsAccountNotFunded(true);
           setAccountNearBalance({
             available: 0,
             staked: 0,
