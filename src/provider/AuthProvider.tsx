@@ -24,7 +24,6 @@ import {
   SESSION_PASSWORD_KEY,
   SESSION_STORAGE_PASSWORD_CHANGED_EVENT_KEY,
 } from "../services/chrome/sessionStorage";
-import { getExplorerUrl } from "../utils/near";
 
 const appLocalStorage = new LocalStorage();
 
@@ -35,8 +34,9 @@ interface AuthProviderValue extends AuthState {
   addAccount: (newAccount: AccountWithPrivateKey) => Promise<Boolean>;
   selectAccount: (index: number) => Promise<void>;
   changeNetwork: (indexOrId: string | number) => Promise<Boolean>;
-  currentNetwork: Network | undefined;
+  currentNetwork: Network;
   explorerUrl: string;
+  indexerServiceUrl: string;
 }
 
 export interface AuthState {
@@ -74,11 +74,6 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     [state.networks.length, state.selectedNetworkIndex] //eslint-disable-line
   );
   console.log("Current network", currentNetwork);
-
-  const explorerUrl = useMemo(
-    () => getExplorerUrl(currentNetwork?.networkId!),
-    [currentNetwork]
-  );
 
   const currentAccount = useMemo(
     () =>
@@ -286,7 +281,8 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         addPublicKey,
         changeNetwork,
         currentNetwork,
-        explorerUrl,
+        explorerUrl: currentNetwork.explorerUrl,
+        indexerServiceUrl: currentNetwork.indexerServiceUrl,
       }}
     >
       <PolywrapProvider

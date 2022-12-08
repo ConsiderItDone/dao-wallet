@@ -9,6 +9,7 @@ import { SelectNetworkPage } from "../selectNetworkPage";
 import { useAuth } from "../../hooks";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ExportPrivateKeyPage } from "../exportPrivateKeyPage";
+import { AddCustomNetworkPage } from "../addCustomNetworkPage";
 
 const Settings = () => {
   const { currentAccount } = useAuth();
@@ -23,6 +24,10 @@ const Settings = () => {
 
   const handleChangeNetwork = () => {
     goTo(SelectNetworkPage);
+  };
+
+  const handleAddCustomNetwork = () => {
+    goTo(AddCustomNetworkPage);
   };
 
   const handleExportPrivateKey = () => {
@@ -55,6 +60,9 @@ const Settings = () => {
         </div>
         <button className="menuItembtn" onClick={handleChangeNetwork}>
           <div>Change Network</div>
+        </button>
+        <button className="menuItembtn" onClick={handleAddCustomNetwork}>
+          <div>Add Custom Network</div>
         </button>
         <button className="menuItembtn" onClick={handleExportPrivateKey}>
           <div>Export Private Key</div>

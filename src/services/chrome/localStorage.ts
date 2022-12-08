@@ -231,10 +231,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       if (isEmpty(customNetworks)) {
         customNetworks = [];
       }
-      customNetworks.push({
-        networkId: customNetwork.networkId,
-        nodeUrl: customNetwork.nodeUrl,
-      });
+      customNetworks.push(customNetwork);
       const result = await this.set({ [NETWORKS_KEY]: customNetworks });
       if (IS_IN_DEVELOPMENT_MODE) {
         window.dispatchEvent(LOCAL_STORAGE_NETWORK_CHANGED_EVENT);

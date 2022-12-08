@@ -1,0 +1,169 @@
+.addCustomNetworkPageContainer {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--white_col);
+    background-image: url(../../images/bgInfo.svg);
+    background-size: cover;
+    background-position: center;
+    font-family: var(--font_manrope);
+}
+
+.addCustomNetworkPageContainer .body {
+    border-radius: 0 0 20px 20px;
+    height: calc(100% - 80px);
+    padding: 32px 60px 50px;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.addCustomNetworkPageContainer .body .title {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 35px;
+    color: #202020;
+    text-align: center;
+}
+
+.addCustomNetworkPageContainer .body .subtitle {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    text-align: center;
+    margin: 12px auto 0;
+    max-width: 70%;
+}
+
+.addCustomNetworkPageContainer .body .form {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 10px
+}
+
+.addCustomNetworkPageContainer .body .form .networkDataInput {
+    box-sizing: border-box;
+    width: 100%;
+    height: 48px;
+    padding: 16px;
+    font-size: 16px;
+    line-height: 22px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.08);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.addCustomNetworkPageContainer .body .form .networkDataInput::placeholder {
+    font-size: 12px;
+    line-height: 16px;
+    opacity: 0.6;
+}
+
+.addCustomNetworkPageContainer .body .form .networkDataInput:focus {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.addCustomNetworkPageContainer .body .form .errorMessage {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: indianred;
+    margin-bottom: -20px;
+    font-size: 12px;
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer .radioInputLabel {
+    cursor: pointer;
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer .radioInputLabel:hover {
+    opacity: 0.8;
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: white;
+    margin: 0;
+
+    cursor: pointer;
+    font: inherit;
+    color: #20202040;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 50%;
+
+    display: grid;
+    place-content: center;
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer input[type="radio"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #A2A0F1;
+    background-color: white;
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer input[type="radio"]:checked::before {
+    transform: scale(1);
+}
+
+.addCustomNetworkPageContainer .body .form .radioInputsContainer input[type="radio"]:focus {
+    outline: max(2px, 0.15em) solid currentColor;
+    outline-offset: max(2px, 0.15em);
+}
+
+.addCustomNetworkPageContainer .body .addCustomNetworkButton {
+    min-width: 166px;
+    height: 48px;
+    text-align: center;
+    margin: 40px auto 0;
+    padding: 15px 24px;
+    border-radius: 88px;
+    background: #202020;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    color: var(--white_col);
+    cursor: pointer;
+}
+
+.addCustomNetworkPageContainer .body .addCustomNetworkButton:hover {
+    opacity: 0.8;
+}
+
+.addCustomNetworkPageContainer .body .addCustomNetworkButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.addCustomNetworkPageContainer .body .cancel {
+    width: fit-content;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 700;
+    font-style: normal;
+    margin: 12px auto 0;
+    opacity: 0.5;
+}
+
+.addCustomNetworkPageContainer .body .cancel:hover {
+    opacity: 0.8;
+}

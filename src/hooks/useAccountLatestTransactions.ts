@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getIndexerServiceUrl } from "../utils/near";
 import { useAuth } from "./useAuth";
 
 export type ActivityActionKind =
@@ -26,7 +25,7 @@ export interface AccountActivity {
 export const useAccountLatestActivity = (
   accountId: string | undefined
 ): { activities: AccountActivity[] | undefined; isLoading: boolean } => {
-  const { currentNetwork } = useAuth();
+  const { currentNetwork, indexerServiceUrl } = useAuth();
 
   const [accountActivities, setAccountActivities] = useState<
     AccountActivity[] | undefined
@@ -41,9 +40,7 @@ export const useAccountLatestActivity = (
         return;
       }
 
-      const indexerUrl = getIndexerServiceUrl(currentNetwork.networkId);
-
-      fetch(`${indexerUrl}/account/${accountId}/activity`)
+      fetch(`${indexerServiceUrl}/account/${accountId}/activity`)
         .then((response) => response.json())
         .then((data) => setAccountActivities(data))
         .catch((error) => {
@@ -56,7 +53,7 @@ export const useAccountLatestActivity = (
     };
 
     getAccountLatestActivities(accountId);
-  }, [accountId, currentNetwork?.networkId]);
+  }, [accountId, currentNetwork?.networkId, indexerServiceUrl]);
 
   return {
     activities: accountActivities,
