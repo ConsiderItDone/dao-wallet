@@ -8,7 +8,18 @@ import { NEAR_TOKEN } from "../consts/near";
 import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import base58 from "bs58";
 
-function getIndexerServiceUrl(networkId: NetworkID): string {
+export function getExplorerUrl(networkId: NetworkID): string {
+  switch (networkId) {
+    case "testnet":
+      return "https://explorer.testnet.near.org";
+    case "mainnet":
+      return "https://explorer.near.org";
+    default:
+      return "https://explorer.near.org";
+  }
+}
+
+export function getIndexerServiceUrl(networkId: NetworkID): string {
   switch (networkId) {
     case "testnet":
       return "https://testnet-api.kitwallet.app";
