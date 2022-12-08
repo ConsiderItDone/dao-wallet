@@ -5,7 +5,15 @@ import Icon from "../icon";
 import "./index.css";
 import { goTo } from "react-chrome-extension-router";
 import BalancePage from "../balancePage";
-import { EXPLORER_URL } from "../../consts/near";
+import { useAuth } from "../../hooks";
+import { shortenWalletAddress } from "../../utils/wallet";
+
+function formatAccountId(accountId: string | undefined) {
+  if (!accountId) return accountId;
+  return accountId?.length >= 16
+    ? shortenWalletAddress(accountId, 6, 6)
+    : accountId;
+}
 
 interface Props {
   amount: number;
@@ -15,6 +23,8 @@ interface Props {
 }
 
 const TransactionPage = ({ amount, receiver, hash, tokenSymbol }: Props) => {
+  const { explorerUrl } = useAuth();
+
   const onContinue = () => {
     goTo(BalancePage);
   };
@@ -32,10 +42,10 @@ const TransactionPage = ({ amount, receiver, hash, tokenSymbol }: Props) => {
         <div className="recipient">
           <a
             target={"_blank"}
-            href={`${EXPLORER_URL}/transactions/${hash}`}
+            href={`${explorerUrl}/transactions/${hash}`}
             rel="noreferrer"
           >
-            {receiver}
+            {formatAccountId(receiver)}
           </a>
         </div>
         <button className="btnContinue" onClick={onContinue}>

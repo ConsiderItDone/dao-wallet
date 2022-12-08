@@ -327,6 +327,7 @@
   font-size: 16px;
   line-height: 22px;
   background: transparent;
+  padding-right: 45px;
 }
 .sendPageContainer .toContainer input:disabled {
   opacity: 0.8;

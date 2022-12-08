@@ -5,11 +5,13 @@ import { useAuth } from "../../hooks";
 import iconsObj from "../../assets/icons";
 import Icon from "../icon";
 import { ClipLoader } from "react-spinners";
+import { getImplicitAccountId } from "../../utils/account";
 
 const appLocalStorage = new LocalStorage();
 
 interface ConnectAccountOption {
   accountId: string;
+  publicKey: string | undefined;
   isChosen: boolean;
 }
 
@@ -39,6 +41,7 @@ export const ConnectAccountsPage = ({ website }: Props) => {
           );
           return {
             accountId: account.accountId,
+            publicKey: account.publicKey,
             isChosen: isAlreadyChosen,
           };
         }
@@ -61,7 +64,11 @@ export const ConnectAccountsPage = ({ website }: Props) => {
       connectAccountOptions
         ? connectAccountOptions
             .filter((account) => account.isChosen)
-            .map((account) => account.accountId)
+            .map((account) =>
+              account.publicKey
+                ? getImplicitAccountId(account.publicKey)
+                : account.accountId
+            )
         : []
     );
 

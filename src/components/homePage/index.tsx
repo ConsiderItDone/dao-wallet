@@ -54,7 +54,7 @@ const HomePage = () => {
   const handleNextPage = async (
     requestedInjectedApiMethod: string | null | undefined
   ) => {
-    const hasAccount = await localStorage.hasAccount();
+    const hasAccount = await localStorage.hasAnyAccount();
 
     if (!hasAccount) {
       goTo(ChooseMethod);
