@@ -29,6 +29,7 @@ import {
   HandleSignInOutResult,
   HandleSignTransactionsResult,
 } from "./contentscriptApi";
+import { IS_IN_DEVELOPMENT_MODE } from "../consts/app";
 
 function injectInpageScript() {
   try {
@@ -228,6 +229,10 @@ function documentElementCheck() {
 // Checks if wallet api should be injected in window
 function shouldInjectApi() {
   return (
-    doctypeCheck() && suffixCheck() && documentElementCheck() && httpCheck()
+    doctypeCheck() &&
+    suffixCheck() &&
+    documentElementCheck() &&
+    httpCheck() &&
+    !IS_IN_DEVELOPMENT_MODE
   );
 }
