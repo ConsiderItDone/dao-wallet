@@ -22,9 +22,10 @@ import {
   handleSignTransaction,
   handleSignTransactions,
 } from "./backgroundApi";
+import { IS_IN_DEVELOPMENT_MODE } from "../consts/app";
 
 // Only add listeners in background service worker (it doesn't have window object)
-if (chrome?.runtime && !self?.window) {
+if (chrome?.runtime && !self?.window && !IS_IN_DEVELOPMENT_MODE) {
   // Catch messages from content script
   chrome.runtime.onMessage.addListener(function (
     message: ChromeRuntimeMessage,

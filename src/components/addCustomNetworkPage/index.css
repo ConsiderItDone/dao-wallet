@@ -67,11 +67,7 @@
 }
 
 .addCustomNetworkPageContainer .body .form .errorMessage {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     color: indianred;
-    margin-bottom: -20px;
     font-size: 12px;
 }
 

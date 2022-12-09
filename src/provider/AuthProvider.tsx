@@ -13,7 +13,7 @@ import {
   LocalStorage,
   LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT_KEY,
   AccountWithPrivateKey,
-  NETWORKS_KEY,
+  CUSTOM_NETWORKS_KEY,
   LOCAL_STORAGE_NETWORK_CHANGED_EVENT_KEY,
   LAST_SELECTED_NETWORK_INDEX_KEY,
 } from "../services/chrome/localStorage";
@@ -313,7 +313,8 @@ const setEventListeners = (
 
       const shouldUpdateNetwork =
         areaName === "local" &&
-        (NETWORKS_KEY in changes || LAST_SELECTED_NETWORK_INDEX_KEY in changes);
+        (CUSTOM_NETWORKS_KEY in changes ||
+          LAST_SELECTED_NETWORK_INDEX_KEY in changes);
 
       if (shouldUpdateNetwork) {
         updateNetwork();

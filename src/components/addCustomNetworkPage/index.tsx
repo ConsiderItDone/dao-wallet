@@ -8,11 +8,13 @@ import BalancePage from "../balancePage";
 import { LocalStorage } from "../../services/chrome/localStorage";
 import { MAINNET, TESTNET } from "../../consts/networks";
 import { NetworkID } from "../../types";
+import { SELECT_NETWORK_TIMEOUT } from "../selectNetworkPage";
+import { Loading } from "../animations/loading";
 
 const appLocalStorage = new LocalStorage();
 
 export const AddCustomNetworkPage = () => {
-  const { networks, currentNetwork } = useAuth();
+  const { networks } = useAuth();
 
   const [networkId, setNetworkId] = useState<string>("");
   const [networkIdError, setNetworkIdError] = useState<
@@ -20,11 +22,11 @@ export const AddCustomNetworkPage = () => {
   >(undefined);
 
   const [nodeUrl, setNodeUrl] = useState<string>("");
-  const [defaultNetworkId, setDefaultNetworkId] = useState<NetworkID>(
-    currentNetwork?.networkId === "mainnet" ? "mainnet" : "testnet"
-  );
+  const [defaultNetworkId, setDefaultNetworkId] =
+    useState<NetworkID>("mainnet");
   const [isAddingCustomNetwork, setIsAddingCustomNetwork] =
     useState<boolean>(false);
+  const [isChangingPage, setIsChangingPage] = useState<boolean>(false);
 
   const onNetworkIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNetworkId(event?.target?.value);
@@ -50,13 +52,16 @@ export const AddCustomNetworkPage = () => {
         }
       }
 
+      setIsChangingPage(true);
       let defaultNetwork = defaultNetworkId === "mainnet" ? MAINNET : TESTNET;
       await appLocalStorage.addCustomNetwork({
         ...defaultNetwork,
         networkId,
         nodeUrl,
       });
-      goTo(BalancePage);
+      setTimeout(() => {
+        goTo(BalancePage);
+      }, SELECT_NETWORK_TIMEOUT);
     } catch (error) {
       console.error("[HandleAddCustomNetwork]:", error);
       setNetworkIdError("Failed to add custom network");
@@ -73,74 +78,82 @@ export const AddCustomNetworkPage = () => {
     <div className="addCustomNetworkPageContainer">
       <Header />
       <div className="body">
-        <div className="title">Add Custom Network</div>
-        <div className="form">
-          <input
-            className="networkDataInput"
-            placeholder="Network ID"
-            onChange={onNetworkIdChange}
-            value={networkId}
-            disabled={isAddingCustomNetwork}
-          />
-          {!!networkId && networkIdError && (
-            <div className="errorMessage">{networkIdError}</div>
-          )}
-          <input
-            className="networkDataInput"
-            placeholder="Node URL"
-            value={nodeUrl}
-            onChange={onNodeUrlChange}
-            disabled={isAddingCustomNetwork}
-          />
-          <div className="radioInputsContainer">
-            <input
-              type="radio"
-              id="mainnet"
-              name="isMainnet"
-              value="mainnet"
-              checked={defaultNetworkId === "mainnet"}
-              onChange={onDefaultNetworkIdChange}
-            />
-            <label className="radioInputLabel" htmlFor="mainnet">
-              Mainnet
-            </label>
-            <input
-              type="radio"
-              id="testnet"
-              name="isTestnet"
-              value="testnet"
-              checked={defaultNetworkId === "testnet"}
-              onChange={onDefaultNetworkIdChange}
-            />
-            <label className="radioInputLabel" htmlFor="testnet">
-              Testnet
-            </label>
+        {isChangingPage ? (
+          <div className="clipLoaderContainer">
+            <Loading />
           </div>
-        </div>
-        <button
-          onClick={handleAddCustomNetwork}
-          disabled={
-            !networkId ||
-            networkIdError === undefined ||
-            !!networkIdError ||
-            !nodeUrl ||
-            isAddingCustomNetwork
-          }
-          className="addCustomNetworkButton"
-        >
-          {isAddingCustomNetwork ? (
-            <ClipLoader color="#fff" size={14} />
-          ) : (
-            "Add"
-          )}
-        </button>
-        <button
-          className="cancel"
-          onClick={onCancel}
-          disabled={isAddingCustomNetwork}
-        >
-          Cancel
-        </button>
+        ) : (
+          <>
+            <div className="title">Add Custom Network</div>
+            <div className="form">
+              <input
+                className="networkDataInput"
+                placeholder="Network ID"
+                onChange={onNetworkIdChange}
+                value={networkId}
+                disabled={isAddingCustomNetwork}
+              />
+              {!!networkId && networkIdError && (
+                <div className="errorMessage">{networkIdError}</div>
+              )}
+              <input
+                className="networkDataInput"
+                placeholder="Node URL"
+                value={nodeUrl}
+                onChange={onNodeUrlChange}
+                disabled={isAddingCustomNetwork}
+              />
+              <div className="radioInputsContainer">
+                <input
+                  type="radio"
+                  id="mainnet"
+                  name="isMainnet"
+                  value="mainnet"
+                  checked={defaultNetworkId === "mainnet"}
+                  onChange={onDefaultNetworkIdChange}
+                />
+                <label className="radioInputLabel" htmlFor="mainnet">
+                  Mainnet
+                </label>
+                <input
+                  type="radio"
+                  id="testnet"
+                  name="isTestnet"
+                  value="testnet"
+                  checked={defaultNetworkId === "testnet"}
+                  onChange={onDefaultNetworkIdChange}
+                />
+                <label className="radioInputLabel" htmlFor="testnet">
+                  Testnet
+                </label>
+              </div>
+            </div>
+            <button
+              onClick={handleAddCustomNetwork}
+              disabled={
+                !networkId ||
+                networkIdError === undefined ||
+                !!networkIdError ||
+                !nodeUrl ||
+                isAddingCustomNetwork
+              }
+              className="addCustomNetworkButton"
+            >
+              {isAddingCustomNetwork ? (
+                <ClipLoader color="#fff" size={14} />
+              ) : (
+                "Add Network"
+              )}
+            </button>
+            <button
+              className="cancel"
+              onClick={onCancel}
+              disabled={isAddingCustomNetwork}
+            >
+              Cancel
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

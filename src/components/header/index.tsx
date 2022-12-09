@@ -19,7 +19,7 @@ import HomePage from "../homePage";
 import { useNavigate } from "react-router-dom";
 
 const formatWalletName = (str: string) => {
-  if (str?.length <= 8) {
+  if (!str || str?.length <= 8) {
     return str;
   }
 

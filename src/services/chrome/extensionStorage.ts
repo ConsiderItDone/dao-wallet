@@ -1,4 +1,5 @@
 import { isEmpty } from "../../utils/common";
+import { IS_IN_DEVELOPMENT_MODE } from "../../consts/app";
 
 export interface ApplicationStorageArea {
   get: (
@@ -57,5 +58,11 @@ export class ExtensionStorage<Type> {
         resolve();
       });
     });
+  }
+}
+
+export function emitDevelopmentStorageEvent(event: Event) {
+  if (IS_IN_DEVELOPMENT_MODE) {
+    window.dispatchEvent(event);
   }
 }
