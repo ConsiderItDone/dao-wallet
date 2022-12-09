@@ -1,0 +1,135 @@
+.accountLatestActivitiesContainer {
+    max-width: 440px;
+    margin: 0 auto;
+    background-color: white;
+    padding-bottom: 24px;
+}
+
+.accountLatestActivitiesContainer .activitiesList {
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity {
+    cursor: pointer;
+    display: flex;
+    padding: 16px 41px 16px 32px;
+    border-bottom: 1px solid rgb(240, 240, 241);
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity:hover {
+    opacity: 0.8;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity {
+    display: flex;
+    align-items: center;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .iconWrapper {
+    width: 40px;
+    height: 40px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 4px;
+    border-radius: 50%;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .iconWrapper .icon {
+    width: 100%;
+    height: 100%;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .actionAndSubInfoWrapper {
+    margin-left: 12px;
+    line-height: 100%;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .actionAndSubInfoWrapper .action {
+    font-weight: 700;
+    font-family: var(--font_bold);
+    font-size: 12px;
+    line-height: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .actionAndSubInfoWrapper .subInfo {
+    white-space: nowrap;
+    width: fit-content;
+    font-weight: 600;
+    font-family: var(--font_semi_bold);
+    font-size: 12px;
+    line-height: 16px;
+    opacity: 0.4;
+    margin-top: 3px;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .amountAndDateWrapper {
+    text-align: right;
+    margin-left: auto;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .amountAndDateWrapper .nearAmountWrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .amountAndDateWrapper .nearAmountWrapper .icon {
+    width: 8px;
+    margin-top: -2px;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .amountAndDateWrapper .nearAmountWrapper .value {
+    font-weight: 700;
+    font-family: var(--font_bold);
+    font-size: 12px;
+    line-height: 16px;
+    white-space: nowrap;
+    margin-left: 7px;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .amountAndDateWrapper .dateTimeWrapper {
+    white-space: nowrap;
+    width: fit-content;
+    font-weight: 600;
+    font-family: var(--font_semi_bold);
+    font-size: 12px;
+    line-height: 16px;
+    opacity: 0.4;
+    display: flex;
+    margin-top: 3px;
+}
+
+.accountLatestActivitiesContainer .activitiesList .activity .amountAndDateWrapper .dateTimeWrapper .time {
+    margin-left: 8px;
+}
+
+.accountLatestActivitiesContainer .allActivitiesButton {
+    text-align: center;
+    margin: 20px auto 0;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    cursor: pointer;
+    text-decoration-line: underline;
+}
+
+.accountLatestActivitiesContainer .allActivitiesButton:hover {
+    opacity: 0.8;
+}
+
+.accountLatestActivitiesContainer .noTransactions {
+    font-family: var(--font_semi_bold);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #20202040;
+    text-align: center;
+    padding: 20px 20px 0;
+}

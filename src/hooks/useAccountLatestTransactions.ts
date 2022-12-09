@@ -14,7 +14,7 @@ export type ActivityActionKind =
 export interface AccountActivity {
   action_index: number;
   action_kind: ActivityActionKind;
-  args: object;
+  args: any;
   block_hash: string;
   block_timestamp: string;
   hash: string;

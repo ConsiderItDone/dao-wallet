@@ -21,6 +21,8 @@ import { useNearToUsdRatio } from "../../hooks/useNearToUsdRatio";
 import { useAccountNearBalance } from "../../hooks/useAccountNearBalance";
 import { toFixedBottom } from "../../utils/common";
 import { AccountNotFundedNotification } from "../accountNotFundedNotification";
+import { useAccountLatestActivity } from "../../hooks/useAccountLatestTransactions";
+import { AccountLatestActivitiesList } from "../accountLatestActivitiesList";
 
 const formatTokenAmount = (
   amount: number | null | undefined,
@@ -57,6 +59,8 @@ const wrapValueElementWithSkeletonLoading = (
   }
 };
 
+export type BalancePageFooterTab = "tokens" | "NFT" | "activity";
+
 export interface AccountBalance {
   available: number;
   staked: number;
@@ -65,7 +69,7 @@ export interface AccountBalance {
 }
 
 const BalancePage = () => {
-  const [footerTab, setFooterTab] = useState("tokens");
+  const [footerTab, setFooterTab] = useState<BalancePageFooterTab>("tokens");
   const [isBalanceDropdownVisible, setIsBalanceDropdownVisible] =
     useState(true);
   const [isStakeDropdownVisible, setIsStakeDropdownVisible] = useState(true);
@@ -86,6 +90,10 @@ const BalancePage = () => {
     accountNearBalance?.available
   );
   const nftCollections = useAccountNftCollections(account?.accountId);
+  const {
+    activities: accountActivities,
+    isLoading: isLoadingAccountActivities,
+  } = useAccountLatestActivity(account?.accountId);
 
   const balanceSecondary = () => {
     return (
@@ -374,8 +382,16 @@ const BalancePage = () => {
             <Loading />
           </div>
         )
-      ) : Array.isArray(nftCollections) ? (
-        <NftCollectionsList nftCollections={nftCollections} />
+      ) : footerTab === "NFT" ? (
+        Array.isArray(nftCollections) ? (
+          <NftCollectionsList nftCollections={nftCollections} />
+        ) : (
+          <div className="footerLoadingContainer">
+            <Loading />
+          </div>
+        )
+      ) : !isLoadingAccountActivities ? (
+        <AccountLatestActivitiesList activities={accountActivities} />
       ) : (
         <div className="footerLoadingContainer">
           <Loading />

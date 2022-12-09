@@ -1,11 +1,7 @@
 import "./index.css";
 import React from "react";
 import { Token } from "../../services/chrome/localStorage";
-import iconsObj from "../../assets/icons";
 import { toFixedBottom } from "../../utils/common";
-import { NEAR_TOKEN } from "../../consts/near";
-import { goTo } from "react-chrome-extension-router";
-import { AccountLatestActivityPage } from "../accountLatestActivityPage";
 
 export interface TokenAmountData {
   token: Token;
@@ -28,10 +24,6 @@ const formatUsdTokenAmount = (amount: number) => {
 };
 
 export const TokenList = ({ tokens }: Props) => {
-  const viewAccountLatestActivity = () => {
-    goTo(AccountLatestActivityPage);
-  };
-
   return (
     <div className="tokenListContainer">
       {tokens?.length ? (
@@ -61,16 +53,6 @@ export const TokenList = ({ tokens }: Props) => {
                 ) : null}
               </div>
             </div>
-            {tokenAmountData?.token?.address === NEAR_TOKEN.address ? (
-              <div
-                className="rightPartWrapper"
-                onClick={viewAccountLatestActivity}
-              >
-                <div className="imgWrapper">
-                  <img src={iconsObj.arrowRight} alt="" className="img" />
-                </div>
-              </div>
-            ) : null}
           </div>
         ))
       ) : (

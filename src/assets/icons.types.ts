@@ -20,4 +20,12 @@ export interface IconsMapper extends Record<string, unknown> {
   successBigIcon: string;
   defaultTokenIcon: string;
   plusIcon: string;
+  actionAddKey: string;
+  actionCreateAccount: string;
+  actionDeleteAccount: string;
+  actionDeleteKey: string;
+  actionDeployContract: string;
+  actionFunctionCall: string;
+  actionStake: string;
+  actionTransfer: string;
 }
