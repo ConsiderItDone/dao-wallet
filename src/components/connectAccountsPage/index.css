@@ -2,19 +2,104 @@
     width: 100%;
     min-height: 100%;
     background-color: var(--white_col);
-    background-image: url(../../images/bgInfo.svg);
-    background-size: cover;
-    background-position: center;
     font-family: var(--font_manrope);
 }
 
-.connectAccountsPageContainer .body {
-    padding: 32px 60px 50px 60px;
-    height: 100%;
-    text-align: center;
+.connectAccountsPageContainer header {
+    background-color: var(--white_col);
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    min-height: 40px;
 }
 
-.connectAccountsPageContainer .body>.title {
+.connectAccountsPageContainer header .tabSelector {
+    display: flex;
+}
+
+.connectAccountsPageContainer header .tabSelector .backBtn {
+    cursor: pointer;
+    margin-right: 14px;
+}
+
+.connectAccountsPageContainer header .tabSelector .backBtn:hover {
+    opacity: 0.8;
+}
+
+.connectAccountsPageContainer header .tabSelector .backBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.connectAccountsPageContainer header .tabSelector .tabInfo {
+    font-weight: 600;
+    font-family: var(--font_semi_bold);
+    font-style: normal;
+    font-size: 12px;
+    line-height: 16px;
+    opacity: 0.4;
+}
+
+.connectAccountsPageContainer header .brandName {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+
+.connectAccountsPageContainer .body {
+    height: 100%;
+    text-align: center;
+    background-image: url(../../images/bgInfo.svg);
+    background-size: cover;
+    background-position: center;
+    padding-top: 20px;
+}
+
+.connectAccountsPageContainer .websiteWrapper {
+    text-align: center;
+    margin: 0 auto;
+    width: 320px;
+    height: 52px;
+    background-color: var(--white_col);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.connectAccountsPageContainer .websiteWrapper .website {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    max-width: 220px;
+}
+
+.connectAccountsPageContainer .websiteWrapper .favicon {
+    width: 16px;
+    height: 16px;
+}
+
+.connectAccountsPageContainer .body .title {
     font-family: var(--font_extra_bold);
     font-style: normal;
     font-weight: 800;
@@ -22,59 +107,86 @@
     line-height: 110%;
     text-align: center;
     color: #202020;
+    margin: 16px auto 0;
+    max-width: 320px;
 }
 
-.connectAccountsPageContainer .secondaryTitle {
+.connectAccountsPageContainer .body .title .arrowDown {
+    display: block;
+    margin: 18px auto 0;
+}
+
+.connectAccountsPageContainer .body .subtitle {
+    margin-top: 12px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
     font-family: var(--font_regular);
     font-style: normal;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 19px;
     text-align: center;
-    color: #202020;
-    margin: 30px auto 0;
-    max-width: 320px;
+}
+
+.connectAccountsPageContainer .body .selectAll {
+    margin-top: 24px;
+}
+
+.connectAccountsPageContainer .body .connectAccountCheckboxWrapper {
+    display: flex;
+    align-items: center;
+    padding: 12px 34px;
+    border-bottom: 1px solid rgb(240, 240, 241);
+}
+
+.connectAccountsPageContainer .body .chosenAccount {
+    border: none;
+    background-color: #fff;
+    margin: 0 auto;
+}
+
+.connectAccountsPageContainer .body .connectAccountCheckboxWrapper .connectAccountCheckboxLabel {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    font-family: var(--font_bold);
+    font-style: normal;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .connectAccountsPageContainer .body .accountsContainer {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 40px;
+    background-color: var(--white_col);
 }
 
-.connectAccountsPageContainer .body .accountsContainer .account {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #20202055;
-    border-radius: 10px;
-    padding: 10px 15px;
-    background-color: white;
-    transition: background-color 300ms ease;
-    cursor: pointer;
-    user-select: none;
+.connectAccountsPageContainer footer {
+    background-color: var(--white_col);
 }
 
-.connectAccountsPageContainer .body .accountsContainer .chosenAccount {
-    background-color: #E0DFFA;
-}
-
-.connectAccountsPageContainer .body .accountsContainer .account .accountId {
+.connectAccountsPageContainer footer .warningMessage {
+    margin-top: 12px;
+    opacity: 0.5;
+    font-weight: 400;
     font-size: 14px;
     line-height: 19px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90%;
+    text-align: center;
 }
 
-.connectAccountsPageContainer .body .accountsContainer .account .isChosenIcon {
-    width: 19px;
-    height: 19px;
-    margin-left: 10px;
+.connectAccountsPageContainer footer .allowsMessage {
+    border-top: 1px solid rgba(152, 150, 240, 0.2);
+    border-bottom: 1px solid rgba(152, 150, 240, 0.2);
+    padding: 14px 0 24px;
+    text-align: center;
+    margin: 24px auto 0;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    font-family: var(--font_bold);
+    font-style: normal;
 }
 
-.connectAccountsPageContainer .body .confirm {
+.connectAccountsPageContainer footer .confirm {
     font-family: var(--font_bold);
     font-style: normal;
     font-weight: 700;
@@ -89,7 +201,7 @@
     min-width: 112px;
 }
 
-.connectAccountsPageContainer .body .cancel {
+.connectAccountsPageContainer footer .cancel {
     font-family: var(--font_bold);
     font-style: normal;
     font-weight: 700;
@@ -101,11 +213,11 @@
     opacity: 0.5;
 }
 
-.connectAccountsPageContainer .body .connectAccountsBtn:hover {
+.connectAccountsPageContainer footer .connectAccountsBtn:hover {
     opacity: 0.8;
 }
 
-.connectAccountsPageContainer .body .connectAccountsBtn:disabled {
+.connectAccountsPageContainer footer .connectAccountsBtn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
