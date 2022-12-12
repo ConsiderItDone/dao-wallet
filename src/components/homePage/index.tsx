@@ -187,7 +187,7 @@ const HomePage = () => {
               !storageHashedPassword
             }
           >
-            {isUnlocking ? <ClipLoader color="#fff" size={14} /> : "Unlock"}
+            {isUnlocking ? <ClipLoader color="#9896F0" size={14} /> : "Unlock"}
           </button>
         </>
       )}

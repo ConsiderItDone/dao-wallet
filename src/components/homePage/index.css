@@ -9,7 +9,7 @@ input {
   background-size: cover;
   background-position: center;
   background-color: #FFFFFF;
-  padding-top: 52px;
+  padding: 52px 0 50px;
   text-align: center;
 }
 .homePageContainer .title {

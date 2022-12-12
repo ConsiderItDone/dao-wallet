@@ -346,7 +346,7 @@ const SendPage = () => {
                     }
                   >
                     {isValidatingReceiver || isValidatingAmount ? (
-                      <ClipLoader color="#fff" size={14} />
+                      <ClipLoader color="#9896F0" size={14} />
                     ) : (
                       "Submit"
                     )}

@@ -173,7 +173,7 @@ export const TransferNftPage = ({ nft }: Props) => {
               className="button nextStepButton"
             >
               {isValidatingRecipientAccountId || isLoadingAccountBalance ? (
-                <ClipLoader color="#fff" size={14} />
+                <ClipLoader color="#9896F0" size={14} />
               ) : (
                 "Next Step"
               )}
@@ -211,7 +211,7 @@ export const TransferNftPage = ({ nft }: Props) => {
               className="button transferNftButton"
             >
               {isValidatingRecipientAccountId || isTransferringNft ? (
-                <ClipLoader color="#fff" size={14} />
+                <ClipLoader color="#9896F0" size={14} />
               ) : (
                 "Confirm Transfer"
               )}

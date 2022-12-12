@@ -19,6 +19,8 @@ import verticalDots from "../images/verticalDots.svg";
 import arrowUp from "../images/arrowUp.svg";
 import successBigIcon from "../images/successBigIcon.svg";
 import defaultTokenIcon from "../images/defaultTokenIcon.svg";
+import unlockIcon from "../images/unlockIcon.png";
+import errorIcon from "../images/errorIcon.png";
 import plusIcon from "../images/plus.svg";
 import actionAddKey from "../images/actionAddKey.svg";
 import actionCreateAccount from "../images/actionCreateAccount.svg";
@@ -50,6 +52,8 @@ const iconsObj: IconsMapper = {
   arrowUp,
   successBigIcon,
   defaultTokenIcon,
+  unlockIcon,
+  errorIcon,
   plusIcon,
   actionAddKey,
   actionCreateAccount,

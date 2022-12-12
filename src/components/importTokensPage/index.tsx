@@ -222,7 +222,7 @@ export const ImportTokensPage = () => {
           {isTokenAddressInputStep ? (
             "Add Token"
           ) : isImportingToken ? (
-            <ClipLoader color="#fff" size={14} />
+            <ClipLoader color="#9896F0" size={14} />
           ) : (
             "Import Token"
           )}
