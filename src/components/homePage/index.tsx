@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import Icon from "../icon";
 import iconsObj from "../../assets/icons";
 import ChooseMethod from "../chooseMethod";
 import { goTo } from "react-chrome-extension-router";
@@ -158,11 +157,8 @@ const HomePage = () => {
       ) : (
         <>
           <div className="title">DAO Wallet</div>
-          <div className="iconContainer">
-            <div className="bg">
-              <Icon className="omniLogo" src={iconsObj.omniLogo} />
-            </div>
-            <Icon className="nearMenu" src={iconsObj.nearMenu} />
+          <div className="daoLogoWrapper">
+            <img className="daoLogo" alt="" src={iconsObj.logoDao} />
           </div>
           <InputField
             fieldName="password"

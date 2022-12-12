@@ -5,7 +5,7 @@ import {
   getComponentStack,
 } from "react-chrome-extension-router";
 import { ReactComponent as NearIcon } from "../../images/nearIcon.svg";
-import { ReactComponent as OmniLogo } from "../../images/omniLogo.svg";
+import { ReactComponent as DaoLogo } from "../../images/logoDao.svg";
 import { ReactComponent as LockIcon } from "../../images/lockIcon.svg";
 import { ReactComponent as SettingsIcon } from "../../images/settingsIcon.svg";
 import { ReactComponent as ArrowIcon } from "../../images/arrow.svg";
@@ -129,7 +129,7 @@ const Header = () => {
         <div
           className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
         >
-          <OmniLogo className="nearIconTitle" />
+          <DaoLogo className="nearIconTitle" />
           <span className="title">DAO Wallet</span>
         </div>
         <div className="item">
