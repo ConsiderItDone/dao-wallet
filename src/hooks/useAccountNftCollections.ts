@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  AccountLikelyNftContractsList,
   fetchNftCollectionMetadata,
   fetchNftsFromCollectionForAccount,
-  listLikelyNftsContracts,
 } from "../utils/nfts";
-import { useQuery } from "./useQuery";
+import { useFetchJson, useQuery } from "./useQuery";
 import { VIEW_FUNCTION_METHOD_NAME } from "../consts/wrapper";
 import { NftCollection } from "../types";
 
@@ -12,6 +12,8 @@ export const useAccountNftCollections = (
   accountId: string | undefined
 ): NftCollection[] | undefined => {
   const [viewFunctionExecute] = useQuery(VIEW_FUNCTION_METHOD_NAME);
+
+  const listLikelyNftsContracts = useFetchJson("listLikelyNftsContracts");
 
   const [nftCollections, setNftCollections] = useState<
     NftCollection[] | undefined
@@ -26,7 +28,10 @@ export const useAccountNftCollections = (
         setNftCollections(undefined);
       }
 
-      const likelyNftContractsList = await listLikelyNftsContracts(accountId);
+      const likelyNftContractsList =
+        await listLikelyNftsContracts<AccountLikelyNftContractsList>({
+          accountId,
+        });
       if (!likelyNftContractsList?.list) {
         setNftCollections([]);
         return;

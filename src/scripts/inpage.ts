@@ -1,17 +1,16 @@
-const apiObject = {
-  isNearWallet: true,
-  hello: () => {
-    return "Hello";
-  },
-  enable: () => {
-    // Send message to content script event listener
-    window.postMessage(
-      { type: "near#enable", text: "Show NEAR wallet popup" },
-      window.location.origin
-    );
-  },
-};
+import { InjectedAPI } from "./injectedAPI/injectedAPI";
+import { InjectedWallet } from "./injectedAPI/injectedAPI.types";
 
-(window as Record<string, any>).near = apiObject;
+declare global {
+  interface Window {
+    near: Record<string, InjectedWallet>;
+  }
+}
 
-export {};
+if (window) {
+  if (!window.near) {
+    window.near = {};
+  }
+
+  window.near.daoWallet = new InjectedAPI();
+}

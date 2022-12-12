@@ -8,8 +8,8 @@ import { goBack, goTo } from "react-chrome-extension-router";
 import { useAuth, useSendTransaction } from "../../hooks";
 import { ClipLoader } from "react-spinners";
 import { Token } from "../../services/chrome/localStorage";
-import { EXPLORER_URL, NEAR_TOKEN } from "../../consts/near";
 import { useState } from "react";
+import { NEAR_TOKEN } from "../../consts/near";
 
 const formatErrorMessage = (message: string | undefined): string => {
   if (!message) return "No error message";
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
-  const { currentAccount: account } = useAuth();
+  const { currentAccount: account, explorerUrl } = useAuth();
   const { execute, loading, error, confirmLedger } = useSendTransaction(token);
 
   const [errorTransactionHash, setErrorTransactionHash] = useState<
@@ -48,7 +48,7 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
       // @ts-ignore
       const hash = data?.transaction?.hash as string;
       if (executeStatus.SuccessValue === null) {
-        setErrorTransactionHash(`${EXPLORER_URL}/transactions/${hash}`);
+        setErrorTransactionHash(`${explorerUrl}/transactions/${hash}`);
       } else {
         goTo(TransactionPage, {
           amount,

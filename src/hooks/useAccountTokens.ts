@@ -1,12 +1,8 @@
 import { TokenAmountData } from "../components/tokenList";
 import { useEffect, useState } from "react";
 import { NEAR_TOKEN } from "../consts/near";
-import {
-  fetchTokenBalance,
-  fetchTokenMetadata,
-  getAccountFungibleTokens,
-} from "../utils/fungibleTokens";
-import { useQuery } from "./useQuery";
+import { fetchTokenBalance, fetchTokenMetadata } from "../utils/fungibleTokens";
+import { useFetchJson, useQuery } from "./useQuery";
 import { VIEW_FUNCTION_METHOD_NAME } from "../consts/wrapper";
 import defaultTokenIcon from "../images/defaultTokenIcon.svg";
 
@@ -26,6 +22,8 @@ export const useAccountTokens = (
   const [otherTokensList, setOtherTokensList] = useState<
     TokenAmountData[] | undefined
   >(undefined);
+
+  const getAccountFungibleTokens = useFetchJson("likelyTokensFromBlock");
 
   useEffect(() => {
     if (accountNearAmount !== null && accountNearAmount !== undefined) {
@@ -51,8 +49,12 @@ export const useAccountTokens = (
       try {
         const newTokenList: TokenAmountData[] = [];
 
+        const accountFungibleTokens = await getAccountFungibleTokens<{
+          list: string[];
+        }>({ accountId });
+
         const otherFungibleTokensAddresses: string[] =
-          await getAccountFungibleTokens(accountId);
+          accountFungibleTokens?.list || [];
 
         for (const tokenAddress of otherFungibleTokensAddresses) {
           const token = await fetchTokenMetadata(

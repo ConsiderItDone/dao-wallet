@@ -1,21 +1,35 @@
 import React from "react";
 import "./index.css";
+import { BalancePageFooterTab } from "../balancePage";
 
-const NavFooter = ({ step, setStep }: any) => {
+interface Props {
+  step: BalancePageFooterTab;
+  setStep: React.Dispatch<React.SetStateAction<BalancePageFooterTab>>;
+}
+
+const NavFooter = ({ step, setStep }: Props) => {
   return (
-    <div className="btnConteiner">
-      <button
-        onClick={() => setStep("tokens")}
-        className={step === "tokens" ? "active" : ""}
-      >
-        Tokens
-      </button>
-      <button
-        onClick={() => setStep("NFT")}
-        className={step === "NFT" ? "active" : ""}
-      >
-        NFT
-      </button>
+    <div className="navFooterWrapper">
+      <div className="btnContainer">
+        <button
+          onClick={() => setStep("tokens")}
+          className={step === "tokens" ? "active" : ""}
+        >
+          Tokens
+        </button>
+        <button
+          onClick={() => setStep("NFT")}
+          className={step === "NFT" ? "active" : ""}
+        >
+          NFT
+        </button>
+        <button
+          onClick={() => setStep("activity")}
+          className={step === "activity" ? "active" : ""}
+        >
+          Activity
+        </button>
+      </div>
     </div>
   );
 };

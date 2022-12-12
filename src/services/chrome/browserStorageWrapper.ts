@@ -1,6 +1,6 @@
 import { ApplicationStorageArea } from "./extensionStorage";
 
-const STORAGE_DATA_KEY = "nearWallet";
+const STORAGE_DATA_KEY = "daoWallet";
 
 /**
  * Used to imitate extension storage when running application in development mode in browser as react app.

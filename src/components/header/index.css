@@ -6,13 +6,6 @@
   z-index: 11;
   margin: 0 auto;
 }
-footer {
-  max-width: 440px;
-}
-.btnConteiner {
-  max-width: 440px;
-  margin: 0 auto;
-}
 
 .header {
   display: flex;

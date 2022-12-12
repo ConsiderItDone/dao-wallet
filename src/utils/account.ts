@@ -6,12 +6,10 @@ import { getNearConnectionConfig } from "./near";
 import { Network } from "../types";
 import { PublicKey } from "near-api-js/lib/utils/key_pair";
 import { KeyStores } from "@cidt/near-plugin-js";
-import { INDEXER_SERVICE_URL } from "../consts/near";
+import { utils as nearApiUtils } from "near-api-js/lib/common-index";
 
 const ACCOUNT_ID_REGEX =
   /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
-
-const CUSTOM_REQUEST_HEADERS = {};
 
 export function isLegitAccountId(accountId: string) {
   return ACCOUNT_ID_REGEX.test(accountId);
@@ -32,12 +30,12 @@ export function getPublicKeyByPrivateKey(privateKey: string): PublicKey {
 export async function createNewAccount(
   accountId: string,
   privateKey: string,
-  networkId: Network,
+  network: Network,
   keyStore?: KeyStores.KeyStore
 ): Promise<void> {
   const nearConnection = await connect(
     getNearConnectionConfig(
-      networkId,
+      network,
       keyStore || new keyStores.BrowserLocalStorageKeyStore()
     )
   );
@@ -61,10 +59,9 @@ export async function accountExists(
   }
 }
 
-export async function getAccountIds(publicKey: string): Promise<string[]> {
-  return fetch(`${INDEXER_SERVICE_URL}/publicKey/${publicKey}/accounts`, {
-    headers: {
-      ...CUSTOM_REQUEST_HEADERS,
-    },
-  }).then((res) => res.json());
+export function getImplicitAccountId(publicKey: string): string {
+  return nearApiUtils.PublicKey.fromString(
+    publicKey.replace("ed25519:", "")
+    // @ts-ignore
+  ).data.toString("hex");
 }

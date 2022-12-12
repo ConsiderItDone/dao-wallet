@@ -5,7 +5,6 @@ import { fetchWithViewFunction } from "./polywrap";
 import {
   FT_STORAGE_DEPOSIT_GAS,
   FT_TRANSFER_GAS,
-  INDEXER_SERVICE_URL,
   TOKEN_TRANSFER_DEPOSIT,
 } from "../consts/near";
 import { formatFungibleTokenAmount } from "./format";
@@ -86,17 +85,6 @@ export async function sendFungibleToken(
     deposit: TOKEN_TRANSFER_DEPOSIT,
     signerId: ownerAccountId,
   });
-}
-
-// Returns contract addresses of account fungible tokens
-export async function getAccountFungibleTokens(
-  accountId: string
-): Promise<string[]> {
-  return fetch(
-    `${INDEXER_SERVICE_URL}/account/${accountId}/likelyTokensFromBlock`
-  )
-    .then((res) => res.json())
-    .then((jsonResult: any) => jsonResult?.list);
 }
 
 interface FungibleTokenAccountStorageBalance {

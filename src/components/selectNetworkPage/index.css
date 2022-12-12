@@ -1,0 +1,94 @@
+.selectNetworkPageContainer {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--white_col);
+    background-image: url(../../images/bgInfo.svg);
+    background-size: cover;
+    background-position: center;
+    font-family: var(--font_manrope);
+}
+
+.selectNetworkPageContainer .body {
+    border-radius: 0 0 20px 20px;
+    height: calc(100% - 80px);
+    padding: 32px 60px 50px;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.selectNetworkPageContainer .body .title {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 35px;
+    color: #202020;
+    text-align: center;
+}
+
+.selectNetworkPageContainer .body .networksContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 40px;
+    padding: 0 40px;
+}
+
+.selectNetworkPageContainer .body .networksContainer .network {
+    background-color: #202020;
+    color: var(--white_col);
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+}
+
+.selectNetworkPageContainer .body .networksContainer .network:hover {
+    opacity: 0.8;
+}
+
+.selectNetworkPageContainer .body .networksContainer .chosenNetwork {
+    background-color: #9896F0;
+    cursor: default;
+}
+
+.selectNetworkPageContainer .body .networksContainer .chosenNetwork:hover {
+    opacity: 1.0;
+}
+
+.selectNetworkPageContainer .body .networksContainer .network .successIconWrapper {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -20px;
+    margin: auto 0;
+}
+
+.selectNetworkPageContainer .body .networksContainer .network .successIconWrapper .successIcon {
+    width: 100%;
+    height: 100%;
+}
+
+.selectNetworkPageContainer .body .backBtn {
+    width: fit-content;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 700;
+    font-style: normal;
+    margin: 12px auto 0;
+    opacity: 0.5;
+    margin-top: 40px;
+}
+
+.selectNetworkPageContainer .body .backBtn:hover {
+    opacity: 0.8;
+}

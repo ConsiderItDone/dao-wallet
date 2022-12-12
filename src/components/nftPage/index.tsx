@@ -5,6 +5,14 @@ import { NFT } from "../../types";
 import iconsObj from "../../assets/icons";
 import { goTo } from "react-chrome-extension-router";
 import { TransferNftPage } from "../transferNftPage";
+import { shortenWalletAddress } from "../../utils/wallet";
+
+function formatAccountId(accountId: string | undefined) {
+  if (!accountId) return accountId;
+  return accountId?.length >= 16
+    ? shortenWalletAddress(accountId, 4, 4)
+    : accountId;
+}
 
 interface Props {
   nft: NFT;
@@ -41,7 +49,7 @@ export const NftPage = ({ nft }: Props) => {
         </div>
         <div className="ownerWrapper">
           <div className="label">Owner</div>
-          <div className="value">{nft?.owner}</div>
+          <div className="value">{formatAccountId(nft?.owner)}</div>
         </div>
         <div className="descriptionWrapper">
           <div className="descriptionHeader" onClick={onShowDescription}>

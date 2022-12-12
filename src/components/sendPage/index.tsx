@@ -6,18 +6,13 @@ import Icon from "../icon";
 import "./index.css";
 import { goTo, goBack } from "react-chrome-extension-router";
 import { Formik, Form, Field, FormikProps, FieldProps } from "formik";
-import { useAuth, useQuery } from "../../hooks";
+import { useAuth } from "../../hooks";
 import Select from "react-select";
 import { useAccountTokens } from "../../hooks/useAccountTokens";
-import {
-  ACCOUNT_BALANCE_METHOD_NAME,
-  useAccountNearBalance,
-} from "../../hooks/useAccountNearBalance";
+import { useAccountNearBalance } from "../../hooks/useAccountNearBalance";
 import { useNearToUsdRatio } from "../../hooks/useNearToUsdRatio";
 import { TokenAmountData } from "../tokenList";
 import { Loading } from "../animations/loading";
-import { accountExists } from "../../utils/account";
-import { AccountBalance } from "../balancePage";
 import { ClipLoader } from "react-spinners";
 import { toFixedBottom } from "../../utils/common";
 
@@ -88,10 +83,6 @@ const SendPage = () => {
   const [isValidatingAmount, setIsValidatingAmount] = useState<boolean>(false);
   const [amountError, setAmountError] = useState<string | null | undefined>(
     undefined
-  );
-
-  const [executeAccountBalanceQuery] = useQuery<AccountBalance>(
-    ACCOUNT_BALANCE_METHOD_NAME
   );
 
   const onSubmit = (values: SendProps) => {
@@ -193,12 +184,6 @@ const SendPage = () => {
     try {
       if (accountId === currentAccount?.accountId) {
         setReceiverAccountIdError("You can't send token to yourself");
-        return;
-      }
-
-      const exists = await accountExists(accountId, executeAccountBalanceQuery);
-      if (!exists) {
-        setReceiverAccountIdError("Account doesn't exist");
         return;
       }
 

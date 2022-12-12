@@ -1,0 +1,110 @@
+.accountNotFundedNotificationContainer {
+    max-width: 440px;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.accountNotFundedNotificationContainer .token {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 41px 16px 32px;
+    border-bottom: 1px solid rgb(240, 240, 241);
+}
+
+.accountNotFundedNotificationContainer .token .leftPartWrapper {
+    display: flex;
+    align-items: center;
+}
+
+.accountNotFundedNotificationContainer .token .leftPartWrapper .iconWrapper {
+    width: 40px;
+    height: 40px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 4px;
+    border-radius: 50%;
+}
+
+.accountNotFundedNotificationContainer .token .leftPartWrapper .iconWrapper .icon {
+    width: 100%;
+    height: 100%;
+}
+
+.accountNotFundedNotificationContainer .token .leftPartWrapper .messageWrapper {
+    margin-left: 14px;
+    line-height: 100%;
+}
+
+.accountNotFundedNotificationContainer .token .leftPartWrapper .messageWrapper .title {
+    font-weight: 700;
+    font-family: var(--font_bold);
+    font-size: 12px;
+    line-height: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+
+.accountNotFundedNotificationContainer .token .leftPartWrapper .messageWrapper .info {
+    white-space: nowrap;
+    width: fit-content;
+    font-weight: 600;
+    font-family: var(--font_semi_bold);
+    font-size: 12px;
+    line-height: 16px;
+    opacity: 0.4;
+}
+
+.accountNotFundedNotificationContainer .token .rightPartWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+
+.accountNotFundedNotificationContainer .token .rightPartWrapper .imgWrapper {
+    cursor: pointer;
+}
+
+.accountNotFundedNotificationContainer .token .rightPartWrapper .imgWrapper:hover {
+    opacity: 0.6;
+}
+
+.accountNotFundedNotificationContainer .token .rightPartWrapper .imgWrapper .img {
+    width: 100%;
+    height: 100%;
+}
+
+.accountNotFundedNotificationContainer .noTokens {
+    font-family: var(--font_semi_bold);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #20202040;
+    margin-bottom: 12px;
+    text-align: center;
+    margin-top: 32px;
+}
+
+.accountNotFundedNotificationContainer .addTokenContainer {
+    padding: 20px 0 24px 0;
+}
+
+.accountNotFundedNotificationContainer .addTokenContainer .addTokenButton {
+    font-family: var(--font_bold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px;
+    text-decoration-line: underline;
+    color: var(--black_color_secondary);
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.accountNotFundedNotificationContainer .addTokenContainer .addTokenButton:hover {
+    opacity: 0.7;
+}
+
+.accountNotFundedNotificationContainer .addTokenContainer .addTokenButton:disabled {
+    opacity: 0.6;
+}

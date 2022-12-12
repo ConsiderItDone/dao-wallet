@@ -1,14 +1,39 @@
-import React from "react";
-import { goBack } from "react-chrome-extension-router";
-import { ReactComponent as CopyIcon } from "../../images/copyIcon.svg";
+import React, { useState } from "react";
+import { goBack, goTo } from "react-chrome-extension-router";
 import FooterSettings from "../footerSettings";
 import iconsObj from "../../assets/icons";
 import Icon from "../icon";
 import Header from "../header";
-import { items } from "./mock";
 import "./index.css";
+import { SelectNetworkPage } from "../selectNetworkPage";
+import { useAuth } from "../../hooks";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { ExportPrivateKeyPage } from "../exportPrivateKeyPage";
+import { AddCustomNetworkPage } from "../addCustomNetworkPage";
 
 const Settings = () => {
+  const { currentAccount } = useAuth();
+  const [showCopiedIcon, setShowCopiedIcon] = useState<boolean>(false);
+
+  const onAddressCopy = () => {
+    setShowCopiedIcon(true);
+    setTimeout(() => {
+      setShowCopiedIcon(false);
+    }, 1000);
+  };
+
+  const handleChangeNetwork = () => {
+    goTo(SelectNetworkPage);
+  };
+
+  const handleAddCustomNetwork = () => {
+    goTo(AddCustomNetworkPage);
+  };
+
+  const handleExportPrivateKey = () => {
+    goTo(ExportPrivateKeyPage, { account: currentAccount });
+  };
+
   return (
     <div className="settings">
       <Header />
@@ -19,15 +44,29 @@ const Settings = () => {
         <div className="titleSettings">Settings</div>
         <div className="wallet">Wallet ID</div>
         <div className="text">
-          0xa3417B...2acF5 <CopyIcon className="copyIcon" />
+          {currentAccount?.accountId}
+          <CopyToClipboard
+            text={currentAccount?.accountId || ""}
+            onCopy={onAddressCopy}
+          >
+            <div className="addressCopyIconWrapper">
+              <img
+                src={showCopiedIcon ? iconsObj.success : iconsObj.copyIcon}
+                className="addressCopyIcon"
+                alt=""
+              />
+            </div>
+          </CopyToClipboard>
         </div>
-        {items.map((el) => {
-          return (
-            <button key={el?.id} className="menuItembtn">
-              <div>{el?.title} </div>
-            </button>
-          );
-        })}
+        <button className="menuItembtn" onClick={handleChangeNetwork}>
+          <div>Change Network</div>
+        </button>
+        <button className="menuItembtn" onClick={handleAddCustomNetwork}>
+          <div>Add Custom Network</div>
+        </button>
+        <button className="menuItembtn" onClick={handleExportPrivateKey}>
+          <div>Export Private Key</div>
+        </button>
       </div>
       <FooterSettings />
     </div>

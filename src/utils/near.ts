@@ -1,4 +1,4 @@
-import { KeyStores } from "@cidt/near-plugin-js";
+import { KeyStores, NearPluginConfig } from "@cidt/near-plugin-js";
 import { AccountWithPrivateKey } from "../services/chrome/localStorage";
 import { Network } from "../types";
 import { keyStores } from "near-api-js";
@@ -9,18 +9,27 @@ import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import base58 from "bs58";
 
 export function getNearConnectionConfig(
-  networkId: Network,
+  network: Network,
   keyStore?: KeyStores.KeyStore,
   selectedAccount?: AccountWithPrivateKey
-) {
+): NearPluginConfig {
+  const networkId = network.networkId;
+  const walletUrl = network.walletUrl;
+  const helperUrl = network.helperUrl;
+  const indexerServiceUrl = network.indexerServiceUrl;
+  if (!keyStore) {
+    keyStore = new keyStores.InMemoryKeyStore();
+  }
+  const masterAccount = selectedAccount?.accountId || undefined;
   return {
     headers: {},
     networkId: networkId,
-    nodeUrl: `https://rpc.${networkId}.near.org`,
-    walletUrl: `https://wallet.${networkId}.near.org`,
-    helperUrl: `https://helper.${networkId}.near.org`,
-    keyStore: keyStore || new keyStores.InMemoryKeyStore(),
-    masterAccount: selectedAccount?.accountId || undefined,
+    nodeUrl: network.nodeUrl,
+    walletUrl,
+    helperUrl,
+    indexerServiceUrl,
+    keyStore,
+    masterAccount,
   };
 }
 

@@ -1,13 +1,13 @@
-import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
+export type NetworkID = "mainnet" | "testnet" | "betanet" | string;
 
-export interface AccountData {
-  accountId: string;
-  privateKey?: string;
-  publicKey?: PublicKey;
-  isLedger?: boolean;
+export interface Network {
+  networkId: NetworkID;
+  nodeUrl: string;
+  explorerUrl: string;
+  indexerServiceUrl: string;
+  walletUrl: string;
+  helperUrl: string;
 }
-
-export type Network = "mainnet" | "testnet" | "betanet";
 
 export interface NFT {
   title: string;

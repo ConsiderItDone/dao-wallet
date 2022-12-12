@@ -1,8 +1,9 @@
-.btnConteiner {
+.navFooterWrapper .btnContainer {
     display: flex;
-    margin-top: 40px;
+    margin: 40px auto 0;
+    max-width: 440px;
   }
-.btnConteiner > button {
+.navFooterWrapper .btnContainer > button {
     width: 50%;
     display: block;
     padding-bottom: 4px;
@@ -16,7 +17,7 @@
     cursor: pointer;
     border-bottom: 1px solid #9896F033;
   }
-.btnConteiner .active {
+.navFooterWrapper .btnContainer .active {
     border-bottom: 2px solid #9896F0;
     color: var(--black_color_secondary);
   }

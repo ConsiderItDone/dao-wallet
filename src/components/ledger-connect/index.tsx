@@ -4,8 +4,7 @@ import { useLedger } from "../../hooks/useLedger";
 import Header from "../header";
 import HomePage from "../homePage";
 import "./index.css";
-import { getAccountIds } from "../../utils/account";
-import { useAuth } from "../../hooks";
+import { useAuth, useFetchJson } from "../../hooks";
 import { toPublicKey } from "../../utils/near";
 import { AccountNeedsFundingPage } from "../accountNeedsFundingPage";
 import { useState } from "react";
@@ -26,6 +25,8 @@ const LedgerConnect = () => {
     step: "" as ConnectLedgerState,
     loading: false,
   });
+
+  const getAccountIds = useFetchJson("accountsAtPublicKey");
 
   const onAfterConnect = () => {
     //TODO if(devMode)
@@ -49,7 +50,12 @@ const LedgerConnect = () => {
       const implicitAccountId = Buffer.from(pkData).toString("hex");
 
       const publicKeyString = toPublicKey(pkData, true) as string;
-      const ids = await getAccountIds(publicKeyString);
+      const ids = await getAccountIds<string[]>({ publicKeyString });
+
+      if (!ids) {
+        //TODO add error display, reset page state
+        console.log("Error getting accounts");
+      }
 
       const existingAccount = accounts.find(
         (acc) => acc.publicKey === publicKeyString
@@ -69,7 +75,7 @@ const LedgerConnect = () => {
         isLedger: true,
       };
 
-      if (!ids.length) {
+      if (!ids || !ids.length) {
         //Account not funded
         console.log("Account Not Funded");
         if (chrome.tabs) {

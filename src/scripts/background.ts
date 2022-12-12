@@ -1,46 +1,79 @@
-// @ts-ignore
+/* eslint-disable no-restricted-globals */
+import {
+  INJECTED_API_CONNECT_METHOD,
+  INJECTED_API_DISCONNECT_METHOD,
+  INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD,
+  INJECTED_API_GET_NETWORK_METHOD,
+  INJECTED_API_SIGN_IN_METHOD,
+  INJECTED_API_SIGN_OUT_METHOD,
+  INJECTED_API_SIGN_TRANSACTION_METHOD,
+  INJECTED_API_SIGN_TRANSACTIONS_METHOD,
+} from "./scripts.consts";
+import { InjectedAPIMessage } from "./injectedAPI/injectedAPI.custom.types";
+import { ChromeRuntimeMessage } from "./scripts.types";
+import { InjectedAPISignTransactionsParams } from "./injectedAPI/injectedAPI.types";
+import {
+  handleConnect,
+  handleDisconnect,
+  handleGetConnectedAccounts,
+  handleGetNetwork,
+  handleSignIn,
+  handleSignOut,
+  handleSignTransaction,
+  handleSignTransactions,
+} from "./backgroundApi";
+import { IS_IN_DEVELOPMENT_MODE } from "../consts/app";
 
-const POPUP_HEIGHT = 600;
-const POPUP_WIDTH = 400;
-
-async function openPopup() {
-  let top = 0;
-  let left = 0;
-
-  // Try to position popup in top right corner of last focused window
-  try {
-    const lastFocusedWindow = await chrome.windows.getLastFocused();
-    if (
-      lastFocusedWindow?.top &&
-      lastFocusedWindow?.left &&
-      lastFocusedWindow?.width
-    ) {
-      top = lastFocusedWindow.top;
-      left = lastFocusedWindow.left + (lastFocusedWindow.width - POPUP_WIDTH);
-    }
-  } catch {}
-
-  await chrome.windows.create({
-    url: chrome.runtime.getURL("index.html"),
-    type: "popup",
-    height: POPUP_HEIGHT,
-    width: POPUP_WIDTH,
-    top,
-    left,
-  });
-}
-
-if (chrome?.runtime) {
+// Only add listeners in background service worker (it doesn't have window object)
+if (chrome?.runtime && !self?.window && !IS_IN_DEVELOPMENT_MODE) {
   // Catch messages from content script
   chrome.runtime.onMessage.addListener(function (
-    request,
+    message: ChromeRuntimeMessage,
     sender,
     sendResponse
   ) {
-    if (request?.type === "near#enable") {
-      openPopup();
+    const origin = message?.origin;
+    const messageData: InjectedAPIMessage = message?.data;
+    const method = messageData?.method;
+    const params = messageData?.params;
+    console.info("[BackgroundMessage]:", {
+      method,
+      params,
+      origin,
+    });
+    // Returning true means that response will be sent asynchronously
+    switch (method) {
+      case INJECTED_API_CONNECT_METHOD:
+        handleConnect(origin, params, sendResponse);
+        return true;
+      case INJECTED_API_DISCONNECT_METHOD:
+        handleDisconnect(origin, sendResponse);
+        return true;
+      case INJECTED_API_GET_CONNECTED_ACCOUNTS_METHOD:
+        handleGetConnectedAccounts(origin, sendResponse);
+        return true;
+      case INJECTED_API_GET_NETWORK_METHOD:
+        handleGetNetwork(sendResponse);
+        return true;
+      case INJECTED_API_SIGN_TRANSACTION_METHOD:
+        handleSignTransaction(origin, params, sendResponse);
+        return true;
+      case INJECTED_API_SIGN_TRANSACTIONS_METHOD:
+        handleSignTransactions(
+          origin,
+          (params as InjectedAPISignTransactionsParams).transactions,
+          sendResponse
+        );
+        return true;
+      case INJECTED_API_SIGN_IN_METHOD:
+        handleSignIn(origin, params, sendResponse);
+        return true;
+      case INJECTED_API_SIGN_OUT_METHOD:
+        handleSignOut(origin, params, sendResponse);
+        return true;
+      default:
+        sendResponse();
+        break;
     }
-
-    sendResponse();
   });
 }
