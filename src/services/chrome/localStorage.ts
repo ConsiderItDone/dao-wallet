@@ -1,4 +1,7 @@
-import { ExtensionStorage } from "./extensionStorage";
+import {
+  emitDevelopmentStorageEvent,
+  ExtensionStorage,
+} from "./extensionStorage";
 import { isEmpty } from "../../utils/common";
 import { BrowserStorageWrapper } from "./browserStorageWrapper";
 import { SessionStorage } from "./sessionStorage";
@@ -6,6 +9,7 @@ import { decryptPrivateKeyWithPassword } from "../../utils/encryption";
 import { IS_IN_DEVELOPMENT_MODE } from "../../consts/app";
 import { Network } from "../../types";
 import { DEFAULT_NETWORKS } from "../../consts/networks";
+import { getImplicitAccountId } from "../../utils/account";
 
 const HASHED_PASSWORD_KEY = "hashedPassword";
 export const LOCAL_STORAGE_WEBSITES_DATA_KEY = "websitesData";
@@ -13,7 +17,7 @@ export const LOCAL_STORAGE_WEBSITES_DATA_KEY = "websitesData";
 export const ACCOUNTS_KEY = "accounts";
 export const LAST_SELECTED_ACCOUNT_INDEX_KEY = "lastSelectedAccountIndex";
 
-export const NETWORKS_KEY = "networks";
+export const CUSTOM_NETWORKS_KEY = "customNetworks";
 export const LAST_SELECTED_NETWORK_INDEX_KEY = "lastSelectedNetworkIndex";
 
 export const LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT_KEY =
@@ -54,9 +58,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
   async setHashedPassword(hashedPassword: string): Promise<void> {
     try {
       const result = await this.set({ [HASHED_PASSWORD_KEY]: hashedPassword });
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
-      }
+      emitDevelopmentStorageEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
       return result;
     } catch (error) {
       console.error("[SetHashedPassword]:", error);
@@ -75,6 +77,8 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         return undefined;
       }
 
+      const currentNetwork = await this.getCurrentNetwork();
+
       return Promise.all(
         accounts.map(async (account) => ({
           ...account,
@@ -82,6 +86,12 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
             password,
             account.encryptedPrivateKey!
           ),
+          accountId:
+            currentNetwork?.networkId &&
+            !account.accountId.endsWith(currentNetwork.networkId) &&
+            account.publicKey
+              ? getImplicitAccountId(account.publicKey)
+              : account.accountId,
         }))
       );
     } catch (error) {
@@ -90,7 +100,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     }
   }
 
-  async hasAccount(): Promise<boolean> {
+  async hasAnyAccount(): Promise<boolean> {
     try {
       const storageObject = await this.get();
       return !!storageObject?.accounts && storageObject.accounts.length > 0;
@@ -115,9 +125,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
         isLedger: account.isLedger,
       });
       const result = await this.set({ [ACCOUNTS_KEY]: accounts });
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
-      }
+      emitDevelopmentStorageEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
       await this.setLastSelectedAccountIndex(accounts.length - 1);
       return result;
     } catch (error) {
@@ -146,9 +154,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       const result = await this.set({
         [LAST_SELECTED_ACCOUNT_INDEX_KEY]: index,
       });
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
-      }
+      emitDevelopmentStorageEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
       return result;
     } catch (error) {
       console.error("[SetLastSelectedAccountIndex]:", error);
@@ -222,16 +228,8 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       if (isEmpty(customNetworks)) {
         customNetworks = [];
       }
-      customNetworks.push({
-        networkId: customNetwork.networkId,
-        nodeUrl: customNetwork.nodeUrl,
-      });
-      const result = await this.set({ [NETWORKS_KEY]: customNetworks });
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(LOCAL_STORAGE_NETWORK_CHANGED_EVENT);
-      }
-      await this.setLastSelectedAccountIndex(customNetworks.length - 1);
-      return result;
+      customNetworks.push(customNetwork);
+      return await this.set({ [CUSTOM_NETWORKS_KEY]: customNetworks });
     } catch (error) {
       console.error("[AddCustomNetwork]:", error);
       return null;
@@ -259,9 +257,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       const result = await this.set({
         [LAST_SELECTED_NETWORK_INDEX_KEY]: index,
       });
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(LOCAL_STORAGE_NETWORK_CHANGED_EVENT);
-      }
+      emitDevelopmentStorageEvent(LOCAL_STORAGE_NETWORK_CHANGED_EVENT);
       return result;
     } catch (error) {
       console.error("[SetLastSelectedNetworkIndex]:", error);
@@ -309,9 +305,7 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
       accounts[lastSelectedAccountIndex].tokens.push(token);
       await this.set({ [ACCOUNTS_KEY]: accounts });
 
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
-      }
+      emitDevelopmentStorageEvent(LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT);
     } catch (error) {
       console.error("[AddTokenForCurrentAccount]:", error);
     }
@@ -350,11 +344,11 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
     websiteAddress: string
   ): Promise<LocalStorageWebsiteConnectedAccount[]> {
     try {
-      const storageObject = await this.get();
-      const accounts = storageObject?.accounts;
+      const accounts = await this.getAccounts();
 
       if (!accounts) return [];
 
+      const storageObject = await this.get();
       const websitesData = storageObject?.websitesData;
       if (!websitesData) {
         return [];
@@ -364,11 +358,14 @@ export class LocalStorage extends ExtensionStorage<LocalStorageData> {
 
       return connectedAccountIds.map((accountId) => {
         const correspondingAccount = accounts.find(
-          (account) => account.accountId === accountId
+          (account) =>
+            account.accountId === accountId ||
+            (account.publicKey &&
+              getImplicitAccountId(account.publicKey) === accountId)
         );
         const publicKey = correspondingAccount?.publicKey || " ";
         return {
-          accountId,
+          accountId: correspondingAccount?.accountId || accountId,
           publicKey: publicKey,
         };
       });

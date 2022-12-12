@@ -32,9 +32,6 @@
 .balancePageContainer .body .btnBalance{
   margin-bottom: 8px;
 }
-.balancePageContainer .body .btnBalanceSecondary {
-  margin-bottom: 40px;
-}
 .balancePageContainer .body .btnBalance:hover {
   opacity: 0.8;
 }
@@ -73,11 +70,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  margin: 40px auto 0;
   cursor: pointer;
 }
 .balancePageContainer .body .btnSend:hover {
   opacity: 0.8;
+}
+.balancePageContainer .body .btnSend:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 .balancePageContainer .body .btnSend.visible{
   margin-top: 98px;

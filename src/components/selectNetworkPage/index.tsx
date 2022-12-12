@@ -7,6 +7,8 @@ import iconsObj from "../../assets/icons";
 import BalancePage from "../balancePage";
 import { Loading } from "../animations/loading";
 
+export const SELECT_NETWORK_TIMEOUT = 1500;
+
 export const SelectNetworkPage = () => {
   const { networks, selectedNetworkIndex, changeNetwork } = useAuth();
 
@@ -17,7 +19,7 @@ export const SelectNetworkPage = () => {
     await changeNetwork(networkId);
     setTimeout(() => {
       goTo(BalancePage);
-    }, 1500);
+    }, SELECT_NETWORK_TIMEOUT);
   };
 
   const onBack = () => {

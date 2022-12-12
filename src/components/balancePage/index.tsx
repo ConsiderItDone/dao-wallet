@@ -20,6 +20,9 @@ import { useAccountTokens } from "../../hooks/useAccountTokens";
 import { useNearToUsdRatio } from "../../hooks/useNearToUsdRatio";
 import { useAccountNearBalance } from "../../hooks/useAccountNearBalance";
 import { toFixedBottom } from "../../utils/common";
+import { AccountNotFundedNotification } from "../accountNotFundedNotification";
+import { useAccountLatestActivity } from "../../hooks/useAccountLatestTransactions";
+import { AccountLatestActivitiesList } from "../accountLatestActivitiesList";
 
 const formatTokenAmount = (
   amount: number | null | undefined,
@@ -56,6 +59,8 @@ const wrapValueElementWithSkeletonLoading = (
   }
 };
 
+export type BalancePageFooterTab = "tokens" | "NFT" | "activity";
+
 export interface AccountBalance {
   available: number;
   staked: number;
@@ -64,16 +69,15 @@ export interface AccountBalance {
 }
 
 const BalancePage = () => {
-  const [footerTab, setFooterTab] = useState("tokens");
+  const [footerTab, setFooterTab] = useState<BalancePageFooterTab>("tokens");
   const [isBalanceDropdownVisible, setIsBalanceDropdownVisible] =
     useState(true);
   const [isStakeDropdownVisible, setIsStakeDropdownVisible] = useState(true);
 
   const { currentAccount: account } = useAuth();
 
-  const { accountNearBalance, isLoadingAccountBalance } = useAccountNearBalance(
-    account?.accountId
-  );
+  const { accountNearBalance, isLoadingAccountBalance, isAccountNotFunded } =
+    useAccountNearBalance(account?.accountId);
   const nearToUsdRatio = useNearToUsdRatio();
   const {
     totalStaked,
@@ -86,6 +90,10 @@ const BalancePage = () => {
     accountNearBalance?.available
   );
   const nftCollections = useAccountNftCollections(account?.accountId);
+  const {
+    activities: accountActivities,
+    isLoading: isLoadingAccountActivities,
+  } = useAccountLatestActivity(account?.accountId);
 
   const balanceSecondary = () => {
     return (
@@ -295,8 +303,9 @@ const BalancePage = () => {
               : 0
           }
           isLoading={isLoadingAccountBalance || !account || !accountNearBalance}
+          isAccountNotFunded={isAccountNotFunded}
         />
-        {isBalanceDropdownVisible ? (
+        {isAccountNotFunded ? null : isBalanceDropdownVisible ? (
           <button
             onClick={() => {
               setIsBalanceDropdownVisible(!isBalanceDropdownVisible);
@@ -323,7 +332,7 @@ const BalancePage = () => {
         ) : (
           totalBalance()
         )}
-        {isStakeDropdownVisible ? (
+        {isAccountNotFunded ? null : isStakeDropdownVisible ? (
           <button
             onClick={() => {
               setIsStakeDropdownVisible(!isStakeDropdownVisible);
@@ -356,6 +365,7 @@ const BalancePage = () => {
           onClick={() => goTo(SendPage)}
           className={`btnSend ${!isStakeDropdownVisible ? "visible" : ""}`}
           type="button"
+          disabled={isLoadingAccountBalance || isAccountNotFunded}
         >
           <Icon src={iconsObj.arrowGroup} />
           <div>Send</div>
@@ -363,15 +373,25 @@ const BalancePage = () => {
         <NavFooter step={footerTab} setStep={setFooterTab} />
       </div>
       {footerTab === "tokens" ? (
-        Array.isArray(fungibleTokensList) ? (
+        isAccountNotFunded ? (
+          <AccountNotFundedNotification />
+        ) : Array.isArray(fungibleTokensList) ? (
           <TokenList tokens={fungibleTokensList} />
         ) : (
           <div className="footerLoadingContainer">
             <Loading />
           </div>
         )
-      ) : Array.isArray(nftCollections) ? (
-        <NftCollectionsList nftCollections={nftCollections} />
+      ) : footerTab === "NFT" ? (
+        Array.isArray(nftCollections) ? (
+          <NftCollectionsList nftCollections={nftCollections} />
+        ) : (
+          <div className="footerLoadingContainer">
+            <Loading />
+          </div>
+        )
+      ) : !isLoadingAccountActivities ? (
+        <AccountLatestActivitiesList activities={accountActivities} />
       ) : (
         <div className="footerLoadingContainer">
           <Loading />

@@ -19,7 +19,7 @@ import HomePage from "../homePage";
 import { useNavigate } from "react-router-dom";
 
 const formatWalletName = (str: string) => {
-  if (str?.length <= 8) {
+  if (!str || str?.length <= 8) {
     return str;
   }
 
@@ -50,20 +50,20 @@ const Header = () => {
 
   const handleWalletChange = async (walletIndex: number) => {
     setDropdownVisible(!dropdownVisible);
-    selectAccount(walletIndex);
+    await selectAccount(walletIndex);
     goTo(BalancePage);
   };
 
   const handleGoBack = async () => {
     const componentStack = getComponentStack();
     if (componentStack?.length <= 1) {
-      await sessionStorage.setPassword(undefined);
+      await sessionStorage.setPassword("");
     }
     goBack();
   };
 
   const handleLock = async () => {
-    await sessionStorage.setPassword(undefined);
+    await sessionStorage.setPassword("");
     goTo(HomePage);
   };
 
@@ -130,7 +130,7 @@ const Header = () => {
           className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
         >
           <OmniLogo className="nearIconTitle" />
-          <span className="title">Omni Near Wallet</span>
+          <span className="title">DAO Wallet</span>
         </div>
         <div className="item">
           <button onClick={handleLock}>

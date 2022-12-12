@@ -1,5 +1,6 @@
 import React from "react";
 import { goBack, goTo } from "react-chrome-extension-router";
+import { IS_IN_DEVELOPMENT_MODE } from "../consts/app";
 
 export async function openTab(url: string, component: React.ComponentType) {
   // Check if dev environment
@@ -16,6 +17,16 @@ export async function openTab(url: string, component: React.ComponentType) {
     }
   } else {
     goTo(component);
+  }
+}
+
+export async function openExternalWebsite(url: string) {
+  if (IS_IN_DEVELOPMENT_MODE) {
+    window.open(url);
+  } else {
+    return chrome.tabs.create({
+      url,
+    });
   }
 }
 

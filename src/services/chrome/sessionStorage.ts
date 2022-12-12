@@ -1,4 +1,7 @@
-import { ExtensionStorage } from "./extensionStorage";
+import {
+  emitDevelopmentStorageEvent,
+  ExtensionStorage,
+} from "./extensionStorage";
 import { BrowserStorageWrapper } from "./browserStorageWrapper";
 import { IS_IN_DEVELOPMENT_MODE } from "../../consts/app";
 import {
@@ -40,9 +43,7 @@ export class SessionStorage extends ExtensionStorage<SessionStorageData> {
   async setPassword(password: string | undefined): Promise<void> {
     try {
       const result = await this.set({ [SESSION_PASSWORD_KEY]: password });
-      if (IS_IN_DEVELOPMENT_MODE) {
-        window.dispatchEvent(SESSION_STORAGE_PASSWORD_CHANGED_EVENT);
-      }
+      emitDevelopmentStorageEvent(SESSION_STORAGE_PASSWORD_CHANGED_EVENT);
       return result;
     } catch (error) {
       console.error("[SetDecryptedPassword]:", error);

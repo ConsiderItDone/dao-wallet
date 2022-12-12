@@ -19,6 +19,15 @@ import verticalDots from "../images/verticalDots.svg";
 import arrowUp from "../images/arrowUp.svg";
 import successBigIcon from "../images/successBigIcon.svg";
 import defaultTokenIcon from "../images/defaultTokenIcon.svg";
+import plusIcon from "../images/plus.svg";
+import actionAddKey from "../images/actionAddKey.svg";
+import actionCreateAccount from "../images/actionCreateAccount.svg";
+import actionDeleteAccount from "../images/actionDeleteAccount.svg";
+import actionDeleteKey from "../images/actionDeleteKey.svg";
+import actionDeployContract from "../images/actionDeployContract.svg";
+import actionFunctionCall from "../images/actionFunctionCall.svg";
+import actionStake from "../images/actionStake.svg";
+import actionTransfer from "../images/actionTransfer.svg";
 
 const iconsObj: IconsMapper = {
   transactionIcon,
@@ -41,6 +50,15 @@ const iconsObj: IconsMapper = {
   arrowUp,
   successBigIcon,
   defaultTokenIcon,
+  plusIcon,
+  actionAddKey,
+  actionCreateAccount,
+  actionDeleteAccount,
+  actionDeleteKey,
+  actionDeployContract,
+  actionFunctionCall,
+  actionStake,
+  actionTransfer,
 };
 
 export default iconsObj;

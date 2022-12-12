@@ -5,6 +5,8 @@ import { goTo } from "react-chrome-extension-router";
 import { NftPage } from "../nftPage";
 import { NftCollection } from "../../types";
 
+const ROW_NFTS_AMOUNT = 2;
+
 interface Props {
   collection: NftCollection;
 }
@@ -28,15 +30,17 @@ export const NftCollectionGrid = ({ collection }: Props) => {
             <div className="count">{collection?.nfts?.length}</div>
           </div>
         </div>
-        <div className="rightPartWrapper">
-          <div className="arrowWrapper" onClick={onShowMoreNfts}>
-            <img
-              src={iconsObj.arrowRight}
-              alt=""
-              className={`arrow ${shouldShowMoreNfts ? "rotated" : ""}`}
-            />
+        {collection?.nfts?.length > ROW_NFTS_AMOUNT ? (
+          <div className="rightPartWrapper">
+            <div className="arrowWrapper" onClick={onShowMoreNfts}>
+              <img
+                src={iconsObj.arrowRight}
+                alt=""
+                className={`arrow ${shouldShowMoreNfts ? "rotated" : ""}`}
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
       <div className={`nftsContainer ${!shouldShowMoreNfts ? "closed" : ""}`}>
         {collection?.nfts?.map((nft, index) => (

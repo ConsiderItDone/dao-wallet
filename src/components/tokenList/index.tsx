@@ -1,7 +1,6 @@
 import "./index.css";
 import React from "react";
 import { Token } from "../../services/chrome/localStorage";
-import iconsObj from "../../assets/icons";
 import { toFixedBottom } from "../../utils/common";
 
 export interface TokenAmountData {
@@ -52,11 +51,6 @@ export const TokenList = ({ tokens }: Props) => {
                     )} USD`}
                   </div>
                 ) : null}
-              </div>
-            </div>
-            <div className="rightPartWrapper">
-              <div className="imgWrapper">
-                <img src={iconsObj.arrowRight} alt="" className="img" />
               </div>
             </div>
           </div>

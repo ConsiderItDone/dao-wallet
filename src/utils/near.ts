@@ -1,6 +1,6 @@
 import { KeyStores, NearPluginConfig } from "@cidt/near-plugin-js";
 import { AccountWithPrivateKey } from "../services/chrome/localStorage";
-import { Network, NetworkID } from "../types";
+import { Network } from "../types";
 import { keyStores } from "near-api-js";
 import { bignumberToNumber } from "./bignumber";
 import { ethers } from "ethers";
@@ -8,34 +8,15 @@ import { NEAR_TOKEN } from "../consts/near";
 import { PublicKey } from "@cidt/near-plugin-js/build/wrap";
 import base58 from "bs58";
 
-function getIndexerServiceUrl(networkId: NetworkID): string {
-  switch (networkId) {
-    case "testnet":
-      return "https://testnet-api.kitwallet.app";
-    case "mainnet":
-      return "https://api.kitwallet.app";
-    default:
-      return "https://api.kitwallet.app";
-  }
-}
-
-function getWalletUrl(networkId: NetworkID): string {
-  return `https://wallet.${networkId}.near.org`;
-}
-
-function getHelperUrl(networkId: NetworkID): string {
-  return `https://helper.${networkId}.near.org`;
-}
-
 export function getNearConnectionConfig(
   network: Network,
   keyStore?: KeyStores.KeyStore,
   selectedAccount?: AccountWithPrivateKey
 ): NearPluginConfig {
   const networkId = network.networkId;
-  const walletUrl = getWalletUrl(networkId);
-  const helperUrl = getHelperUrl(networkId);
-  const indexerServiceUrl = getIndexerServiceUrl(networkId);
+  const walletUrl = network.walletUrl;
+  const helperUrl = network.helperUrl;
+  const indexerServiceUrl = network.indexerServiceUrl;
   if (!keyStore) {
     keyStore = new keyStores.InMemoryKeyStore();
   }

@@ -13,7 +13,7 @@ import {
   LocalStorage,
   LOCAL_STORAGE_ACCOUNT_CHANGED_EVENT_KEY,
   AccountWithPrivateKey,
-  NETWORKS_KEY,
+  CUSTOM_NETWORKS_KEY,
   LOCAL_STORAGE_NETWORK_CHANGED_EVENT_KEY,
   LAST_SELECTED_NETWORK_INDEX_KEY,
 } from "../services/chrome/localStorage";
@@ -34,7 +34,9 @@ interface AuthProviderValue extends AuthState {
   addAccount: (newAccount: AccountWithPrivateKey) => Promise<Boolean>;
   selectAccount: (index: number) => Promise<void>;
   changeNetwork: (indexOrId: string | number) => Promise<Boolean>;
-  currentNetwork: Network | undefined;
+  currentNetwork: Network;
+  explorerUrl: string;
+  indexerServiceUrl: string;
 }
 
 export interface AuthState {
@@ -80,7 +82,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
             (acc, index) => index === state.selectedAccountIndex
           )
         : undefined,
-    [state.accounts.length, state.selectedAccountIndex] //eslint-disable-line
+    [state.accounts, state.selectedAccountIndex] //eslint-disable-line
   );
   console.log("Current account", currentAccount);
 
@@ -260,7 +262,7 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
     } else {
       setState(DEFAULT_STATE);
     }
-  }, [state.selectedNetworkIndex, init, shouldReInitAccounts]);
+  }, [state.selectedNetworkIndex, init]);
 
   useEffect(() => {
     if (shouldReInitAccounts) {
@@ -279,6 +281,8 @@ const AuthProvider = (props: Omit<ProviderProps<AuthState>, "value">) => {
         addPublicKey,
         changeNetwork,
         currentNetwork,
+        explorerUrl: currentNetwork.explorerUrl,
+        indexerServiceUrl: currentNetwork.indexerServiceUrl,
       }}
     >
       <PolywrapProvider
@@ -309,14 +313,16 @@ const setEventListeners = (
 
       const shouldUpdateNetwork =
         areaName === "local" &&
-        (NETWORKS_KEY in changes || LAST_SELECTED_NETWORK_INDEX_KEY in changes);
+        (CUSTOM_NETWORKS_KEY in changes ||
+          LAST_SELECTED_NETWORK_INDEX_KEY in changes);
 
       if (shouldUpdateNetwork) {
         updateNetwork();
       }
 
       const shouldReinitAccounts =
-        areaName === "session" && SESSION_PASSWORD_KEY in changes;
+        shouldUpdateNetwork ||
+        (areaName === "session" && SESSION_PASSWORD_KEY in changes);
 
       if (shouldReinitAccounts) {
         reinitAccounts();

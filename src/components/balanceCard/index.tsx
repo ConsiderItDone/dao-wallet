@@ -11,6 +11,7 @@ interface BalanceCardProps {
   nearAmount: string | number;
   usdAmount: string | number;
   isLoading?: boolean;
+  isAccountNotFunded?: boolean;
 }
 
 const BalanceCard = ({
@@ -19,6 +20,7 @@ const BalanceCard = ({
   nearAmount,
   usdAmount,
   isLoading = false,
+  isAccountNotFunded = false,
 }: BalanceCardProps) => {
   const [showCopiedIcon, setShowCopiedIcon] = useState<boolean>(false);
 
@@ -57,8 +59,12 @@ const BalanceCard = ({
             </CopyToClipboard>
           </div>
           <div className="title">{title}</div>
-          <div className="balance">{nearAmount} NEAR</div>
-          <div className="text">≈ ${usdAmount} USD</div>
+          <div className="balance">
+            {isAccountNotFunded ? "-" : nearAmount} NEAR
+          </div>
+          <div className="text">
+            {isAccountNotFunded ? "-" : `≈ ${usdAmount}`} USD
+          </div>
         </>
       )}
     </div>

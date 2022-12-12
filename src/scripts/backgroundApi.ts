@@ -60,7 +60,7 @@ export async function handleConnect(
   params: InjectedAPIConnectParams,
   sendResponse: (data: any) => void
 ): Promise<void> {
-  const userHasAccounts = await appLocalStorage.hasAccount();
+  const userHasAccounts = await appLocalStorage.hasAnyAccount();
   if (!userHasAccounts) {
     sendResponse({ error: "User has no accounts in extension" });
     return;

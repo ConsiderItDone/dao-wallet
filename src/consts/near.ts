@@ -10,10 +10,6 @@ export const NEAR_TOKEN: Token = {
   decimals: 24,
 };
 
-//TODO Change to get configs from plugin
-export const ACCOUNT_HELPER_URL = "https://near-contract-helper.onrender.com";
-export const EXPLORER_URL = "https://explorer.testnet.near.org";
-
 export const FT_TRANSFER_GAS = "15000000000000";
 export const FT_STORAGE_DEPOSIT_GAS = "30000000000000";
 export const NFT_TRANSFER_GAS = "30000000000000";

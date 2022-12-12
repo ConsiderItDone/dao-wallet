@@ -54,7 +54,7 @@ const HomePage = () => {
   const handleNextPage = async (
     requestedInjectedApiMethod: string | null | undefined
   ) => {
-    const hasAccount = await localStorage.hasAccount();
+    const hasAccount = await localStorage.hasAnyAccount();
 
     if (!hasAccount) {
       goTo(ChooseMethod);
@@ -157,7 +157,7 @@ const HomePage = () => {
         <div className="title">Loading...</div>
       ) : (
         <>
-          <div className="title">Omni Near Wallet</div>
+          <div className="title">DAO Wallet</div>
           <div className="iconContainer">
             <div className="bg">
               <Icon className="omniLogo" src={iconsObj.omniLogo} />

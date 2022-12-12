@@ -18,7 +18,7 @@ import {
 } from "./scripts.types";
 import {
   LAST_SELECTED_NETWORK_INDEX_KEY,
-  NETWORKS_KEY,
+  CUSTOM_NETWORKS_KEY,
 } from "../services/chrome/localStorage";
 import { SESSION_PASSWORD_KEY } from "../services/chrome/sessionStorage";
 import {
@@ -29,6 +29,7 @@ import {
   HandleSignInOutResult,
   HandleSignTransactionsResult,
 } from "./contentscriptApi";
+import { IS_IN_DEVELOPMENT_MODE } from "../consts/app";
 
 function injectInpageScript() {
   try {
@@ -155,7 +156,8 @@ function addStorageChangesListener() {
   chrome.storage.onChanged.addListener((changes, areaName) => {
     const shouldUpdateNetwork =
       areaName === "local" &&
-      (NETWORKS_KEY in changes || LAST_SELECTED_NETWORK_INDEX_KEY in changes);
+      (CUSTOM_NETWORKS_KEY in changes ||
+        LAST_SELECTED_NETWORK_INDEX_KEY in changes);
     if (shouldUpdateNetwork) {
       sendMessageToInpage({
         target: WALLET_INJECTED_API_MESSAGE_TARGET,
@@ -228,6 +230,10 @@ function documentElementCheck() {
 // Checks if wallet api should be injected in window
 function shouldInjectApi() {
   return (
-    doctypeCheck() && suffixCheck() && documentElementCheck() && httpCheck()
+    doctypeCheck() &&
+    suffixCheck() &&
+    documentElementCheck() &&
+    httpCheck() &&
+    !IS_IN_DEVELOPMENT_MODE
   );
 }
