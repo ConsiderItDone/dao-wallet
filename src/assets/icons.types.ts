@@ -6,7 +6,6 @@ export interface IconsMapper extends Record<string, unknown> {
   arrowGrey: string;
   nearMenu: string;
   copyIcon: string;
-  omniLogo: string;
   nearIcon: string;
   logoCIDT: string;
   x_close: string;
@@ -30,4 +29,5 @@ export interface IconsMapper extends Record<string, unknown> {
   actionFunctionCall: string;
   actionStake: string;
   actionTransfer: string;
+  logoDao: string;
 }

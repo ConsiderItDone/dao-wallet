@@ -5,7 +5,6 @@ import arrowGroup from "../images/arrowGroup.svg";
 import success from "../images/successIcon.svg";
 import arrowGrey from "../images/arrowGrey.svg";
 import nearMenu from "../images/nearMenu.svg";
-import omniLogo from "../images/omniLogo.svg";
 import copyIcon from "../images/copyIcon.svg";
 import nearIcon from "../images/nearIcon.svg";
 import logoCIDT from "../images/logoCIDT.svg";
@@ -30,6 +29,7 @@ import actionDeployContract from "../images/actionDeployContract.svg";
 import actionFunctionCall from "../images/actionFunctionCall.svg";
 import actionStake from "../images/actionStake.svg";
 import actionTransfer from "../images/actionTransfer.svg";
+import logoDao from "../images/logoDao.svg";
 
 const iconsObj: IconsMapper = {
   transactionIcon,
@@ -38,7 +38,6 @@ const iconsObj: IconsMapper = {
   arrowGroup,
   arrowGrey,
   nearMenu,
-  omniLogo,
   copyIcon,
   nearIcon,
   logoCIDT,
@@ -63,6 +62,7 @@ const iconsObj: IconsMapper = {
   actionFunctionCall,
   actionStake,
   actionTransfer,
+  logoDao,
 };
 
 export default iconsObj;
