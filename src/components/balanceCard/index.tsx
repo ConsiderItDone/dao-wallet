@@ -45,7 +45,7 @@ const BalanceCard = ({
         <>
           <div className="token">
             <div className="iconWrapper">
-              <NearIcon className="icon"/>
+              <NearIcon className="icon" />
             </div>
             <div className="address">
               {walletAddress?.length >= 32

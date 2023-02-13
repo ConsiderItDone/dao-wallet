@@ -8,7 +8,7 @@ export const AccountNotFundedNotification = () => {
       <div className="token">
         <div className="leftPartWrapper">
           <div className="iconWrapper">
-            <NearIcon width="20" height="20"/>
+            <NearIcon width="20" height="20" />
           </div>
           <div className="messageWrapper">
             <div className="title">Deposit NEAR</div>

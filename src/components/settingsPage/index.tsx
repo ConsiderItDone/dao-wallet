@@ -45,10 +45,10 @@ const Settings = () => {
         <div className="titleSettings">Settings</div>
         <div className="wallet">Wallet ID</div>
         <div className="text">
-          {currentAccount?.accountId?.length && currentAccount.accountId.length >= 32
+          {currentAccount?.accountId?.length &&
+          currentAccount.accountId.length >= 32
             ? shortenWalletAddress(currentAccount.accountId, 6, 6)
-            : currentAccount?.accountId
-          }
+            : currentAccount?.accountId}
           <CopyToClipboard
             text={currentAccount?.accountId || ""}
             onCopy={onAddressCopy}
