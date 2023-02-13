@@ -10,6 +10,7 @@ import { useAuth } from "../../hooks";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ExportPrivateKeyPage } from "../exportPrivateKeyPage";
 import { AddCustomNetworkPage } from "../addCustomNetworkPage";
+import { shortenWalletAddress } from "../../utils/wallet";
 
 const Settings = () => {
   const { currentAccount } = useAuth();
@@ -44,7 +45,10 @@ const Settings = () => {
         <div className="titleSettings">Settings</div>
         <div className="wallet">Wallet ID</div>
         <div className="text">
-          {currentAccount?.accountId}
+          {currentAccount?.accountId?.length && currentAccount.accountId.length >= 32
+            ? shortenWalletAddress(currentAccount.accountId, 6, 6)
+            : currentAccount?.accountId
+          }
           <CopyToClipboard
             text={currentAccount?.accountId || ""}
             onCopy={onAddressCopy}

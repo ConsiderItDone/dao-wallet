@@ -3,7 +3,7 @@
   min-height: 100%;
   background-color: var(--white_col);
   background-image: url(../../images/bgInfo.svg);
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   font-family: var(--font_manrope);
 }
@@ -126,7 +126,7 @@
   margin: 40px auto 0;
   padding: 15px 24px;
   border-radius: 88px;
-  background: #202020;
+  background: var(--main_color);
   font-style: normal;
   font-weight: 700;
   font-size: 16px;

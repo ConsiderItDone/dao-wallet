@@ -8,6 +8,8 @@
   --font_extra_bold: 'ManropeExtraBold';
   --font_regular: 'ManropeRegular';
   --font_manrope: 'Manrope', sans-serif;
+  --font_header: 'Audiowide';
+  --main_color: #0037FF;
   --header_height: 40px;
 }
 *::-webkit-scrollbar {

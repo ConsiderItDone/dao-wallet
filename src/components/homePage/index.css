@@ -13,23 +13,27 @@ input {
   text-align: center;
 }
 .homePageContainer .title {
-  font-family: var(--font_extra_bold);
+  font-family: var(--font_header);
   font-style: normal;
   font-weight: 800;
   font-size: 36px;
   line-height: 58px;
-  color: #202020;
+  color: var(--main_color);
+}
+.homePageContainer .walletTitel {
+  height: 56px;
+  width: 336px;
 }
 .homePageContainer .iconContainer {
-  width: 151px;
+  width: 80px;
   height: 80px;
   position: relative;
-  margin: 8px auto 0 auto;
+  margin: 23px auto 0 auto;
   margin-bottom: 47px;
 
 }
 .homePageContainer .iconContainer .nearMenu,
-.homePageContainer .iconContainer .omniLogo{
+.homePageContainer .iconContainer .daoLogo{
   position: absolute;
   width: 80px;
   height: 80px;
@@ -44,20 +48,19 @@ input {
   background-color: #FFFFFF;
   border-radius: 50%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.16);
-  z-index: 2;
 }
 .homePageContainer .iconContainer .nearMenu {
   right: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.16);
 }
-.homePageContainer .iconContainer .omniLogo {
+.homePageContainer .iconContainer .daoLogo {
   width: 50px;
   left: 15px;
 }
 
 .homePageContainer .homePagePasswordContainer {
   width: 320px;
-  min-height: 95px;
+  min-height: 50px;
   margin: 0 auto;
 }
 .homePageContainer .homePagePasswordContainer .homePagePassword {
@@ -92,7 +95,7 @@ input {
 .homePageContainer .btn{
   width: 102px;
   height: 48px;
-  background: #202020;
+  background: var(--main_color);
   border-radius: 88px;
   font-family: var(--font_bold);
   font-style: normal;
@@ -107,7 +110,6 @@ input {
   opacity: 0.8;
 }
 .btn:disabled {
-  background: #202020aa;
   cursor: not-allowed;
-  opacity: 1;
+  opacity: 0.5;
 }

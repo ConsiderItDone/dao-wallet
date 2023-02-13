@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.css";
-import { NEAR_TOKEN } from "../../consts/near";
+import NearIcon from "../icon/nerIcon";
 
 export const AccountNotFundedNotification = () => {
   return (
@@ -8,7 +8,7 @@ export const AccountNotFundedNotification = () => {
       <div className="token">
         <div className="leftPartWrapper">
           <div className="iconWrapper">
-            <img src={NEAR_TOKEN.icon} alt="" className="icon" />
+            <NearIcon width="20" height="20"/>
           </div>
           <div className="messageWrapper">
             <div className="title">Deposit NEAR</div>

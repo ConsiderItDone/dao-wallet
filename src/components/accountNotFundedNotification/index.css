@@ -19,7 +19,6 @@
 .accountNotFundedNotificationContainer .token .leftPartWrapper .iconWrapper {
     width: 40px;
     height: 40px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 4px;
     border-radius: 50%;
 }
 

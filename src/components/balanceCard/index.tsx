@@ -4,6 +4,7 @@ import { Loading } from "../animations/loading";
 import { shortenWalletAddress } from "../../utils/wallet";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import iconsObj from "../../assets/icons";
+import NearIcon from "../icon/nerIcon";
 
 interface BalanceCardProps {
   title: string;
@@ -43,6 +44,9 @@ const BalanceCard = ({
       ) : (
         <>
           <div className="token">
+            <div className="iconWrapper">
+              <NearIcon className="icon"/>
+            </div>
             <div className="address">
               {walletAddress?.length >= 32
                 ? shortenWalletAddress(walletAddress, 6, 6)
