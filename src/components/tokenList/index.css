@@ -23,6 +23,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #F2F6FF;
 }
 
 .tokenListContainer .token .leftPartWrapper .iconWrapper .iconToken {
