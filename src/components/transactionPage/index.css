@@ -9,7 +9,7 @@
   background-position: center;
   text-align: center;
   padding-top: 32px;
-  background-size: cover;
+  background-size: contain;
   height: calc(100% - 90px);
 }
 .transactionPageContainer .body .icon{
@@ -49,7 +49,7 @@
   font-weight: 800;
   font-size: 16px;
   line-height: 110%;
-  color: #9896F0;
+  color: var(--main_color);
   margin: 0 auto 40px;
 }
 .transactionPageContainer .body .recipient:hover{
@@ -71,7 +71,7 @@
   padding: 0 24px;
   height: 48px;
   width: 121px;
-  background: #202020;
+  background: var(--main_color);
   border-radius: 88px;
   margin: 0 auto;
   cursor: pointer;

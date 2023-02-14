@@ -5,7 +5,8 @@ import {
   getComponentStack,
 } from "react-chrome-extension-router";
 import { ReactComponent as NearIcon } from "../../images/nearIcon.svg";
-import { ReactComponent as OmniLogo } from "../../images/omniLogo.svg";
+import { ReactComponent as DaoLogo } from "../../images/daoLogo.svg";
+import { ReactComponent as DaoWallet } from "../../images/daoWallet.svg";
 import { ReactComponent as LockIcon } from "../../images/lockIcon.svg";
 import { ReactComponent as SettingsIcon } from "../../images/settingsIcon.svg";
 import { ReactComponent as ArrowIcon } from "../../images/arrow.svg";
@@ -129,10 +130,10 @@ const Header = () => {
         <div
           className={`item titleContainer ${dropdownVisible ? "visible" : ""}`}
         >
-          <OmniLogo className="nearIconTitle" />
-          <span className="title">DAO Wallet</span>
+          <DaoLogo className="nearIconTitle" />
+          <DaoWallet className="walletLabel" />
         </div>
-        <div className="item">
+        <div className="item itemSettings">
           <button onClick={handleLock}>
             <LockIcon className="lockIcon" />
           </button>

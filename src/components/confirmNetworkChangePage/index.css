@@ -3,7 +3,7 @@
     min-height: 100%;
     background-color: var(--white_col);
     background-image: url(../../images/bgInfo.svg);
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     font-family: var(--font_manrope);
 }

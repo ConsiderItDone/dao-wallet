@@ -39,7 +39,7 @@
   margin-bottom: 20px;
 }
 .sendPageContainer .body .btnSubmit {
-  background: var(--black_color_secondary);
+  background: var(--main_color);
   border-radius: 88px;
   width: 105px;
   height: 48px;
@@ -72,7 +72,7 @@
   width: 210px;
   height: 48px;
   background: rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(6px);
   border-radius: 8px;
   text-align: left;
   padding-left: 16px;
@@ -290,7 +290,7 @@
   outline: none;
 }
 .sendPageContainer .body .amountContainer .btnMax {
-  background: #9896F0;
+  background: var(--main_color);
   border-radius: 6px;
   width: 80px;
   height: 44px;

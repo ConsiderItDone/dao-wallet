@@ -11,7 +11,7 @@
   text-align: center;
 }
 .footerSettings .title .link {
-  color: #9896F0;
+  color: var(--main_color);
   display: inline-block;
   margin: 0 5px;
 }

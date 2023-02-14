@@ -5,7 +5,7 @@ import arrowGroup from "../images/arrowGroup.svg";
 import success from "../images/successIcon.svg";
 import arrowGrey from "../images/arrowGrey.svg";
 import nearMenu from "../images/nearMenu.svg";
-import omniLogo from "../images/omniLogo.svg";
+import daoLogo from "../images/daoLogo.svg";
 import copyIcon from "../images/copyIcon.svg";
 import nearIcon from "../images/nearIcon.svg";
 import logoCIDT from "../images/logoCIDT.svg";
@@ -19,7 +19,7 @@ import verticalDots from "../images/verticalDots.svg";
 import arrowUp from "../images/arrowUp.svg";
 import successBigIcon from "../images/successBigIcon.svg";
 import defaultTokenIcon from "../images/defaultTokenIcon.svg";
-import unlockIcon from "../images/unlockIcon.png";
+import unlockIcon from "../images/unlockIcon.svg";
 import errorIcon from "../images/errorIcon.png";
 import plusIcon from "../images/plus.svg";
 import actionAddKey from "../images/actionAddKey.svg";
@@ -38,7 +38,7 @@ const iconsObj: IconsMapper = {
   arrowGroup,
   arrowGrey,
   nearMenu,
-  omniLogo,
+  daoLogo,
   copyIcon,
   nearIcon,
   logoCIDT,

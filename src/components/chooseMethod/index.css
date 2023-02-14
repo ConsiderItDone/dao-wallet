@@ -4,7 +4,7 @@
   background-color: #fff;
   background-image: url(../../images/bgInfo.svg);
   background-position: center;
-  background-size: cover;
+  background-size: contain;
 }
 .chooseMethodContainer .body {
   height: calc(100% - 80px);
@@ -44,7 +44,7 @@
 .chooseMethodContainer .body .btnContainer .btnChoose:hover,
 .chooseMethodContainer .body .btnContainer .btnChoose:focus {
   background: rgba(242, 242, 255, 0.7);
-  border-left: 4px solid #9896F0;
+  border-left: 4px solid var(--main_color);
   backdrop-filter: blur(12px);
   padding: 20px 20px 24px 24px;
 }
@@ -61,7 +61,7 @@
   font-weight: 700;
   font-size: 16px;
   line-height: 18px;
-  color: #202020;
+  color: var(--main_color);
   margin-bottom: 4px;
 }
 .chooseMethodContainer .body .btnContainer .btnChoose .btnText{
@@ -70,7 +70,7 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-  color: #20202040;
+  color: var(--main_color);
 }
 .chooseMethodContainer .body .btnContainer .btnChoose:disabled{
   color: #202020cc;

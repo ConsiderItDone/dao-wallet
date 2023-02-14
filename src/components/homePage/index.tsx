@@ -24,6 +24,7 @@ import {
 import { ConnectAccountsPage } from "../connectAccountsPage";
 import { ConfirmNetworkChangePage } from "../confirmNetworkChangePage";
 import { ApproveOperationPage } from "../approveOperationPage";
+import { ReactComponent as DaoWallet } from "../../images/daoWallet.svg";
 
 const HomePage = () => {
   const [localStorage] = useState<LocalStorage>(new LocalStorage());
@@ -157,12 +158,11 @@ const HomePage = () => {
         <div className="title">Loading...</div>
       ) : (
         <>
-          <div className="title">DAO Wallet</div>
+          <DaoWallet className="walletTitel" />
           <div className="iconContainer">
             <div className="bg">
-              <Icon className="omniLogo" src={iconsObj.omniLogo} />
+              <Icon className="daoLogo" src={iconsObj.daoLogo} />
             </div>
-            <Icon className="nearMenu" src={iconsObj.nearMenu} />
           </div>
           <InputField
             fieldName="password"

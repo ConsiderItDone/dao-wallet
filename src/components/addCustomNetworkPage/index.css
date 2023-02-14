@@ -111,7 +111,7 @@
     border-radius: 50%;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em #A2A0F1;
+    box-shadow: inset 1em 1em var(--main_color);
     background-color: white;
 }
 
@@ -131,7 +131,7 @@
     margin: 40px auto 0;
     padding: 15px 24px;
     border-radius: 88px;
-    background: #202020;
+    background: var(--main_color);
     font-style: normal;
     font-weight: 700;
     font-size: 16px;

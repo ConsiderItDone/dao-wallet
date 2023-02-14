@@ -3,7 +3,7 @@
   height: 100%;
   background-image: url(../../images/bgInfo.svg);
   background-position: center;
-  background-size: cover;
+  background-size: contain;
   background-color: #FFFFFF;
 }
 .unlockWalletPageContainer .body {

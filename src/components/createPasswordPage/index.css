@@ -3,7 +3,7 @@
   height: 100%;
   min-height: 426px;
   background-image: url(../../images/bgInfo.svg);
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-color: #FFFFFF;
   padding-top: 52px;
@@ -57,7 +57,7 @@
 .createPasswordContainer .submitButton {
   width: 102px;
   height: 48px;
-  background: #202020;
+  background: var(--main_color);
   border-radius: 88px;
   font-family: var(--font_bold);
   font-style: normal;
@@ -70,10 +70,11 @@
 }
 
 .submitButton:hover {
-  background: #202020dd;
+  /* background: #202020dd; */
 }
 
 .submitButton:disabled {
-  background: #202020aa;
+  /* background: #202020aa; */
+  opacity: 0.5;
   cursor: not-allowed;
 }

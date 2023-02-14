@@ -19,17 +19,19 @@
 .tokenListContainer .token .leftPartWrapper .iconWrapper {
     width: 40px;
     height: 40px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 4px;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.tokenListContainer .token .leftPartWrapper .iconWrapper .icon {
-    width: 100%;
-    height: 100%;
+.tokenListContainer .token .leftPartWrapper .iconWrapper .iconToken {
+    width: "20px";
+    height: "20px";
 }
 
 .tokenListContainer .token .leftPartWrapper .nameAndAmountWrapper {
-    margin-left: 14px;
+    margin-left: 10px;
     line-height: 100%;
 }
 

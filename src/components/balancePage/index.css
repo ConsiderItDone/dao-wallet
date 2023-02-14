@@ -14,7 +14,7 @@
   width: 320px;
   height: 50px;
   margin: 0 auto;
-  background: #F2F2FF;
+  background: #F2F6FF;
   backdrop-filter: blur(12px);
   padding: 0 20px;
   border-radius: 8px;
@@ -23,7 +23,7 @@
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
-  color: #20202040;
+  color: #202020;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,7 +65,7 @@
 .balancePageContainer .body .btnSend{
   width: 320px;
   height: 48px;
-  background: #202020;
+  background: var(--main_color);
   border-radius: 88px;
   display: flex;
   align-items: center;

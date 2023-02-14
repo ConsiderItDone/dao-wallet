@@ -151,6 +151,7 @@ const ConfirmationPage = ({ amount, token, receiver, usdRatio }: Props) => {
           ) : (
             <div className="clipLoaderContainer">
               <ClipLoader color="#9896F0" size={16} />
+              Sending...
             </div>
           )}
         </button>

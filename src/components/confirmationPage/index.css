@@ -9,7 +9,7 @@
   padding: 32px 0 0 0;
   text-align: center;
   border-radius:0 0 20px 20px;
-  background-size: cover;
+  background-size: contain;
   height: calc(100% - 90px);
   padding-bottom: 17px;
 }
@@ -60,7 +60,7 @@
 .confirmationPageContainer .adddressContainer{
   width: 320px;
   height: 16px;
-  background: #F2F2FF;
+  background: #F2F6FF;
   backdrop-filter: blur(12px);
   border-radius: 8px;
   display: flex;
@@ -73,7 +73,7 @@
 .confirmationPageContainer .assetContainer {
   width: 320px;
   height: 107px;
-  background: #F2F2FF;
+  background: #F2F6FF;
   padding: 16px 20px;
   border-radius: 8px;
   margin: 0 auto;
@@ -141,7 +141,7 @@
   color: #FFFFFF;
   width: 169px;
   height: 48px;
-  background: #202020;
+  background: var(--main_color);
   border-radius: 88px;
   margin: 40px auto 12px;
   cursor: pointer;
@@ -190,4 +190,10 @@
 .confirmationPageContainer .body .transactionError a:hover {
   text-underline: indianred;
   color: indianred;
+}
+
+.clipLoaderContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

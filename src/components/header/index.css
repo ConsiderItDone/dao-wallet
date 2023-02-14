@@ -4,19 +4,20 @@
   top: 0;
   width: 100%;
   z-index: 11;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }
 
 .header {
   display: flex;
   height: 40px;
-  max-width: 440px;
-  margin: 0 auto;
+  width: 440px;
   align-items: center;
   padding-left: 18px;
   padding-right: 18px;
   position: relative;
-  justify-content: right;
+  justify-content: center;
+  box-sizing: border-box;
 
 }
 .header .backBtn{
@@ -28,21 +29,20 @@
   display: flex;
   align-items: center;
 }
-.header .titleContainer{
-  margin-right: auto;
-}
+
 .header .walletContainer {
-  margin-left: 0;
-  margin-right: 35px;
+  position: absolute;
+  left: 0;
 }
 .header .title{
-  font-family: var(--font_bold);
+  font-family: var(--font_header);
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: #000000;
+  color: var(--main_color);
   display: inline-block;
+  text-transform: uppercase;
 }
 .header .dropdownBtn{
   font-family: var(--font_semi_bold);
@@ -50,7 +50,7 @@
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
-  color: #20202040;
+  color: var(--main_color);
   min-height: 24px;
   display: flex;
   align-items: center;
@@ -72,26 +72,38 @@
   margin-right: 12px;
 }
 .header .dropdownBtn .nearIcon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 12px;
   margin-right: 4px;
 }
 .header .dropdownBtn .currentAccountIcon {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  min-height: 16px;
+  width: 8px;
+  height: 8px;
+  min-width: 14px;
+  min-height: 14px;
   margin-right: 4px;
   background: white;
+  border-radius: 50%;
+  padding: 2px;
 }
 .header .item .nearIconTitle{ 
-  width: 20px; 
-  height: 20px;
+  width: 22px; 
+  height: 26px;
   display: inline-block;
   margin-right: 8px;
 }
 .header .item > button {
   cursor: pointer;
+}
+.itemSettings {
+  position: absolute;
+  right: 0;
+}
+
+.header .item .walletLabel{ 
+  width: 120px; 
+  height: 20px;
+  display: inline-block;
 }
 
 .header .walletsContainer {
@@ -100,7 +112,7 @@
  left: 0;
  top: 0;
  background: rgba(0, 0, 0, 0.2);
- backdrop-filter: blur(12px);
+ backdrop-filter: blur(6px);
  border-radius: 0 0 20px 20px;
  padding: 12px 16px;
  z-index: 3;
@@ -157,7 +169,7 @@
 .header .walletsContainer .btnAddAccount {
   width: 129px;
   height: 32px;
-  background: #202020;
+  background: var(--main_color);
   border-radius: 88px;
   font-family: var(--font_bold);
   font-style: normal;

@@ -2,6 +2,7 @@ import "./index.css";
 import React from "react";
 import { Token } from "../../services/chrome/localStorage";
 import { toFixedBottom } from "../../utils/common";
+import NearIcon from "../icon/nerIcon";
 
 export interface TokenAmountData {
   token: Token;
@@ -31,11 +32,7 @@ export const TokenList = ({ tokens }: Props) => {
           <div className="token" key={index}>
             <div className="leftPartWrapper">
               <div className="iconWrapper">
-                <img
-                  src={tokenAmountData?.token?.icon}
-                  alt=""
-                  className="icon"
-                />
+                <NearIcon className="iconToken" />
               </div>
               <div className="nameAndAmountWrapper">
                 <div className="amount">

@@ -34,7 +34,7 @@
 }
 
 .selectNetworkPageContainer .body .networksContainer .network {
-    background-color: #202020;
+    background-color: var(--main_color);
     color: var(--white_col);
     width: 100%;
     padding: 10px 15px;
@@ -54,8 +54,9 @@
 }
 
 .selectNetworkPageContainer .body .networksContainer .chosenNetwork {
-    background-color: #9896F0;
+    background-color: var(--main_color);
     cursor: default;
+    opacity: 0.5;
 }
 
 .selectNetworkPageContainer .body .networksContainer .chosenNetwork:hover {
