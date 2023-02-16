@@ -3,7 +3,7 @@
   height: 100%;
   min-height: 426px;
   background-image: url(../../images/bgInfo.svg);
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-color: #FFFFFF;
   padding-top: 52px;
