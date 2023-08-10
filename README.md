@@ -1,9 +1,9 @@
 # DAO Wallet
 
-![DAOwallet](https://github.com/ConsiderItDone/dao-wallet/assets/1008882/4c4dd61d-6c75-4073-8d6d-97f0c5d4ac02)
-
 DAO Wallet is WebAssembly Web3 wallet that enables users to interact with decentralized applications (DApps) 
 and blockchain networks seamlessly. It allows users to securely manage their cryptocurrency assets and NFT, including sending and receiving transactions.
+
+![DAOwallet](https://github.com/ConsiderItDone/dao-wallet/assets/1008882/4c4dd61d-6c75-4073-8d6d-97f0c5d4ac02)
 
 ## Features
 - **WebAssembly**: The wallet is built using WebAssembly, which offers a fast and secure environment for running cryptocurrency operations in a browser.
