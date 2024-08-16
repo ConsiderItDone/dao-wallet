@@ -7,7 +7,7 @@ and blockchain networks seamlessly. It allows users to securely manage their cry
 
 ## Features
 - **WebAssembly**: The wallet is built using WebAssembly, which offers a fast and secure environment for running cryptocurrency operations in a browser.
-- **Polywrap Technology**: The wallet is built using [Polywrap](https://polywrap.io/), a powerful technology for creating modular and upgradeable blockchain integrations.
+- **Polywrap Technology**: The wallet is built using [Polywrap](https://github.com/polywrap), a powerful technology for creating modular and upgradeable blockchain integrations.
 - **Secure Key Management**: The wallet supports secure key management, including generation of new keys, importing existing keys, and securely storing the keys.
 - **NFT and Asset Management**: Users can view and transfers their NFT collections.
 - **Transaction Management**: Users can create, sign, and broadcast transactions.
